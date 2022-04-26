@@ -32,7 +32,7 @@ contract IrlNFTCollection is ERC721URIStorage {
     function MintArt(address _player, string memory _tokenURI, bool _sendIrl, bool _streetArt) public returns (uint256)
     {
         _tokenIds.increment();
-		arts.push(Arts(_sendIrl, _streetArt));
+		    arts.push(Arts(_sendIrl, _streetArt));
         uint256 newItemId = _tokenIds.current();
         _mint(_player, newItemId);
         _setTokenURI(newItemId, _tokenURI);
