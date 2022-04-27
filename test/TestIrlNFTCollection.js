@@ -28,6 +28,7 @@ contract("IrlNFTCollectionManager", accounts => {
     it("...Check that the Artist was created with the name of its first collection by default", async () => {
         let artistInstance = await irlMgtInstance.getArtistDetails(artist);
         assert.equal(artistInstance.name, "My duss", "Artist name should be set to My duss");
+        assert.equal(artistInstance.verified, false, "Artist should not be verified by default");
     });
 
     it("...create a new artist", async () => {
@@ -43,10 +44,16 @@ contract("IrlNFTCollectionManager", accounts => {
         assert.equal(artistInstance.description, "Street Artist", "Artist description should be set to Street Artist");
     });
 
+    it("...verify a existing artist", async () => {
+        let tx = await irlMgtInstance.verifyArtist(artist, true, {from: ownerAddress });
+        let artistInstance = await irlMgtInstance.getArtistDetails(artist);
+        assert.equal(artistInstance.verified, true, "Artist should be verified");
+    });
+
     it("...check created NFT collection", async () => {
         irlNFTinstance = await IrlNFTCollection.at(collectionAddress);
         let name = await irlNFTinstance.name();
-        assert.equal(name, "My duss", "Artist name should be set to My duss");
+        assert.equal(name, "My duss", "Collection name should be set to My duss");
     });
 
     it("...check collection array retrieval", async () => {

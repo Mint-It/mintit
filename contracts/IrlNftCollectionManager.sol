@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /** 
   * @title In Real Life NFT collection Manager
-  * @author Geoffrey Bernicot / Christophe Burgalat
+  * @author Geoffrey B. / Christophe B.
   * @notice Give the ability to deploy a contract to manage ERC-721 tokens for an Artist. S/O @Snow
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
@@ -18,6 +18,7 @@ contract IrlNFTCollectionManager is Ownable{
       string name;
       string description;
       bool created;
+      bool verified;
       mapping(address => IrlNFTCollection) collections;
     }
     mapping(address => artist) private artists;
@@ -59,6 +60,14 @@ contract IrlNFTCollectionManager is Ownable{
         }
         else
           emit ArtistUpdated(false, _artistName, msg.sender);
+    }
+
+    /**
+      * @notice Verify or Unverify an existing artist
+      */
+    function verifyArtist(address _artist, bool _verified) public onlyOwner {
+        require(artists[_artist].created == true, "artist does not exists");
+        artists[_artist].verified = _verified;
     }
 
     /**
@@ -115,10 +124,11 @@ contract IrlNFTCollectionManager is Ownable{
       *
       * @return name of the artist
       * @return description of the artist
+      * @return verified information about the artist
       */    
-    function getArtistDetails(address artistAddress) public view returns (string memory name, string memory description) {
+    function getArtistDetails(address artistAddress) public view returns (string memory name, string memory description, bool verified) {
         artist storage a = artists[artistAddress];
-        return (a.name, a.description);
+        return (a.name, a.description, a.verified);
     }
 
 }
