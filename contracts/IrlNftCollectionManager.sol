@@ -23,6 +23,14 @@ contract IrlNFTCollectionManager is Ownable{
     }
     mapping(address => artist) private artists;
 
+    struct user {
+      string name;
+      string description;
+      bool created;
+    }
+    mapping(address => user) private users;
+
+
     // Array of collection addresses
     address[] public collectionArray;
     // Array of artist addresses
@@ -33,6 +41,8 @@ contract IrlNFTCollectionManager is Ownable{
 
     /// @notice Event emitted each time a new artist is created or updated
     event ArtistUpdated(bool _created, string _artistName, address _artistAddress);
+    /// @notice Event emitted each time a new user is created or updated
+    event UserUpdated(bool _created, string _userName, address _userAddress);
 
     /**
       * @notice Generate the contract bytecode including constructor parameters
@@ -46,7 +56,7 @@ contract IrlNFTCollectionManager is Ownable{
     }
 
     /**
-      * @notice Declare a new artist
+      * @notice Create or update an artist
       */
     function createArtist(string memory _artistName, string memory _artistDescription) public  {
         require(bytes(_artistName).length > 0, "artist name cannot be empty");
@@ -62,6 +72,22 @@ contract IrlNFTCollectionManager is Ownable{
           emit ArtistUpdated(false, _artistName, msg.sender);
     }
 
+    /**
+      * @notice Create or update a user
+      */
+    function createUser(string memory _userName, string memory _userDescription) public  {
+        require(bytes(_userName).length > 0, "user name cannot be empty");
+        users[msg.sender].name = _userName;
+        users[msg.sender].description = _userDescription;
+
+        if (users[msg.sender].created == false) {
+          users[msg.sender].created = true;
+          emit UserUpdated(true, _userName, msg.sender);
+        }
+        else
+          emit UserUpdated(false, _userName, msg.sender);
+    }
+    
     /**
       * @notice Verify or Unverify an existing artist
       */
@@ -131,4 +157,14 @@ contract IrlNFTCollectionManager is Ownable{
         return (a.name, a.description, a.verified);
     }
 
+    /**
+      * @notice Return the details of a user based on its address
+      *
+      * @return name of the user
+      * @return description of the user
+      */    
+    function getUserDetails(address userAddress) public view returns (string memory name, string memory description) {
+        user storage u = users[userAddress];
+        return (u.name, u.description);
+    }
 }

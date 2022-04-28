@@ -9,6 +9,7 @@ contract("IrlNFTCollectionManager", accounts => {
     let ownerAddress = accounts[0];
     let address  = accounts[1];
     let artist = accounts[3];
+    let user = accounts[4];
 
     beforeEach(async () => {
         irlMgtInstance = await IrlNFTCollectionManager.deployed();
@@ -48,6 +49,19 @@ contract("IrlNFTCollectionManager", accounts => {
         let tx = await irlMgtInstance.verifyArtist(artist, true, {from: ownerAddress });
         let artistInstance = await irlMgtInstance.getArtistDetails(artist);
         assert.equal(artistInstance.verified, true, "Artist should be verified");
+    });
+
+    it("...create a new user", async () => {
+        let tx = await irlMgtInstance.createUser("User1", "User1 description", {from: user });
+        truffleAssert.eventEmitted(tx, 'UserUpdated', (ev) => {
+            return ev._userAddress == user && ev._userName == "User1";
+        });
+    });
+
+    it("...Check that the User was updated with the name specified", async () => {
+        let userInstance = await irlMgtInstance.getUserDetails(user);
+        assert.equal(userInstance.name, "User1", "User name should be set to User1");
+        assert.equal(userInstance.description, "User1 description", "User description should be set to User1 description");
     });
 
     it("...check created NFT collection", async () => {
