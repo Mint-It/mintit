@@ -153,8 +153,7 @@ contract IrlNFTCollectionManager is Ownable{
       * @return verified information about the artist
       */    
     function getArtistDetails(address artistAddress) public view returns (string memory name, string memory description, bool verified) {
-        artist storage a = artists[artistAddress];
-        return (a.name, a.description, a.verified);
+        return (artists[artistAddress].name, artists[artistAddress].description, artists[artistAddress].verified);
     }
 
     /**
@@ -164,7 +163,6 @@ contract IrlNFTCollectionManager is Ownable{
       * @return description of the user
       */    
     function getUserDetails(address userAddress) public view returns (string memory name, string memory description) {
-        user storage u = users[userAddress];
-        return (u.name, u.description);
+        return (users[userAddress].name, users[userAddress].description);
     }
 }
