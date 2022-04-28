@@ -33,7 +33,7 @@ contract("IrlNFTCollectionManager", accounts => {
     });
 
     it("...create a new artist", async () => {
-        let tx = await irlMgtInstance.createArtist("TocToc", "Street Artist", {from: artist });
+        let tx = await irlMgtInstance.setArtist("TocToc", "Street Artist", {from: artist });
         truffleAssert.eventEmitted(tx, 'ArtistUpdated', (ev) => {
             return ev._artistAddress == artist && ev._artistName == "TocToc";
         });
@@ -52,7 +52,7 @@ contract("IrlNFTCollectionManager", accounts => {
     });
 
     it("...create a new user", async () => {
-        let tx = await irlMgtInstance.createUser("User1", "User1 description", {from: user });
+        let tx = await irlMgtInstance.setUser("User1", "User1 description", {from: user });
         truffleAssert.eventEmitted(tx, 'UserUpdated', (ev) => {
             return ev._userAddress == user && ev._userName == "User1";
         });

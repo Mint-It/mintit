@@ -58,7 +58,7 @@ contract IrlNFTCollectionManager is Ownable{
     /**
       * @notice Create or update an artist
       */
-    function createArtist(string memory _artistName, string memory _artistDescription) public  {
+    function setArtist(string memory _artistName, string memory _artistDescription) public  {
         require(bytes(_artistName).length > 0, "artist name cannot be empty");
         artists[msg.sender].name = _artistName;
         artists[msg.sender].description = _artistDescription;
@@ -75,7 +75,7 @@ contract IrlNFTCollectionManager is Ownable{
     /**
       * @notice Create or update a user
       */
-    function createUser(string memory _userName, string memory _userDescription) public  {
+    function setUser(string memory _userName, string memory _userDescription) public  {
         require(bytes(_userName).length > 0, "user name cannot be empty");
         users[msg.sender].name = _userName;
         users[msg.sender].description = _userDescription;
@@ -119,7 +119,7 @@ contract IrlNFTCollectionManager is Ownable{
         
         // create the artist if not exist
         if (artists[msg.sender].created == false) {
-            createArtist(_collectionName, "");
+            setArtist(_collectionName, "");
         }
         artists[msg.sender].collections[collectionAddress] = IrlNFTCollection(collectionAddress);
         collectionArray.push(collectionAddress);
