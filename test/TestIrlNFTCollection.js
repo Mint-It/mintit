@@ -79,4 +79,8 @@ contract("IrlNFTCollectionManager", accounts => {
         let colAddress = await irlMgtInstance.collectionArray(0);
         assert.equal(colAddress, collectionAddress, "Collection Array do not include collection created");
     });
+
+    it("...set max supply should not be allowed for non owner", async () => {
+        await truffleAssert.fails(irlNFTinstance.setMaxSupply(50, {from: user }));
+    });
 });
