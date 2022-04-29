@@ -5,6 +5,7 @@ pragma solidity 0.8.13;
 import "./IrlNFTCollection.sol";
 import "./Artists.sol";
 import "./Users.sol";
+import "./DeployNFTCollection.sol";
 
 /** 
   * @title In Real Life NFT collection Manager
@@ -13,6 +14,7 @@ import "./Users.sol";
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
 contract IrlNFTCollectionManager is Artists, Users{
+    using DeployNFTCollection for string;
 
     // Array of collection addresses
     address[] public collectionArray;
@@ -25,11 +27,11 @@ contract IrlNFTCollectionManager is Artists, Users{
       *
       * @return bytecode of the contract
       */
-    function getCreationBytecode(string memory _artistName, string memory _artistSymbol) private pure returns (bytes memory) {
+    /*function getCreationBytecode(string memory _artistName, string memory _artistSymbol) private pure returns (bytes memory) {
         bytes memory bytecode = type(IrlNFTCollection).creationCode;
 
         return abi.encodePacked(bytecode, abi.encode(_artistName, _artistSymbol));
-    }
+    }*/
 
     /**
       * @notice Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
@@ -38,7 +40,7 @@ contract IrlNFTCollectionManager is Artists, Users{
       */
     function createIrlNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
         // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = getCreationBytecode(_collectionName, _collectionSymbol);
+        /*bytes memory collectionBytecode = getCreationBytecode(_collectionName, _collectionSymbol);
 				// Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(_collectionName));
 
@@ -50,7 +52,8 @@ contract IrlNFTCollectionManager is Artists, Users{
             }
         }
         // Initialize the collection contract with the artist settings
-        //IrlNFTCollection(collectionAddress).initialize(msg.sender);
+        //IrlNFTCollection(collectionAddress).initialize(msg.sender);*/
+        collectionAddress = _collectionName.deployNFTCollection(_collectionSymbol);
         
         // create the artist if not exist
         if (artists[msg.sender].created == false) {
