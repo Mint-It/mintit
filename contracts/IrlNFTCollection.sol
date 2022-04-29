@@ -21,6 +21,9 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     // Max number of NFT to be minted
     uint private maxSupply;
 
+    // Price of a NFT
+    uint price;
+
     // URI of the NFTs when revealed
     string private baseURI;
     //The extension of the file containing the Metadatas of the NFTs
@@ -73,6 +76,14 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
         baseExtension = _baseExtension;
     }
 
+    /** 
+    * @notice Allows to change the price of a NFT during the config stage
+    **/
+    function setPrice(uint _price) external onlyOwner {
+        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        price = _price;
+    }
+    
     /**
     * @notice Return URI of the NFTs when revealed
     *
@@ -107,6 +118,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     {
         require(sellingStage == Stages.Sale, "Sale has not started yet.");
         require(totalSupply() + 1 < maxSupply, "All NFT are sold");
+        require(msg.value >= price, "Not enought funds.");
         _tokenIds.increment();
         uint randomNumber = random(100);
         uint256 newItemId = _tokenIds.current();
