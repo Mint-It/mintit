@@ -62,6 +62,15 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
 
     /** 
     * @notice Allows to change the max supply during the config stage
+    *
+    * @return The maximum number of NFT that can be supplied
+    **/
+    function getMaxSupply() external view returns (uint) {
+        return maxSupply;
+    }
+
+    /** 
+    * @notice Allows to change the max supply during the config stage
     **/
     function setBaseURI(string memory __baseURI) external onlyOwner {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
@@ -83,7 +92,16 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
         price = _price;
     }
-    
+
+    /** 
+    * @notice Allows to change the max supply during the config stage
+    *
+    * @return The price of NFT
+    **/
+    function getPrice() external view returns (uint) {
+        return price;
+    }
+
     /**
     * @notice Return URI of the NFTs when revealed
     *
