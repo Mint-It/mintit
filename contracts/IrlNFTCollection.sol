@@ -4,7 +4,6 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /** 
@@ -13,9 +12,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
+contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
     using Strings for uint256;
     using Counters for Counters.Counter;
+    address artistAddress;
     Counters.Counter private _tokenIds;
 
     // Max number of NFT to be minted
@@ -48,14 +48,15 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
-    constructor(string memory name_, string memory symbol_) ERC721 (name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, address _artist) ERC721 (name_, symbol_) {
         sellingStage = Stages.Config;
+        artistAddress = _artist;
     }
 
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setMaxSupply(uint _amount) external onlyOwner {
+    function setMaxSupply(uint _amount) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the max supply.");
         maxSupply = _amount;
     }
@@ -72,7 +73,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setBaseURI(string memory __baseURI) external onlyOwner {
+    function setBaseURI(string memory __baseURI) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
         baseURI = __baseURI;
     }
@@ -80,7 +81,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setBaseExtension(string memory _baseExtension) external onlyOwner {
+    function setBaseExtension(string memory _baseExtension) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
         baseExtension = _baseExtension;
     }
@@ -88,7 +89,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the price of a NFT during the config stage
     **/
-    function setPrice(uint _price) external onlyOwner {
+    function setPrice(uint _price) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
         price = _price;
     }
@@ -114,7 +115,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the sellinStep to Presale
     **/
-    function setUpPresale() external onlyOwner {
+    function setUpPresale() external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to go to Presale.");
         sellingStage = Stages.Presale;
     }
@@ -122,7 +123,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the sellinStep to Sale
     **/
-    function setUpSale() external onlyOwner {
+    function setUpSale() external onlyArtist {
         require(sellingStage == Stages.Presale, "Should be in Presale stage to go to Sale.");
         sellingStage = Stages.Sale;
     }
@@ -180,5 +181,10 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     function random(uint number) public view returns(uint){
         return uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,  
         msg.sender))) % number;
+    }
+
+    modifier onlyArtist() {
+        require(_msgSender() == artistAddress, "Caller is not privileged");
+        _;
     }
 }

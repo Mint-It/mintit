@@ -3,6 +3,7 @@ pragma solidity 0.8.13;
 
 // importing the ERC-721 contract to deploy for an artist
 import "./IrlNFTCollection.sol";
+import "@openzeppelin/contracts/utils/Create2.sol";
 
 /** 
   * @title In Real Life NFT collection Deployment Library
@@ -17,20 +18,22 @@ library DeployNFTCollection {
       *
       * @return collectionAddress the address of the created collection contract
       */
-    function deployNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
+    function deployNFTCollection(string memory _collectionName, string memory _collectionSymbol, address _owner) external returns (address collectionAddress) {
 
         // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = abi.encodePacked(type(IrlNFTCollection).creationCode, abi.encode(_collectionName, _collectionSymbol));
+        bytes memory collectionBytecode = abi.encodePacked(type(IrlNFTCollection).creationCode, abi.encode(_collectionName, _collectionSymbol, _owner));
 				// Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(_collectionName));
 
-        assembly {
+        collectionAddress = Create2.deploy(0, salt, collectionBytecode);
+
+        /*assembly {
             collectionAddress := create2(0, add(collectionBytecode, 0x20), mload(collectionBytecode), salt)
             if iszero(extcodesize(collectionAddress)) {
                 // revert if something gone wrong (collectionAddress doesn't contain an address)
                 revert(0, 0)
             }
-        }
+        }*/
         return collectionAddress;
     }
 }
