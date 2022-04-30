@@ -23,36 +23,12 @@ contract IrlNFTCollectionManager is Artists, Users{
     event IrlNFTCollectionCreated(string _collectionName, address _collectionAddress, uint _timestamp);
 
     /**
-      * @notice Generate the contract bytecode including constructor parameters
-      *
-      * @return bytecode of the contract
-      */
-    /*function getCreationBytecode(string memory _artistName, string memory _artistSymbol) private pure returns (bytes memory) {
-        bytes memory bytecode = type(IrlNFTCollection).creationCode;
-
-        return abi.encodePacked(bytecode, abi.encode(_artistName, _artistSymbol));
-    }*/
-
-    /**
       * @notice Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
       *
       * @return collectionAddress the address of the created collection contract
       */
     function createIrlNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
-        // Import the bytecode of the contract to deploy
-        /*bytes memory collectionBytecode = getCreationBytecode(_collectionName, _collectionSymbol);
-				// Make a random salt based on the artist name
-        bytes32 salt = keccak256(abi.encodePacked(_collectionName));
-
-        assembly {
-            collectionAddress := create2(0, add(collectionBytecode, 0x20), mload(collectionBytecode), salt)
-            if iszero(extcodesize(collectionAddress)) {
-                // revert if something gone wrong (collectionAddress doesn't contain an address)
-                revert(0, 0)
-            }
-        }
-        // Initialize the collection contract with the artist settings
-        //IrlNFTCollection(collectionAddress).initialize(msg.sender);*/
+        // deploy NFT collection
         collectionAddress = _collectionName.deployNFTCollection(_collectionSymbol);
         
         // create the artist if not exist
