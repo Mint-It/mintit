@@ -24,14 +24,19 @@ contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
     // Price of a NFT
     uint price;
 
+    // description of the NFT collection
+    string private description;
+
+    // url to an image to represent the collection
+    string private banner;
+
     // URI of the NFTs when revealed
     string private baseURI;
     //The extension of the file containing the Metadatas of the NFTs
     string private baseExtension = ".json";
 
     struct Arts{
-        bool sendIrl;
-        bool streetArt;
+      string description;
     }
     mapping(uint => Arts) private arts;
 
@@ -54,20 +59,46 @@ contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
     }
 
     /** 
-    * @notice Allows to change the max supply during the config stage
+    * @notice Retrieve the description of the collection
+    *
+    * @return The description of the collection
     **/
-    function setMaxSupply(uint _amount) external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to change the max supply.");
-        maxSupply = _amount;
+    function getDescription() external view returns (string memory) {
+        return description;
+    }
+
+    /** 
+    * @notice Retrieve the image banner of the collection
+    *
+    * @return The image banner of the collection
+    **/
+    function getBanner() external view returns (string memory) {
+        return banner;
     }
 
     /** 
     * @notice Allows to change the max supply during the config stage
+    **/
+    function setDetails(string memory _description, string memory _banner) external onlyArtist {
+        description = _description;
+        banner = _banner;
+    }
+
+    /** 
+    * @notice Allows to retrieve the max supply of the collection
     *
     * @return The maximum number of NFT that can be supplied
     **/
     function getMaxSupply() external view returns (uint) {
         return maxSupply;
+    }
+    
+    /** 
+    * @notice Allows to change the max supply during the config stage
+    **/
+    function setMaxSupply(uint _amount) external onlyArtist {
+        require(sellingStage == Stages.Config, "Should be in Config stage to change the max supply.");
+        maxSupply = _amount;
     }
 
     /** 
@@ -95,7 +126,7 @@ contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
     }
 
     /** 
-    * @notice Allows to change the max supply during the config stage
+    * @notice Allows to change the price of the NFT during the config stage
     *
     * @return The price of NFT
     **/
@@ -139,14 +170,8 @@ contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
         require(totalSupply() + 1 < maxSupply, "All NFT are sold");
         require(msg.value >= price, "Not enought funds.");
         _tokenIds.increment();
-        uint randomNumber = random(100);
         uint256 newItemId = _tokenIds.current();
-        arts[newItemId].sendIrl = false;
-        arts[newItemId].streetArt = false;
-        if (randomNumber < 3)
-            arts[newItemId].streetArt = true;
-        else if (randomNumber < 10)
-            arts[newItemId].sendIrl = true;
+        arts[newItemId].description = "";
         _safeMint(msg.sender, newItemId);
 
         return newItemId;
@@ -167,20 +192,6 @@ contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
             bytes(currentBaseURI).length > 0 
             ? string(abi.encodePacked(currentBaseURI, _nftId.toString(), baseExtension))
             : "";
-    }
-
-    /**
-    * @notice Calculate a Random number is a specified range
-    *
-    * @dev Should be temporary as better random calculation exists (Chainlink VRF) 
-    *
-    * @param number The max number
-    *
-    * @return uint representing the random value
-    **/    
-    function random(uint number) public view returns(uint){
-        return uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,  
-        msg.sender))) % number;
     }
 
     modifier onlyArtist() {
