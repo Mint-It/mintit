@@ -4,7 +4,6 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /** 
@@ -13,13 +12,23 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
+contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
     using Strings for uint256;
     using Counters for Counters.Counter;
+    address artistAddress;
     Counters.Counter private _tokenIds;
 
     // Max number of NFT to be minted
     uint private maxSupply;
+
+    // Price of a NFT
+    uint price;
+
+    // description of the NFT collection
+    string private description;
+
+    // url to an image to represent the collection
+    string private banner;
 
     // URI of the NFTs when revealed
     string private baseURI;
@@ -27,8 +36,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     string private baseExtension = ".json";
 
     struct Arts{
-        bool sendIrl;
-        bool streetArt;
+      string description;
     }
     mapping(uint => Arts) private arts;
 
@@ -45,14 +53,50 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
-    constructor(string memory name_, string memory symbol_) ERC721 (name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, address _artist) ERC721 (name_, symbol_) {
         sellingStage = Stages.Config;
+        artistAddress = _artist;
+    }
+
+    /** 
+    * @notice Retrieve the description of the collection
+    *
+    * @return The description of the collection
+    **/
+    function getDescription() external view returns (string memory) {
+        return description;
+    }
+
+    /** 
+    * @notice Retrieve the image banner of the collection
+    *
+    * @return The image banner of the collection
+    **/
+    function getBanner() external view returns (string memory) {
+        return banner;
     }
 
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setMaxSupply(uint _amount) external onlyOwner {
+    function setDetails(string memory _description, string memory _banner) external onlyArtist {
+        description = _description;
+        banner = _banner;
+    }
+
+    /** 
+    * @notice Allows to retrieve the max supply of the collection
+    *
+    * @return The maximum number of NFT that can be supplied
+    **/
+    function getMaxSupply() external view returns (uint) {
+        return maxSupply;
+    }
+    
+    /** 
+    * @notice Allows to change the max supply during the config stage
+    **/
+    function setMaxSupply(uint _amount) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the max supply.");
         maxSupply = _amount;
     }
@@ -60,7 +104,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setBaseURI(string memory __baseURI) external onlyOwner {
+    function setBaseURI(string memory __baseURI) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
         baseURI = __baseURI;
     }
@@ -68,9 +112,26 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setBaseExtension(string memory _baseExtension) external onlyOwner {
+    function setBaseExtension(string memory _baseExtension) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
         baseExtension = _baseExtension;
+    }
+
+    /** 
+    * @notice Allows to change the price of a NFT during the config stage
+    **/
+    function setPrice(uint _price) external onlyArtist {
+        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        price = _price;
+    }
+
+    /** 
+    * @notice Allows to change the price of the NFT during the config stage
+    *
+    * @return The price of NFT
+    **/
+    function getPrice() external view returns (uint) {
+        return price;
     }
 
     /**
@@ -85,7 +146,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the sellinStep to Presale
     **/
-    function setUpPresale() external onlyOwner {
+    function setUpPresale() external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to go to Presale.");
         sellingStage = Stages.Presale;
     }
@@ -93,7 +154,7 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     /** 
     * @notice Allows to change the sellinStep to Sale
     **/
-    function setUpSale() external onlyOwner {
+    function setUpSale() external onlyArtist {
         require(sellingStage == Stages.Presale, "Should be in Presale stage to go to Sale.");
         sellingStage = Stages.Sale;
     }
@@ -107,15 +168,10 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
     {
         require(sellingStage == Stages.Sale, "Sale has not started yet.");
         require(totalSupply() + 1 < maxSupply, "All NFT are sold");
+        require(msg.value >= price, "Not enought funds.");
         _tokenIds.increment();
-        uint randomNumber = random(100);
         uint256 newItemId = _tokenIds.current();
-        arts[newItemId].sendIrl = false;
-        arts[newItemId].streetArt = false;
-        if (randomNumber < 3)
-            arts[newItemId].streetArt = true;
-        else if (randomNumber < 10)
-            arts[newItemId].sendIrl = true;
+        arts[newItemId].description = "";
         _safeMint(msg.sender, newItemId);
 
         return newItemId;
@@ -138,17 +194,8 @@ contract IrlNFTCollection is ERC721Enumerable, Ownable, ReentrancyGuard {
             : "";
     }
 
-    /**
-    * @notice Calculate a Random number is a specified range
-    *
-    * @dev Should be temporary as better random calculation exists (Chainlink VRF) 
-    *
-    * @param number The max number
-    *
-    * @return uint representing the random value
-    **/    
-    function random(uint number) public view returns(uint){
-        return uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,  
-        msg.sender))) % number;
+    modifier onlyArtist() {
+        require(_msgSender() == artistAddress, "Caller is not privileged");
+        _;
     }
 }

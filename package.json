@@ -1,6 +1,15 @@
 {
+  "scripts": {
+    "docgen": "npx solidity-docgen --solc-module solc-0.8"
+  },
   "dependencies": {
     "@openzeppelin/contracts": "^4.5.0",
+    "@truffle/hdwallet-provider": "^2.0.8",
+    "dotenv": "^16.0.0",
+    "solidity-docgen": "^0.5",
     "truffle-assertions": "^0.9.2"
+  },
+  "devDependencies": {
+    "solc-0.8": "npm:solc@^0.8.13"
   }
 }
