@@ -8,13 +8,12 @@ import "./Users.sol";
 import "./DeployNFTCollection.sol";
 
 /** 
-  * @title In Real Life NFT collection Manager
+  * @title Mint It NFT collection Manager
   * @author Geoffrey B. / Christophe B.
-  * @notice Give the ability to deploy a contract to manage ERC-721 tokens for an Artist. S/O @Snow
-  * @dev    If the contract is already deployed for an _artistName, it will revert.
+  * @notice Give the ability to deploy a contract to manage ERC-721 tokens for an Artist.
+  * @dev    If the contract is already deployed for an _collectionName, it will revert.
   */
 contract MintitNFTCollectionManager is Artists, Users{
-    //using DeployNFTCollection for string;
 
     // Array of collection addresses
     address[] public collectionArray;
@@ -29,9 +28,7 @@ contract MintitNFTCollectionManager is Artists, Users{
       */
     function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
         // deploy NFT collection
-        //collectionAddress = Create2.deploy(_collectionName, _collectionSymbol);
         collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender);
-        //collectionAddress = _collectionName.deployNFTCollection(_collectionSymbol, msg.sender);
         
         // create the artist if not exist
         if (artists[msg.sender].created == false) {

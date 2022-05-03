@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
+/** 
+  * @title MintIt Users smart contract
+  * @author Geoffrey B. / Christophe B.
+  * @notice Users contract to manage User informations
+  */
 contract Users {
 
     struct user {

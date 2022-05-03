@@ -4,6 +4,11 @@ pragma solidity 0.8.13;
 import "./MintitNFTCollection.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/** 
+  * @title MintIt Artists smart contract
+  * @author Geoffrey B. / Christophe B.
+  * @notice Artists contract to manage Artists informations
+  */
 contract Artists is Ownable{
 
     // structure to store artists informations

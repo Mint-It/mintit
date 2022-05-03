@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 /** 
-  * @title In Real Life NFT collection
+  * @title Mint It NFT collection
   * @author Geoffrey B. / Christophe B.
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
@@ -36,6 +37,9 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     string private baseURI;
     //The extension of the file containing the Metadatas of the NFTs
     string private baseExtension = ".json";
+
+   // merkle tree to check if address is in whitelist
+    bytes32 private whiteList;
 
     struct Arts{
       string description;
@@ -152,7 +156,28 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     function getPresalePrice() external view returns (uint) {
         return presalePrice;
     }
-    
+
+    /**
+    * @notice Set a new adresses white list 
+    *
+    * @param _newWhiteList The new Merkle Root
+    **/
+    function setWhitelist(bytes32 _newWhiteList) external onlyArtist {
+        whiteList = _newWhiteList;
+    }
+ 
+    /** 
+    * @notice Returns true if a leaf can be proved to be a part of a Merkle tree defined by root
+    *
+    * @param account Account to verify if whitelisted
+    * @param proof The Merkle Proof
+    *
+    * @return True if a account can be proved to be a part of the whiteList merkle tree
+    **/
+    function isWhiteListed(address account, bytes32[] calldata proof) internal view returns(bool) {
+        return MerkleProof.verify(proof, whiteList, keccak256(abi.encodePacked(account)));
+    }
+
     /**
     * @notice Return URI of the NFTs when revealed
     *
@@ -178,6 +203,24 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         sellingStage = Stages.Sale;
     }
 
+    /**
+    * @notice Allows to mint NFTs
+    *
+    * @return newItemId The Id of the minted NFT
+    **/
+    function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant returns (uint256)
+    {
+        require(sellingStage == Stages.Presale, "Presale has not started yet.");
+        require(totalSupply() + 1 < maxSupply, "All NFT are sold");
+        require(isWhiteListed(msg.sender, _proof), "Not on the whitelist");
+        require(msg.value >= presalePrice, "Not enought funds.");
+        _tokenIds.increment();
+        uint256 newItemId = _tokenIds.current();
+        arts[newItemId].description = "";
+        _safeMint(msg.sender, newItemId);
+
+        return newItemId;
+    }
     /**
     * @notice Allows to mint NFTs
     *
