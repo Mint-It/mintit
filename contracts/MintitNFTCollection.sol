@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract IrlNFTCollection is ERC721Enumerable, ReentrancyGuard {
+contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     using Strings for uint256;
     using Counters for Counters.Counter;
     address artistAddress;

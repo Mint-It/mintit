@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import "./IrlNFTCollection.sol";
+import "./MintitNFTCollection.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Artists is Ownable{
@@ -12,7 +12,7 @@ contract Artists is Ownable{
       string description;
       bool created;
       bool verified;
-      mapping(address => IrlNFTCollection) collections;
+      mapping(address => MintitNFTCollection) collections;
     }
     mapping(address => artist) internal artists;
     // Array of artist addresses

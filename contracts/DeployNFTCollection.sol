@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 // importing the ERC-721 contract to deploy for an artist
-import "./IrlNFTCollection.sol";
+import "./MintitNFTCollection.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
 
 /** 
@@ -21,7 +21,7 @@ library DeployNFTCollection {
     function deployNFTCollection(string memory _collectionName, string memory _collectionSymbol, address _owner) external returns (address collectionAddress) {
 
         // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = abi.encodePacked(type(IrlNFTCollection).creationCode, abi.encode(_collectionName, _collectionSymbol, _owner));
+        bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTCollection).creationCode, abi.encode(_collectionName, _collectionSymbol, _owner));
 		// Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(_collectionName));
 

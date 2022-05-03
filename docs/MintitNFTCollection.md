@@ -1,18 +1,40 @@
-## `IrlNFTCollection`
+## `MintitNFTCollection`
 
 NFT collection of an artist which may generate some action in real life
 
 
    If the contract is already deployed for an _artistName, it will revert.
 
+### `onlyArtist()`
 
-### `constructor(string name_, string symbol_)` (public)
+
+
+
+
+
+### `constructor(string name_, string symbol_, address _artist)` (public)
 
 Constructor parameters of ERC721. Params will be set by Collection Manager
 
 
 
-### `setMaxSupply(uint256 _amount)` (external)
+### `getDescription() → string` (external)
+
+Retrieve the description of the collection
+
+
+
+
+
+### `getBanner() → string` (external)
+
+Retrieve the image banner of the collection
+
+
+
+
+
+### `setDetails(string _description, string _banner)` (external)
 
 Allows to change the max supply during the config stage
 
@@ -21,8 +43,15 @@ Allows to change the max supply during the config stage
 
 ### `getMaxSupply() → uint256` (external)
 
-Allows to change the max supply during the config stage
+Allows to retrieve the max supply of the collection
 
+
+
+
+
+### `setMaxSupply(uint256 _amount)` (external)
+
+Allows to change the max supply during the config stage
 
 
 
@@ -50,7 +79,7 @@ Allows to change the price of a NFT during the config stage
 
 ### `getPrice() → uint256` (external)
 
-Allows to change the max supply during the config stage
+Allows to change the price of the NFT during the config stage
 
 
 
@@ -94,25 +123,12 @@ Allows to get the complete URI of a specific NFT by his ID
 
 
 
-### `random(uint256 number) → uint256` (public)
-
-Calculate a Random number is a specified range
-
-
-
-Should be temporary as better random calculation exists (Chainlink VRF) 
-
-
-
 
 
 ### `Arts`
 
 
-bool sendIrl
-
-
-bool streetArt
+string description
 
 
 

@@ -56,7 +56,7 @@ bool created
 bool verified
 
 
-mapping(address => contract IrlNFTCollection) collections
+mapping(address => contract MintitNFTCollection) collections
 
 
 

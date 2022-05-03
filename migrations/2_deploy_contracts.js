@@ -1,9 +1,9 @@
-var IrlNFTCollectionManager = artifacts.require("./IrlNFTCollectionManager.sol");
+var MintitNFTCollectionManager = artifacts.require("./MintitNFTCollectionManager.sol");
 var DeployNFTCollection = artifacts.require("DeployNFTCollection");
 
 module.exports = function(deployer) {
   deployer.deploy(DeployNFTCollection);
-  deployer.link(DeployNFTCollection, IrlNFTCollectionManager);
-  deployer.deploy(IrlNFTCollectionManager);
-  //deployer.deploy(IrlNFTCollectionManager);
+  deployer.link(DeployNFTCollection, MintitNFTCollectionManager);
+  deployer.deploy(MintitNFTCollectionManager);
+  //deployer.deploy(MintitNFTCollectionManager);
 };

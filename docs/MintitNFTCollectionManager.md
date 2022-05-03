@@ -1,4 +1,4 @@
-## `IrlNFTCollectionManager`
+## `MintitNFTCollectionManager`
 
 Give the ability to deploy a contract to manage ERC-721 tokens for an Artist. S/O @Snow
 
@@ -6,7 +6,7 @@ Give the ability to deploy a contract to manage ERC-721 tokens for an Artist. S/
    If the contract is already deployed for an _artistName, it will revert.
 
 
-### `createIrlNFTCollection(string _collectionName, string _collectionSymbol) → address collectionAddress` (external)
+### `createMintitNFTCollectionn(string _collectionName, string _collectionSymbol) → address collectionAddress` (external)
 
 Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
 
@@ -23,7 +23,7 @@ Return the list of collection addresses created
 
 
 
-### `IrlNFTCollectionCreated(string _collectionName, address _collectionAddress, uint256 _timestamp)`
+### `MintitNFTCollectionCreated(string _collectionName, address _collectionAddress, uint256 _timestamp)`
 
 Event emitted each time a new NFT collection is created
 

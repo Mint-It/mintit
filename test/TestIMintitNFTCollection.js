@@ -1,8 +1,8 @@
-const IrlNFTCollectionManager = artifacts.require("IrlNFTCollectionManager");
-const IrlNFTCollection = artifacts.require("IrlNFTCollection");
+const MintitNFTCollectionManager = artifacts.require("MintitNFTCollectionManager");
+const MintitNFTCollection = artifacts.require("MintitNFTCollection");
 const truffleAssert = require('truffle-assertions');
 
-contract("IrlNFTCollectionManager", accounts => {
+contract("MintitNFTCollectionManager", accounts => {
     let irlMgtInstance;
     let irlNFTinstance;
     let collectionAddress;
@@ -12,12 +12,12 @@ contract("IrlNFTCollectionManager", accounts => {
     let user = accounts[3];
 
     beforeEach(async () => {
-        irlMgtInstance = await IrlNFTCollectionManager.deployed();
+        irlMgtInstance = await MintitNFTCollectionManager.deployed();
     })    
 
     it("...Create new NFT collection", async () => {
-        let tx = await irlMgtInstance.createIrlNFTCollection("My duss", "DUSS", {from: artist });
-        truffleAssert.eventEmitted(tx, 'IrlNFTCollectionCreated', (ev) => {
+        let tx = await irlMgtInstance.createMintitNFTCollection("My duss", "DUSS", {from: artist });
+        truffleAssert.eventEmitted(tx, 'MintitNFTCollectionCreated', (ev) => {
             collectionAddress = ev._collectionAddress;
             return ev._collectionName == "My duss";
         });
@@ -26,7 +26,7 @@ contract("IrlNFTCollectionManager", accounts => {
         });
     });
 
-    /*it("...Check that the Artist was created with the name of its first collection by default", async () => {
+    it("...Check that the Artist was created with the name of its first collection by default", async () => {
         let artistInstance = await irlMgtInstance.getArtistDetails(artist);
         assert.equal(artistInstance.name, "My duss", "Artist name should be set to My duss");
         assert.equal(artistInstance.verified, false, "Artist should not be verified by default");
@@ -65,7 +65,7 @@ contract("IrlNFTCollectionManager", accounts => {
     });
 
     it("...check created NFT collection", async () => {
-        irlNFTinstance = await IrlNFTCollection.at(collectionAddress);
+        irlNFTinstance = await MintitNFTCollection.at(collectionAddress);
         let name = await irlNFTinstance.name();
         assert.equal(name, "My duss", "Collection name should be set to My duss");
     });
@@ -117,5 +117,5 @@ contract("IrlNFTCollectionManager", accounts => {
     it("...check user balance", async () => {
         let nbNft = await irlNFTinstance.balanceOf(user);
         assert.equal(nbNft, 1, "user should have 1 NFT");
-    });*/
+    });
 });
