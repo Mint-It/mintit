@@ -79,43 +79,4 @@ contract("MintitNFTCollectionManager", accounts => {
         let colAddress = await mintitMgtInstance.collectionArray(0);
         assert.equal(colAddress, collectionAddress, "Collection Array do not include collection created");
     });
-
-    it("...set max supply should not be allowed for non owner", async () => {
-        await truffleAssert.fails(mintitNFTinstance.setMaxSupply(50, {from: user }));
-    });
-
-    it("...set max supply", async () => {
-        await mintitNFTinstance.setMaxSupply(50, {from: artist });
-        let supply = await mintitNFTinstance.getMaxSupply();
-        assert.equal(supply, 50, "Supply should be set to 50");
-    });
-
-    it("...mint a NFT should fail if Sale did not start yet", async () => {
-        await truffleAssert.fails(mintitNFTinstance.MintArt({from: user }));
-    });
-
-    it("...Move to Presale", async () => {
-        let nftId = await mintitNFTinstance.setUpPresale({from: artist });
-        let stage = await mintitNFTinstance.sellingStage({from: user });
-        assert.equal(stage, 1, "Should be stage Presale");
-    });
-
-    it("...Move to Sale", async () => {
-        let nftId = await mintitNFTinstance.setUpSale({from: artist });
-        let stage = await mintitNFTinstance.sellingStage({from: user });
-        assert.equal(stage, 2, "Should be stage Sale");
-    });
-
-    it("...mint a NFT", async () => {
-        let tx = await mintitNFTinstance.MintArt({from: user });
-        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
-            return ev.tokenId == 1;
-        });
-        //assert.equal(nftId, 1, "First mint should have id 1");
-    });
-
-    it("...check user balance", async () => {
-        let nbNft = await mintitNFTinstance.balanceOf(user);
-        assert.equal(nbNft, 1, "user should have 1 NFT");
-    });
 });
