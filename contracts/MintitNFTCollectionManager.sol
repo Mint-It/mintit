@@ -27,7 +27,7 @@ contract MintitNFTCollectionManager is Artists, Users{
       *
       * @return collectionAddress the address of the created collection contract
       */
-    function createMintitNFTCollectionn(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
+    function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
         // deploy NFT collection
         //collectionAddress = Create2.deploy(_collectionName, _collectionSymbol);
         collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender);
