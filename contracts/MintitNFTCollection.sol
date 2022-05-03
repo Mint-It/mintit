@@ -22,7 +22,9 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     uint private maxSupply;
 
     // Price of a NFT
-    uint price;
+    uint private price;
+    // Price of a NFT in Presale
+    uint private presalePrice;
 
     // description of the NFT collection
     string private description;
@@ -134,6 +136,23 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         return price;
     }
 
+    /** 
+    * @notice Allows to change the price of a NFT during the config stage
+    **/
+    function setPresalePrice(uint _price) external onlyArtist {
+        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        presalePrice = _price;
+    }
+
+    /** 
+    * @notice Allows to change the price of the NFT during the config stage
+    *
+    * @return The price of NFT
+    **/
+    function getPresalePrice() external view returns (uint) {
+        return presalePrice;
+    }
+    
     /**
     * @notice Return URI of the NFTs when revealed
     *
