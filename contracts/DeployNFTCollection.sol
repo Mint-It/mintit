@@ -22,7 +22,7 @@ library DeployNFTCollection {
 
         // Import the bytecode of the contract to deploy
         bytes memory collectionBytecode = abi.encodePacked(type(IrlNFTCollection).creationCode, abi.encode(_collectionName, _collectionSymbol, _owner));
-				// Make a random salt based on the artist name
+		// Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(_collectionName));
 
         collectionAddress = Create2.deploy(0, salt, collectionBytecode);

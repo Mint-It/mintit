@@ -8,8 +8,8 @@ contract("IrlNFTCollectionManager", accounts => {
     let collectionAddress;
     let ownerAddress = accounts[0];
     let address  = accounts[1];
-    let artist = accounts[3];
-    let user = accounts[4];
+    let artist = accounts[2];
+    let user = accounts[3];
 
     beforeEach(async () => {
         irlMgtInstance = await IrlNFTCollectionManager.deployed();
@@ -26,7 +26,7 @@ contract("IrlNFTCollectionManager", accounts => {
         });
     });
 
-    it("...Check that the Artist was created with the name of its first collection by default", async () => {
+    /*it("...Check that the Artist was created with the name of its first collection by default", async () => {
         let artistInstance = await irlMgtInstance.getArtistDetails(artist);
         assert.equal(artistInstance.name, "My duss", "Artist name should be set to My duss");
         assert.equal(artistInstance.verified, false, "Artist should not be verified by default");
@@ -117,5 +117,5 @@ contract("IrlNFTCollectionManager", accounts => {
     it("...check user balance", async () => {
         let nbNft = await irlNFTinstance.balanceOf(user);
         assert.equal(nbNft, 1, "user should have 1 NFT");
-    });
+    });*/
 });
