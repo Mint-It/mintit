@@ -59,9 +59,19 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
-    constructor(string memory name_, string memory symbol_, address _artist) ERC721 (name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, address _artist,
+                uint _maxSupply, uint _presalePrice, uint _price,
+                string memory _banner, string memory _description,
+                string memory _newBaseURI, string memory _baseExtension) ERC721 (name_, symbol_) {
         sellingStage = Stages.Config;
         artistAddress = _artist;
+        maxSupply = _maxSupply;
+        presalePrice = _presalePrice;
+        price = _price;
+        banner = _banner;
+        description = _description;
+        baseURI = _newBaseURI;
+        baseExtension = _baseExtension;
     }
 
     /** 
