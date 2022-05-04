@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import React from 'react';
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import Web3 from "web3";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWallet, faUser } from '@fortawesome/free-solid-svg-icons'
 import logoMintit from './assets/img/mintit_logo.png';
+import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
 
 import "./App.css";
 import Home from './components/Home';
@@ -15,7 +15,7 @@ import Artist from './components/Artist';
 
 library.add(faWallet, faUser);
 
-const supportedChainId = 97;
+const MintitNFTCollectionManagerContractAddress = "0x2246b2e9Eb52005FbBEC31f706E32C5a93170F4D";
 
 class App extends React.Component {
   state = { storageValue: 0, web3: null, accounts: null, contract: null, currentAccount: null };
@@ -53,11 +53,15 @@ class App extends React.Component {
   }
 
   checkWalletIsConnected = async () => {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    const web3 = new Web3(Web3.givenProvider);
+    const accounts = await web3.eth.requestAccounts();
+    const chainId = await web3.eth.getChainId();
+    console.log(chainId);
     if (accounts.length !== 0) {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         const account = accounts[0];
         this.setState({currentAccount: account});
+        console.log(accounts);
+        const contactNFTManager = new web3.eth.Contract(MintitNFTCollectionManagerContract, MintitNFTCollectionManagerContractAddress);
     } else {
       console.log("No authorized account found");
     }
@@ -77,6 +81,10 @@ class App extends React.Component {
       <FontAwesomeIcon icon="wallet" /> <span id="loginButtonText">Connect Wallet</span> 
     </button>
     )
+  }
+
+  getAllCollections = async () => {
+
   }
 
   render() {
