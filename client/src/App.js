@@ -6,43 +6,45 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWallet, faUser } from '@fortawesome/free-solid-svg-icons'
 import logoMintit from './assets/img/mintit_logo.png';
 import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
+import MintitNFTCollection from "./contracts/MintitNFTCollection.json";
+import { MintitNFTCollectionManagerContractAddress } from "./contractAddresses";
 
 import "./App.css";
 import Home from './components/Home';
 import Create from './components/Create';
 import Explore from './components/Explore';
 import Artist from './components/Artist';
+import Error from './components/Error';
 
 library.add(faWallet, faUser);
 
-const MintitNFTCollectionManagerContractAddress = "0x2246b2e9Eb52005FbBEC31f706E32C5a93170F4D";
-
 class App extends React.Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null, currentAccount: null };
+  state = {web3: null, currentAccount: null, contract: null};
 
   componentDidMount = async () => {
-    this.checkWalletIsConnected();
+    this.connectWalletHandler();
   };
 
   connectWalletHandler = async () => {
     try {
-      //console.log(this.state.accounts);
-      // Get network provider and web3 instance.
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const account = accounts[0];
-      this.setState({currentAccount: account});
-      //const web3 = await getWeb3();
-
-      // Use web3 to get the user's accounts.
-      //const accounts = await web3.eth.getAccounts();
-
+      const web3 = new Web3(Web3.givenProvider);
+      this.setState({ web3: web3});
+      const accounts = await web3.eth.requestAccounts();
+      if (accounts.length !== 0) {
+        this.setState({currentAccount: accounts[0]});
+        const contractNFTManager = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
+        const allCollections = await contractNFTManager.methods.getCollectionArray().call({ from:  accounts[0] });
+        for (const collection of allCollections) {
+          const contractNFT = new web3.eth.Contract(MintitNFTCollection.abi, collection);
+          const nameNft = await contractNFT.methods.name().call({ from:  accounts[0] });
+          console.log(nameNft);
+        }
+      } else {
+        console.log("No authorized account found");
+      }
       // Get the contract instance.
       //const networkId = await web3.eth.net.getId();
       //const deployedNetwork = SimpleStorageContract.networks[networkId];
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      //this.setState({ web3, accounts });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -52,39 +54,40 @@ class App extends React.Component {
     }
   }
 
-  checkWalletIsConnected = async () => {
-    const web3 = new Web3(Web3.givenProvider);
-    const accounts = await web3.eth.requestAccounts();
-    const chainId = await web3.eth.getChainId();
-    console.log(chainId);
-    if (accounts.length !== 0) {
-        const account = accounts[0];
-        this.setState({currentAccount: account});
-        console.log(accounts);
-        const contactNFTManager = new web3.eth.Contract(MintitNFTCollectionManagerContract, MintitNFTCollectionManagerContractAddress);
-    } else {
-      console.log("No authorized account found");
-    }
-  }
-
   connectedWallet = () => {
     return (
       <div className='flex flex-wrap items-center text-base'>
-        <p id="userWallet" style={{lineHeight: "12px"}} className="text-lg text-gray-600"><span id="userWalletSpan" style={{color: "#66cf8e", fontSize: "16px", fontWeight: "bold"}}>{this.state.currentAccount.slice(0,5)+'...'+this.state.currentAccount.slice(38,42)}</span><br /><span style={{fontSize: "10px"}}>WALLET CONNECTED</span></p>
+        <p id="userWallet" className="text-lg text-gray-600 leading-3"><span id="userWalletSpan" className="text-red-500 font-bold text-base">{this.state.currentAccount.slice(0,5)+'...'+this.state.currentAccount.slice(38,42)}</span><br /><span style={{fontSize: "10px"}}>WALLET CONNECTED</span></p>
       </div>
     )
   }
   
   connectWalletButton = () => {
     return (
-      <button onClick={() => this.connectWalletHandler()} id="loginButton" className='bg-gray-900 text-gray-200 py-2 px-3 mx-2 rounded border border-indigo-500 hover:bg-gray-800 hover:text-gray-100'>
-      <FontAwesomeIcon icon="wallet" /> <span id="loginButtonText">Connect Wallet</span> 
+      <button onClick={() => this.connectWalletHandler()} id="loginButton" className='inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
+      <FontAwesomeIcon icon="wallet" /> <span id="loginButtonText">	&nbsp;Connect Wallet</span> 
     </button>
     )
   }
 
-  getAllCollections = async () => {
+  errorPage = () => {
+    return (
+      <Error />
+    )
+  }
 
+  routesPage = () => {
+    return (
+      <Routes>
+        <Route exact path='/' element={<Home/>} />
+        <Route exact path='/create' element={<Create parentState={this.state}/>} />
+        <Route exact path='/explore' element={<Explore/>} />
+        <Route exact path='/artist' element={<Artist/>} />
+      </Routes>
+    )
+  }
+
+  getAllCollections = async () => {
   }
 
   render() {
@@ -105,15 +108,12 @@ class App extends React.Component {
       isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>
         <FontAwesomeIcon icon="user" /><span id="loginButtonText">&nbsp;Profil</span>
         </NavLink>
-    {this.state.currentAccount ? this.connectedWallet() : this.connectWalletButton()}
+        {this.state.currentAccount ? this.connectedWallet() : this.connectWalletButton()}
   </div>
 </header>
-<Routes>
-        <Route exact path='/' element={<Home/>} />
-        <Route exact path='/create' element={<Create/>} />
-        <Route exact path='/explore' element={<Explore/>} />
-        <Route exact path='/artist' element={<Artist/>} />
-    </Routes>
+ 
+{this.state.currentAccount ? this.routesPage() : this.errorPage()}
+
 <footer className="text-gray-600 body-font">
   <div className="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
     <p className="text-sm text-gray-500 sm:py-2 sm:mt-0 mt-4">© 2022 Mint It</p>

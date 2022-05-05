@@ -6,11 +6,6 @@ import artist from '../assets/img/artist.jpg';
 class Artist extends React.Component {
     constructor(props) {
       super(props);
-      /*const deployedNetwork = VotingContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        VotingContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );*/
     }
 
     setArtist = async () => {
@@ -39,11 +34,11 @@ class Artist extends React.Component {
       <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Artiste</h2>
       <p className="leading-relaxed mb-5 text-gray-600">Crée ton profil Artiste</p>
       <div className="relative mb-4">
-        <label for="artistName" className="leading-7 text-sm text-gray-600">Nom</label>
+        <label htmlFor="artistName" className="leading-7 text-sm text-gray-600">Nom</label>
         <input type="artistName" id="artistName" name="artistName" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
       </div>
       <div className="relative mb-4">
-        <label for="artistDescription" className="leading-7 text-sm text-gray-600">Description</label>
+        <label htmlFor="artistDescription" className="leading-7 text-sm text-gray-600">Description</label>
         <textarea id="artistDescription" name="artistDescription" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
       </div>
       <button className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">OK!</button>
