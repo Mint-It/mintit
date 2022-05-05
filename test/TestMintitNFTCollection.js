@@ -38,8 +38,8 @@ contract("MintitNFTCollectionManager", accounts => {
 
     it("...set max supply", async () => {
         await mintitNFTinstance.setMaxSupply(50, {from: artist });
-        let supply = await mintitNFTinstance.getMaxSupply();
-        assert.equal(supply, 50, "Supply should be set to 50");
+        let supply = await mintitNFTinstance.getCollectionInfos();
+        assert.equal(supply['maxSupply'], 50, "Supply should be set to 50");
     });
 
     it("...mint a NFT should fail if Sale did not start yet", async () => {

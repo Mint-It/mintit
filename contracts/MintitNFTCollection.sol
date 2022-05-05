@@ -19,24 +19,19 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     address artistAddress;
     Counters.Counter private _tokenIds;
 
-    // Max number of NFT to be minted
-    uint private maxSupply;
+    struct Infos {
+        string name;
+        string symbol;
+        uint maxSupply;
+        uint price;
+        uint presalePrice;
+        string description;
+        string banner;
+        string baseURI;
+        string baseExtension;
+    }
 
-    // Price of a NFT
-    uint private price;
-    // Price of a NFT in Presale
-    uint private presalePrice;
-
-    // description of the NFT collection
-    string private description;
-
-    // url to an image to represent the collection
-    string private banner;
-
-    // URI of the NFTs when revealed
-    string private baseURI;
-    //The extension of the file containing the Metadatas of the NFTs
-    string private baseExtension = ".json";
+    Infos private collectionInfo;
 
    // merkle tree to check if address is in whitelist
     bytes32 private whiteList;
@@ -65,56 +60,31 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
                 string memory _newBaseURI, string memory _baseExtension) ERC721 (name_, symbol_) {
         sellingStage = Stages.Config;
         artistAddress = _artist;
-        maxSupply = _maxSupply;
-        presalePrice = _presalePrice;
-        price = _price;
-        banner = _banner;
-        description = _description;
-        baseURI = _newBaseURI;
-        baseExtension = _baseExtension;
-    }
-
-    /** 
-    * @notice Retrieve the description of the collection
-    *
-    * @return The description of the collection
-    **/
-    function getDescription() external view returns (string memory) {
-        return description;
-    }
-
-    /** 
-    * @notice Retrieve the image banner of the collection
-    *
-    * @return The image banner of the collection
-    **/
-    function getBanner() external view returns (string memory) {
-        return banner;
+        collectionInfo.maxSupply = _maxSupply;
+        collectionInfo.presalePrice = _presalePrice;
+        collectionInfo.price = _price;
+        collectionInfo.banner = _banner;
+        collectionInfo.description = _description;
+        collectionInfo.baseURI = _newBaseURI;
+        collectionInfo.baseExtension = _baseExtension;
+        collectionInfo.name = name_;
+        collectionInfo.symbol = symbol_;
     }
 
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
     function setDetails(string memory _description, string memory _banner) external onlyArtist {
-        description = _description;
-        banner = _banner;
+        collectionInfo.description = _description;
+        collectionInfo.banner = _banner;
     }
 
-    /** 
-    * @notice Allows to retrieve the max supply of the collection
-    *
-    * @return The maximum number of NFT that can be supplied
-    **/
-    function getMaxSupply() external view returns (uint) {
-        return maxSupply;
-    }
-    
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
     function setMaxSupply(uint _amount) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the max supply.");
-        maxSupply = _amount;
+        collectionInfo.maxSupply = _amount;
     }
 
     /** 
@@ -122,7 +92,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function setBaseURI(string memory __baseURI) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
-        baseURI = __baseURI;
+        collectionInfo.baseURI = __baseURI;
     }
 
     /** 
@@ -130,7 +100,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function setBaseExtension(string memory _baseExtension) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
-        baseExtension = _baseExtension;
+        collectionInfo.baseExtension = _baseExtension;
     }
 
     /** 
@@ -138,16 +108,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function setPrice(uint _price) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
-        price = _price;
-    }
-
-    /** 
-    * @notice Allows to change the price of the NFT during the config stage
-    *
-    * @return The price of NFT
-    **/
-    function getPrice() external view returns (uint) {
-        return price;
+        collectionInfo.price = _price;
     }
 
     /** 
@@ -155,16 +116,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function setPresalePrice(uint _price) external onlyArtist {
         require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
-        presalePrice = _price;
-    }
-
-    /** 
-    * @notice Allows to change the price of the NFT during the config stage
-    *
-    * @return The price of NFT
-    **/
-    function getPresalePrice() external view returns (uint) {
-        return presalePrice;
+        collectionInfo.presalePrice = _price;
     }
 
     /**
@@ -194,7 +146,16 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @return The URI of the NFTs when revealed
     **/
     function _baseURI() internal view virtual override returns (string memory) {
-        return baseURI;
+        return collectionInfo.baseURI;
+    }
+
+    /** 
+    * @notice Allows to get details information of the NFT collection
+    *
+    * @return The infos of NFT collection
+    **/
+    function getCollectionInfos() external view returns (Infos memory) {
+        return (collectionInfo);
     }
 
     /** 
@@ -221,9 +182,9 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant returns (uint256)
     {
         require(sellingStage == Stages.Presale, "Presale has not started yet.");
-        require(totalSupply() + 1 < maxSupply, "All NFT are sold");
+        require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
         require(isWhiteListed(msg.sender, _proof), "Not on the whitelist");
-        require(msg.value >= presalePrice, "Not enought funds.");
+        require(msg.value >= collectionInfo.presalePrice, "Not enought funds.");
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         arts[newItemId].description = "";
@@ -239,8 +200,8 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     function MintArt() external payable nonReentrant returns (uint256)
     {
         require(sellingStage == Stages.Sale, "Sale has not started yet.");
-        require(totalSupply() + 1 < maxSupply, "All NFT are sold");
-        require(msg.value >= price, "Not enought funds.");
+        require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
+        require(msg.value >= collectionInfo.price, "Not enought funds.");
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         arts[newItemId].description = "";
@@ -262,7 +223,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         string memory currentBaseURI = _baseURI();
         return 
             bytes(currentBaseURI).length > 0 
-            ? string(abi.encodePacked(currentBaseURI, _nftId.toString(), baseExtension))
+            ? string(abi.encodePacked(currentBaseURI, _nftId.toString(), collectionInfo.baseExtension))
             : "";
     }
 
