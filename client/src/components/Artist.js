@@ -6,11 +6,6 @@ import artist from '../assets/img/artist.jpg';
 class Artist extends React.Component {
     constructor(props) {
       super(props);
-      /*const deployedNetwork = VotingContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        VotingContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );*/
     }
 
     setArtist = async () => {

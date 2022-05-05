@@ -2,8 +2,7 @@
 import React from 'react';
 import Web3 from "web3";
 import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
-
-const MintitNFTCollectionManagerContractAddress = "0x2246b2e9Eb52005FbBEC31f706E32C5a93170F4D";
+import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Create extends React.Component {
   state = {contract: null};

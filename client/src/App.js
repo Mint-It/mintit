@@ -7,6 +7,7 @@ import { faWallet, faUser } from '@fortawesome/free-solid-svg-icons'
 import logoMintit from './assets/img/mintit_logo.png';
 import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
 import MintitNFTCollection from "./contracts/MintitNFTCollection.json";
+import { MintitNFTCollectionManagerContractAddress } from "./contractAddresses";
 
 import "./App.css";
 import Home from './components/Home';
@@ -15,8 +16,6 @@ import Explore from './components/Explore';
 import Artist from './components/Artist';
 
 library.add(faWallet, faUser);
-
-const MintitNFTCollectionManagerContractAddress = "0x2246b2e9Eb52005FbBEC31f706E32C5a93170F4D";
 
 class App extends React.Component {
   state = {web3: null, currentAccount: null, contract: null};
@@ -57,7 +56,7 @@ class App extends React.Component {
   connectedWallet = () => {
     return (
       <div className='flex flex-wrap items-center text-base'>
-        <p id="userWallet" style={{lineHeight: "12px"}} className="text-lg text-gray-600"><span id="userWalletSpan" style={{color: "#66cf8e", fontSize: "16px", fontWeight: "bold"}}>{this.state.currentAccount.slice(0,5)+'...'+this.state.currentAccount.slice(38,42)}</span><br /><span style={{fontSize: "10px"}}>WALLET CONNECTED</span></p>
+        <p id="userWallet" className="text-lg text-gray-600 leading-3"><span id="userWalletSpan" className="text-red-500 font-bold text-base">{this.state.currentAccount.slice(0,5)+'...'+this.state.currentAccount.slice(38,42)}</span><br /><span style={{fontSize: "10px"}}>WALLET CONNECTED</span></p>
       </div>
     )
   }
