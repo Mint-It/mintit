@@ -1,18 +1,26 @@
 // Artist.js
 import React from 'react';
-//import artistsContract from "../contracts/Artists.json";
 import artist from '../assets/img/artist.jpg';
+import Web3 from "web3";
+import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
+import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Artist extends React.Component {
+  state = {contract: null};
+
     constructor(props) {
       super(props);
     }
 
+    componentDidMount = async () => {
+      this.getArtist();
+    };
+
     setArtist = async () => {
         try{
-            //await contract.methods.setArtist().send({ from: accounts[0] });
-           
-          } catch (error) {
+          const contract = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
+          const test = await contract.methods.setArtist("test", "test").send({ from: this.props.parentState.currentAccount });
+        } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
               error,
@@ -20,6 +28,20 @@ class Artist extends React.Component {
             console.error(error);
           }
     }
+
+    getArtist = async () => {
+      try{
+        const contract = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
+        const artistDatas = await contract.methods.getArtistDetails(this.props.parentState.currentAccount).call({ from:  this.props.parentState.currentAccount });
+        console.log(artistDatas);
+      } catch (error) {
+          // Catch any errors for any of the above operations.
+          alert(
+            error,
+          );
+          console.error(error);
+        }
+  }
 
     render() {
         return (
@@ -31,18 +53,17 @@ class Artist extends React.Component {
   </div>
   <div className="container px-5 py-5 mx-auto flex">
     <div className="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
-      <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Artiste</h2>
-      <p className="leading-relaxed mb-5 text-gray-600">Crée ton profil Artiste</p>
+      <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Artist</h2>
+      <p className="leading-relaxed mb-5 text-gray-600">Set my artist profile</p>
       <div className="relative mb-4">
-        <label htmlFor="artistName" className="leading-7 text-sm text-gray-600">Nom</label>
+        <label htmlFor="artistName" className="leading-7 text-sm text-gray-600">Name</label>
         <input type="artistName" id="artistName" name="artistName" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
       </div>
       <div className="relative mb-4">
         <label htmlFor="artistDescription" className="leading-7 text-sm text-gray-600">Description</label>
         <textarea id="artistDescription" name="artistDescription" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
       </div>
-      <button className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">OK!</button>
-      <p className="text-xs text-gray-500 mt-3">Chicharrones blog helvetica normcore iceland tousled brook viral artisan.</p>
+      <button onClick={() => this.setArtist()}  className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">OK!</button>
     </div>
   </div>
 </section>

@@ -5,9 +5,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWallet, faUser } from '@fortawesome/free-solid-svg-icons'
 import logoMintit from './assets/img/mintit_logo.png';
-import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
-import MintitNFTCollection from "./contracts/MintitNFTCollection.json";
-import { MintitNFTCollectionManagerContractAddress } from "./contractAddresses";
 
 import "./App.css";
 import Home from './components/Home';
@@ -32,13 +29,6 @@ class App extends React.Component {
       const accounts = await web3.eth.requestAccounts();
       if (accounts.length !== 0) {
         this.setState({currentAccount: accounts[0]});
-        const contractNFTManager = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
-        const allCollections = await contractNFTManager.methods.getCollectionArray().call({ from:  accounts[0] });
-        for (const collection of allCollections) {
-          const contractNFT = new web3.eth.Contract(MintitNFTCollection.abi, collection);
-          const nameNft = await contractNFT.methods.name().call({ from:  accounts[0] });
-          console.log(nameNft);
-        }
       } else {
         console.log("No authorized account found");
       }
@@ -79,15 +69,12 @@ class App extends React.Component {
   routesPage = () => {
     return (
       <Routes>
-        <Route exact path='/' element={<Home/>} />
+        <Route exact path='/' element={<Home parentState={this.state}/>} />
         <Route exact path='/create' element={<Create parentState={this.state}/>} />
-        <Route exact path='/explore' element={<Explore/>} />
-        <Route exact path='/artist' element={<Artist/>} />
+        <Route exact path='/explore' element={<Explore parentState={this.state}/>} />
+        <Route exact path='/artist' element={<Artist parentState={this.state}/>} />
       </Routes>
     )
-  }
-
-  getAllCollections = async () => {
   }
 
   render() {
@@ -100,13 +87,13 @@ class App extends React.Component {
 
     <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 flex flex-wrap items-center text-base justify-center">
       <NavLink to={'/explore'} className={({ isActive }) => 
-      isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>Explorer</NavLink>
+      isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>Explore</NavLink>
       <NavLink to={'/create'} className={({ isActive }) => 
-      isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>Créer</NavLink>
+      isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>Create</NavLink>
     </nav>
     <NavLink to={'/artist'} className={({ isActive }) => 
       isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>
-        <FontAwesomeIcon icon="user" /><span id="loginButtonText">&nbsp;Profil</span>
+        <FontAwesomeIcon icon="user" /><span id="loginButtonText">&nbsp;Artist profile</span>
         </NavLink>
         {this.state.currentAccount ? this.connectedWallet() : this.connectWalletButton()}
   </div>

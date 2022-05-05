@@ -1,16 +1,34 @@
 // Home.js
 import React from 'react';
+import Web3 from "web3";
+import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
+import MintitNFTCollection from "../contracts/MintitNFTCollection.json";
+import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Home extends React.Component {
     constructor(props) {
       super(props);
     }
 
+    componentDidMount = async () => {
+      this.getAllCollections();
+    };
+
+    getAllCollections = async () => {
+      const contractNFTManager = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
+      const allCollections = await contractNFTManager.methods.getCollectionArray().call({ from: this.props.parentState.currentAccount });
+      for (const collection of allCollections) {
+        const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, collection);
+        const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
+        console.log(infosNft);
+      }
+    }
+
     render() {
         return (
         <div>
             <div className="flex flex-col text-center w-full">
-      <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Nouveautés</h1>
+      <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">New Collections</h1>
     </div>
     <section className="text-gray-600 body-font">
   <div className="container px-5 py-5 mx-auto">
