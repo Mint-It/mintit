@@ -28,13 +28,39 @@ contract MintitNFTCollectionManager is Artists, Users{
       */
     function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
         // deploy NFT collection
-        collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender);
+        collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender,
+                                                  0, 0, 0, "", "", "", "");
         
         // create the artist if not exist
         if (artists[msg.sender].created == false) {
             setArtist(_collectionName, "");
         }
         artists[msg.sender].collections[collectionAddress] = MintitNFTCollection(collectionAddress);
+        collectionArray.push(collectionAddress);
+
+        emit MintitNFTCollectionCreated(_collectionName, collectionAddress, block.timestamp);
+    }
+
+    /**
+      * @notice Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
+      *
+      * @return collectionAddress the address of the created collection contract
+      */
+    function createDetailledMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol, 
+                                        uint _maxSupply, uint _presalePrice, uint _price,
+                                        string memory _banner, string memory _description,
+                                        string memory _newBaseURI, string memory _baseExtension) external returns (address collectionAddress) {
+        // deploy NFT collection
+        collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender,
+                                _maxSupply, _presalePrice, _price, _banner, _description,
+                                _newBaseURI, _baseExtension);
+        
+        // create the artist if not exist
+        if (artists[msg.sender].created == false) {
+            setArtist(_collectionName, "");
+        }
+        MintitNFTCollection collection = MintitNFTCollection(collectionAddress);
+        artists[msg.sender].collections[collectionAddress] = collection;
         collectionArray.push(collectionAddress);
 
         emit MintitNFTCollectionCreated(_collectionName, collectionAddress, block.timestamp);

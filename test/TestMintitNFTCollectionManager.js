@@ -79,4 +79,18 @@ contract("MintitNFTCollectionManager", accounts => {
         let colAddress = await mintitMgtInstance.collectionArray(0);
         assert.equal(colAddress, collectionAddress, "Collection Array do not include collection created");
     });
+
+    it("...Create new detailled NFT collection", async () => {
+        //let tx = await mintitMgtInstance.createMintitNFTCollection("My duss2", "DUSS2", {from: artist });
+        let tx = await mintitMgtInstance.createDetailledMintitNFTCollection("Collection 2", "TUSS",
+                                            100, 1000000, 2000000, "http://", "description", 
+                                            "http://ssssssss", ".json", {from: artist });
+        truffleAssert.eventEmitted(tx, 'MintitNFTCollectionCreated', (ev) => {
+            collectionAddress = ev._collectionAddress;
+            return ev._collectionName == "Collection 2";
+        });
+        //truffleAssert.eventEmitted(tx, 'ArtistUpdated', (ev) => {
+        //    return ev._artistAddress == artist && ev._artistName == "My duss2" && ev._created == true;
+        //});
+    });    
 });

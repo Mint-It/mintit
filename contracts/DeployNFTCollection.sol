@@ -18,22 +18,20 @@ library DeployNFTCollection {
       *
       * @return collectionAddress the address of the created collection contract
       */
-    function deployNFTCollection(string memory _collectionName, string memory _collectionSymbol, address _owner) external returns (address collectionAddress) {
+    function deployNFTCollection(string memory _collectionName, string memory _collectionSymbol, address _owner,
+                                        uint _maxSupply, uint _presalePrice, uint _price,
+                                        string memory _banner, string memory _description,
+                                        string memory _newBaseURI, string memory _baseExtension) external returns (address collectionAddress) {
 
         // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTCollection).creationCode, abi.encode(_collectionName, _collectionSymbol, _owner));
+        bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTCollection).creationCode, 
+                                            abi.encode(_collectionName, _collectionSymbol, _owner,
+                                                        _maxSupply, _presalePrice, _price, _banner, _description,
+                                                        _newBaseURI, _baseExtension));
 		// Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(_collectionName));
 
         collectionAddress = Create2.deploy(0, salt, collectionBytecode);
 
-        /*assembly {
-            collectionAddress := create2(0, add(collectionBytecode, 0x20), mload(collectionBytecode), salt)
-            if iszero(extcodesize(collectionAddress)) {
-                // revert if something gone wrong (collectionAddress doesn't contain an address)
-                revert(0, 0)
-            }
-        }*/
         return collectionAddress;
-    }
-}
+    }}
