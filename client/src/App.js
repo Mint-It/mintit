@@ -14,6 +14,7 @@ import Home from './components/Home';
 import Create from './components/Create';
 import Explore from './components/Explore';
 import Artist from './components/Artist';
+import Error from './components/Error';
 
 library.add(faWallet, faUser);
 
@@ -69,6 +70,23 @@ class App extends React.Component {
     )
   }
 
+  errorPage = () => {
+    return (
+      <Error />
+    )
+  }
+
+  routesPage = () => {
+    return (
+      <Routes>
+        <Route exact path='/' element={<Home/>} />
+        <Route exact path='/create' element={<Create parentState={this.state}/>} />
+        <Route exact path='/explore' element={<Explore/>} />
+        <Route exact path='/artist' element={<Artist/>} />
+      </Routes>
+    )
+  }
+
   getAllCollections = async () => {
   }
 
@@ -90,15 +108,12 @@ class App extends React.Component {
       isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>
         <FontAwesomeIcon icon="user" /><span id="loginButtonText">&nbsp;Profil</span>
         </NavLink>
-    {this.state.currentAccount ? this.connectedWallet() : this.connectWalletButton()}
+        {this.state.currentAccount ? this.connectedWallet() : this.connectWalletButton()}
   </div>
 </header>
-<Routes>
-        <Route exact path='/' element={<Home/>} />
-        <Route exact path='/create' element={<Create parentState={this.state}/>} />
-        <Route exact path='/explore' element={<Explore/>} />
-        <Route exact path='/artist' element={<Artist/>} />
-    </Routes>
+ 
+{this.state.currentAccount ? this.routesPage() : this.errorPage()}
+
 <footer className="text-gray-600 body-font">
   <div className="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
     <p className="text-sm text-gray-500 sm:py-2 sm:mt-0 mt-4">© 2022 Mint It</p>
