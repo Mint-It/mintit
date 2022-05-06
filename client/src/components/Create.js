@@ -5,20 +5,36 @@ import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollection
 import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Create extends React.Component {
-  state = {contract: null};
-
+  
     constructor(props) {
       super(props);
+      this.state = {
+        contract: null,
+        name: "",
+        symbol: "",
+        maxSupply: 0,
+        presalePrice: 0,
+        mintPrice: 0,
+        banner: "",
+        newBaseURI: ""
+      };
     }
 
     componentDidMount = async () => {
       
     };
 
+    handleChange = (evt) => {
+      const value = evt.target.value;
+      this.setState({
+        ...this.state,
+        [evt.target.name]: value
+      });
+    }
+
     createNFTCollection = async () => {
       const contract = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
-      const test = await contract.methods.createMintitNFTCollection("test", "test").send({ from: this.props.parentState.currentAccount });
-      console.log(test);
+      const addressNFTContract = await contract.methods.createDetailledMintitNFTCollection(this.state.name, this.state.symbol, this.state.maxSupply, this.state.presalePrice, this.state.mintPrice, this.state.banner, "Description de la collection", this.state.newBaseURI, "jpg").send({ from: this.props.parentState.currentAccount });
     }
 
     render() {
@@ -34,43 +50,43 @@ class Create extends React.Component {
         <div className="p-2 w-1/2">
           <div className="relative">
             <label htmlFor="name" className="leading-7 text-sm text-gray-600">Name</label>
-            <input type="text" id="name" name="name" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input required type="text" id="name" name="name" value={this.state.name} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
             <label htmlFor="symbol" className="leading-7 text-sm text-gray-600">Symbol</label>
-            <input type="text" id="symbol" name="symbol" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input type="text" id="symbol" name="symbol" value={this.state.symbol} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-1/3">
           <div className="relative">
             <label htmlFor="maxSupply" className="leading-7 text-sm text-gray-600">Max supply</label>
-            <input type="number" min="1" step="1" id="maxSupply" name="maxSupply" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input type="number" min="1" step="1" id="maxSupply" name="maxSupply" value={this.state.maxSupply} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-1/3">
           <div className="relative">
             <label htmlFor="presalePrice" className="leading-7 text-sm text-gray-600">Presale price</label>
-            <input type="number" min="0" step="0.1" id="presalePrice" name="presalePrice" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input type="number" min="0" step="0.1" id="presalePrice" name="presalePrice" value={this.state.presalePrice} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-1/3">
           <div className="relative">
             <label htmlFor="mintPrice" className="leading-7 text-sm text-gray-600">Mint price</label>
-            <input type="number" min="0" step="0.1" id="mintPrice" name="mintPrice" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input type="number" min="0" step="0.1" id="mintPrice" name="mintPrice" value={this.state.mintPrice} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-full">
           <div className="relative">
             <label htmlFor="banner" className="leading-7 text-sm text-gray-600">Banner image URL</label>
-            <input type="url" id="banner" name="banner" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input type="url" id="banner" name="banner" value={this.state.banner} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
             <label htmlFor="newBaseURI" className="leading-7 text-sm text-gray-600">Base URI</label>
-            <input type="text" id="newBaseURI" name="newBaseURI" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <input type="text" id="newBaseURI" name="newBaseURI" value={this.state.newBaseURI} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
         <div className="p-2 w-1/2">

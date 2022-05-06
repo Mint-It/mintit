@@ -2,38 +2,60 @@
 import React from 'react';
 import artist from '../assets/img/artist.jpg';
 import Web3 from "web3";
+import { toast } from 'react-toastify';
 import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
 import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Artist extends React.Component {
-  state = {contract: null};
 
     constructor(props) {
       super(props);
+      this.state = {
+        artistName: "",
+        artistDescription: ""
+      }
     }
 
     componentDidMount = async () => {
       this.getArtist();
+      this.props.parentState.contract.events.ArtistUpdated([])
+      .on("connected", function(subscriptionId){ console.log(subscriptionId);
+        })
+      .on('data', function(event){
+        console.log(event.returnValues);
+        toast.success("Artist updated", {
+          position: toast.POSITION.TOP_CENTER
+        });
+      })
     };
+
+    handleChange = (evt) => {
+      const value = evt.target.value;
+      this.setState({
+        ...this.state,
+        [evt.target.name]: value
+      });
+    }
 
     setArtist = async () => {
         try{
-          const contract = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
-          const test = await contract.methods.setArtist("test", "test").send({ from: this.props.parentState.currentAccount });
+          const test = await this.props.parentState.contract.methods.setArtist(this.state.artistName, this.state.artistDescription).send({ from: this.props.parentState.currentAccount });
+          toast.info("Transaction sent", {
+            position: toast.POSITION.TOP_CENTER
+          });
         } catch (error) {
             // Catch any errors for any of the above operations.
-            alert(
-              error,
-            );
+            toast.error(error.message, {
+              position: toast.POSITION.TOP_CENTER
+            });
             console.error(error);
           }
     }
 
     getArtist = async () => {
       try{
-        const contract = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
-        const artistDatas = await contract.methods.getArtistDetails(this.props.parentState.currentAccount).call({ from:  this.props.parentState.currentAccount });
-        console.log(artistDatas);
+        const artistDatas = await this.props.parentState.contract.methods.getArtistDetails(this.props.parentState.currentAccount).call({ from:  this.props.parentState.currentAccount });
+        this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description']});
       } catch (error) {
           // Catch any errors for any of the above operations.
           alert(
@@ -46,6 +68,7 @@ class Artist extends React.Component {
     render() {
         return (
         <div>
+          
           <div className="flex flex-col text-center w-full">
           <section className="text-gray-600 body-font relative">
   <div className="absolute inset-0 bg-gray-300">
@@ -57,13 +80,13 @@ class Artist extends React.Component {
       <p className="leading-relaxed mb-5 text-gray-600">Set my artist profile</p>
       <div className="relative mb-4">
         <label htmlFor="artistName" className="leading-7 text-sm text-gray-600">Name</label>
-        <input type="artistName" id="artistName" name="artistName" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+        <input type="artistName" id="artistName" value={this.state.artistName} onChange={this.handleChange} name="artistName" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
       </div>
       <div className="relative mb-4">
         <label htmlFor="artistDescription" className="leading-7 text-sm text-gray-600">Description</label>
-        <textarea id="artistDescription" name="artistDescription" className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+        <textarea id="artistDescription" name="artistDescription" value={this.state.artistDescription} onChange={this.handleChange} className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
       </div>
-      <button onClick={() => this.setArtist()}  className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">OK!</button>
+      <button onClick={() => this.setArtist()} className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">OK!</button>
     </div>
   </div>
 </section>

@@ -5,8 +5,12 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWallet, faUser } from '@fortawesome/free-solid-svg-icons'
 import logoMintit from './assets/img/mintit_logo.png';
+import { ToastContainer, toast } from 'react-toastify';
+import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
+import { MintitNFTCollectionManagerContractAddress } from "./contractAddresses";
 
 import "./App.css";
+import 'react-toastify/dist/ReactToastify.min.css';
 import Home from './components/Home';
 import Create from './components/Create';
 import Explore from './components/Explore';
@@ -28,7 +32,9 @@ class App extends React.Component {
       this.setState({ web3: web3});
       const accounts = await web3.eth.requestAccounts();
       if (accounts.length !== 0) {
-        this.setState({currentAccount: accounts[0]});
+        
+        const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
+        this.setState({currentAccount: accounts[0], contract: contract});
       } else {
         console.log("No authorized account found");
       }
@@ -81,6 +87,7 @@ class App extends React.Component {
     return (
       <Router>
       <div className="App">
+      <ToastContainer />
                 <header className="text-gray-600 body-font">
   <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
   <a href='/'><img className="w-22 h-10" alt="logo" src={logoMintit} /></a>
