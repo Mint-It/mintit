@@ -3,12 +3,11 @@ import React from 'react';
 import Web3 from "web3";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faWallet, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faWallet, faUser, faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons'
 import logoMintit from './assets/img/mintit_logo.png';
 import { ToastContainer, toast } from 'react-toastify';
 import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
 import { MintitNFTCollectionManagerContractAddress } from "./contractAddresses";
-
 import "./App.css";
 import 'react-toastify/dist/ReactToastify.min.css';
 import Home from './components/Home';
@@ -17,10 +16,18 @@ import Explore from './components/Explore';
 import Artist from './components/Artist';
 import Error from './components/Error';
 
-library.add(faWallet, faUser);
+library.add(faWallet, faUser, faHandHoldingDollar);
 
 class App extends React.Component {
-  state = {web3: null, currentAccount: null, contract: null};
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      web3: null,
+      currentAccount: null,
+      contractNFTManager: null
+    };
+  }
 
   componentDidMount = async () => {
     this.connectWalletHandler();
@@ -32,15 +39,12 @@ class App extends React.Component {
       this.setState({ web3: web3});
       const accounts = await web3.eth.requestAccounts();
       if (accounts.length !== 0) {
-        
         const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
-        this.setState({currentAccount: accounts[0], contract: contract});
+        this.setState({currentAccount: accounts[0], contractNFTManager: contract});
       } else {
         console.log("No authorized account found");
       }
-      // Get the contract instance.
       //const networkId = await web3.eth.net.getId();
-      //const deployedNetwork = SimpleStorageContract.networks[networkId];
     } catch (error) {
       // Catch any errors for any of the above operations.
       toast.error("Failed to load web3, accounts, or contract. Check console for details.", {

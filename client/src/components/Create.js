@@ -9,7 +9,6 @@ class Create extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        contract: null,
         name: "",
         symbol: "",
         maxSupply: 0,
@@ -33,8 +32,7 @@ class Create extends React.Component {
     }
 
     createNFTCollection = async () => {
-      const contract = new this.props.parentState.web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
-      const addressNFTContract = await contract.methods.createDetailledMintitNFTCollection(this.state.name, this.state.symbol, this.state.maxSupply, this.state.presalePrice, this.state.mintPrice, this.state.banner, "Description de la collection", this.state.newBaseURI, "jpg").send({ from: this.props.parentState.currentAccount });
+      const addressNFTContract = await this.props.parentState.contractNFTManager.methods.createDetailledMintitNFTCollection(this.state.name, this.state.symbol, this.state.maxSupply, this.state.presalePrice, this.state.mintPrice, this.state.banner, "Description de la collection", this.state.newBaseURI, "jpg").send({ from: this.props.parentState.currentAccount });
     }
 
     render() {
@@ -110,7 +108,7 @@ class Create extends React.Component {
         <div className="p-2 w-full">
           <div className="relative">
             <label htmlFor="description" className="leading-7 text-sm text-gray-600">Description</label>
-            <textarea id="description" name="description" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+            <textarea id="description" name="description" value={this.state.description} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
           </div>
         </div>
         <div className="p-2 w-full">

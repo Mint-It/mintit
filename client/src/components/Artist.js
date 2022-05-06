@@ -18,8 +18,9 @@ class Artist extends React.Component {
 
     componentDidMount = async () => {
       this.getArtist();
-      this.props.parentState.contract.events.ArtistUpdated([])
-      .on("connected", function(subscriptionId){ console.log(subscriptionId);
+      this.props.parentState.contractNFTManager.events.ArtistUpdated([])
+      .on("connected", function(subscriptionId){
+        console.log(subscriptionId);
         })
       .on('data', function(event){
         console.log(event.returnValues);
@@ -39,7 +40,7 @@ class Artist extends React.Component {
 
     setArtist = async () => {
         try{
-          const test = await this.props.parentState.contract.methods.setArtist(this.state.artistName, this.state.artistDescription).send({ from: this.props.parentState.currentAccount });
+          const test = await this.props.parentState.contractNFTManager.methods.setArtist(this.state.artistName, this.state.artistDescription).send({ from: this.props.parentState.currentAccount });
           toast.info("Transaction sent", {
             position: toast.POSITION.TOP_CENTER
           });
@@ -54,7 +55,7 @@ class Artist extends React.Component {
 
     getArtist = async () => {
       try{
-        const artistDatas = await this.props.parentState.contract.methods.getArtistDetails(this.props.parentState.currentAccount).call({ from:  this.props.parentState.currentAccount });
+        const artistDatas = await this.props.parentState.contractNFTManager.methods.getArtistDetails(this.props.parentState.currentAccount).call({ from:  this.props.parentState.currentAccount });
         this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description']});
       } catch (error) {
           // Catch any errors for any of the above operations.
