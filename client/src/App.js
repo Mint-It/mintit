@@ -43,9 +43,9 @@ class App extends React.Component {
       //const deployedNetwork = SimpleStorageContract.networks[networkId];
     } catch (error) {
       // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
+      toast.error("Failed to load web3, accounts, or contract. Check console for details.", {
+        position: toast.POSITION.TOP_CENTER
+      });
       console.error(error);
     }
   }

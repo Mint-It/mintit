@@ -58,9 +58,9 @@ class Artist extends React.Component {
         this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description']});
       } catch (error) {
           // Catch any errors for any of the above operations.
-          alert(
-            error,
-          );
+          toast.error(error.message, {
+            position: toast.POSITION.TOP_CENTER
+          });
           console.error(error);
         }
   }
