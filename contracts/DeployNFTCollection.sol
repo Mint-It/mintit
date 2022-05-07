@@ -20,14 +20,14 @@ library DeployNFTCollection {
       */
     function deployNFTCollection(string memory _collectionName, string memory _collectionSymbol, address _owner,
                                         uint _maxSupply, uint _presalePrice, uint _price,
-                                        string memory _banner, string memory _description,
+                                        string memory _banner, string memory _description, string memory _category,
                                         string memory _newBaseURI, string memory _baseExtension) external returns (address collectionAddress) {
 
         // Import the bytecode of the contract to deploy
         bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTCollection).creationCode, 
                                             abi.encode(_collectionName, _collectionSymbol, _owner,
                                                         _maxSupply, _presalePrice, _price, _banner, _description,
-                                                        _newBaseURI, _baseExtension));
+                                                        _category, _newBaseURI, _baseExtension));
 		// Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(_collectionName));
 
