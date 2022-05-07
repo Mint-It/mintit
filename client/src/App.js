@@ -38,13 +38,13 @@ class App extends React.Component {
       this.setState({ web3: web3});
       const accounts = await web3.eth.requestAccounts();
       if (accounts.length !== 0) {
-        // Get the contract address (to confirm)
-        const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContract.networks[5777].address);
+        const networkId = await web3.eth.net.getId();
+        const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContract.networks[networkId].address);
         this.setState({currentAccount: accounts[0], contractNFTManager: contract});
       } else {
         console.log("No authorized account found");
       }
-      //const networkId = await web3.eth.net.getId();
+      
     } catch (error) {
       // Catch any errors for any of the above operations.
       toast.error("Failed to load web3, accounts, or contract. Check console for details.", {
