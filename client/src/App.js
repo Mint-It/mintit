@@ -42,7 +42,9 @@ class App extends React.Component {
         const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContract.networks[networkId].address);
         this.setState({currentAccount: accounts[0], contractNFTManager: contract});
       } else {
-        console.log("No authorized account found");
+        toast.error("No authorized account found.", {
+          position: toast.POSITION.TOP_CENTER
+        });
       }
       
     } catch (error) {
