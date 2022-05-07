@@ -14,8 +14,8 @@ class Explore extends React.Component {
             {id:0, name:"Soon"},
             {id:1, name:"Whitelist"},
             {id:2, name:"Presale"},
-            {id:3, name:"Sale"}
-            {id:4, name:"Soldout"}
+            {id:3, name:"Sale"},
+            {id:4, name:"Soldout"},
             {id:5, name:"Reveal"}
         ],
         categoryArray: [
@@ -24,7 +24,7 @@ class Explore extends React.Component {
           {id:1, name:"Collectibles"},
           {id:2, name:"Musique"},
           {id:3, name:"Photographie"},
-          {id:4, name:"Sports"},
+          {id:4, name:"Sports"}
         ]
       };
     }
