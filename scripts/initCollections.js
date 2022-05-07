@@ -31,13 +31,13 @@ const initCollections = async () => {
 
     // Create Duss NFT collection
     txCount = await web3.eth.getTransactionCount(artist1);
-    data = mintitMgr.methods.createDetailledMintitNFTCollection("DuDuss", "DUSS", 30, 5, 10, "https://images.squarespace-cdn.com/content/v1/55e6ffd8e4b03fb450e2a3e0/1563631832486-F7MSGAZA5VADVCWED7WO/logo1.png?format=1500w", "Le street artiste Toctoc, créatif et passionné, est à l’image de ses personnages : drôle et attachant.", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
+    data = mintitMgr.methods.createDetailledMintitNFTCollection("DuDuss", "DUSS", 30, web3.utils.toWei("0.5", "ether"), web3.utils.toWei("1", "ether"), "https://images.squarespace-cdn.com/content/v1/55e6ffd8e4b03fb450e2a3e0/1563631832486-F7MSGAZA5VADVCWED7WO/logo1.png?format=1500w", "Le street artiste Toctoc, créatif et passionné, est à l’image de ses personnages : drôle et attachant.", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
     sendMintitTransaction(data, cAddress, privateKey1, txCount)
 
     
     // Create Other NFT collection
     txCount = await web3.eth.getTransactionCount(artist1);
-    data = mintitMgr.methods.createDetailledMintitNFTCollection("DoDoss", "DOSS", 30, 5, 10, "https://images.squarespace-cdn.com/content/v1/55e6ffd8e4b03fb450e2a3e0/1563631832486-F7MSGAZA5VADVCWED7WO/logo1.png?format=1500w", "Le street artiste Toctoc, créatif et passionné, est à l’image de ses personnages : drôle et attachant.", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
+    data = mintitMgr.methods.createDetailledMintitNFTCollection("DoDoss", "DOSS", 50, web3.utils.toWei("1", "ether"), web3.utils.toWei("2", "ether"), "https://images.squarespace-cdn.com/content/v1/55e6ffd8e4b03fb450e2a3e0/1563631832486-F7MSGAZA5VADVCWED7WO/logo1.png?format=1500w", "Le street artiste Toctoc, créatif et passionné, est à l’image de ses personnages : drôle et attachant.", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
     sendMintitTransaction(data, cAddress, privateKey1, txCount)
 
 
@@ -49,7 +49,7 @@ const initCollections = async () => {
     
     // Create Diss NFT collection
     txCount = await web3.eth.getTransactionCount(artist2);
-    data = mintitMgr.methods.createDetailledMintitNFTCollection("DiDiss", "DISS", 30, 5, 10, "https://images.squarespace-cdn.com/content/v1/55e6ffd8e4b03fb450e2a3e0/1563631832486-F7MSGAZA5VADVCWED7WO/logo1.png?format=1500w", "Le street artiste Toctoc, créatif et passionné, est à l’image de ses personnages : drôle et attachant.", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
+    data = mintitMgr.methods.createDetailledMintitNFTCollection("DiDiss", "DISS", 80, web3.utils.toWei("3", "ether"), web3.utils.toWei("4", "ether"), "https://images.squarespace-cdn.com/content/v1/55e6ffd8e4b03fb450e2a3e0/1563631832486-F7MSGAZA5VADVCWED7WO/logo1.png?format=1500w", "Le street artiste Toctoc, créatif et passionné, est à l’image de ses personnages : drôle et attachant.", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
     sendMintitTransaction(data, cAddress, privateKey2, txCount)
 
     console.log("---------------------------");
