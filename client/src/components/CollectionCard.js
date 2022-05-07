@@ -7,7 +7,7 @@ class CollectionCard extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0}
+        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0}
       };
     }
 
@@ -19,11 +19,6 @@ class CollectionCard extends React.Component {
         const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.props.collectionAddress);
         const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
         this.setState({collectionInfos : infosNft});
-    }
-
-    getPrice() {
-      const price = this.state.collectionInfos.price;
-      return Web3.utils.fromWei(price, "ether");
     }
 
     render = () => {
@@ -48,7 +43,7 @@ class CollectionCard extends React.Component {
                 </svg>{this.state.collectionInfos.maxSupply} NFTs
               </span>
               <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-                <FontAwesomeIcon icon="hand-holding-dollar" />&nbsp;{ Web3.utils.fromWei("10000000000000000") } ETH
+                <FontAwesomeIcon icon="hand-holding-dollar" />&nbsp;{ Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.price)) } ETH
               </span>
             </div>
           </div>
