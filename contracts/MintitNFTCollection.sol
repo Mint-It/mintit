@@ -22,13 +22,15 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     struct Infos {
         string name;
         string symbol;
-        uint maxSupply;
         string description;
         string banner;
         string baseURI;
         string baseExtension;
+        string category;
         uint price;
         uint presalePrice;
+        uint maxSupply;
+        uint maxPerWallet;
     }
 
     Infos private collectionInfo;
@@ -40,6 +42,8 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
       string description;
     }
     mapping(uint => Arts) private arts;
+
+    mapping(address => uint) private nbWallet;
 
     // The different stages of selling the collection
     enum Stages {
@@ -57,12 +61,14 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
       */
     constructor(string memory name_, string memory symbol_, address _artist,
                 uint _maxSupply, uint _presalePrice, uint _price,
-                string memory _banner, string memory _description,
+                string memory _banner, string memory _description, string memory _category,
                 string memory _newBaseURI, string memory _baseExtension) ERC721 (name_, symbol_) {
         sellingStage = Stages.Config;
         artistAddress = _artist;
         collectionInfo.maxSupply = _maxSupply;
+        collectionInfo.maxPerWallet = 2;
         collectionInfo.presalePrice = _presalePrice;
+        collectionInfo.category = _category;
         collectionInfo.price = _price;
         collectionInfo.banner = _banner;
         collectionInfo.description = _description;
@@ -186,9 +192,11 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
         require(isWhiteListed(msg.sender, _proof), "Not on the whitelist");
         require(msg.value >= collectionInfo.presalePrice, "Not enought funds.");
+        require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         arts[newItemId].description = "";
+        nbWallet[msg.sender] = nbWallet[msg.sender] + 1;
         _safeMint(msg.sender, newItemId);
 
         return newItemId;
@@ -203,9 +211,11 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         require(sellingStage == Stages.Sale, "Sale has not started yet.");
         require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
         require(msg.value >= collectionInfo.price, "Not enought funds.");
+        require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         arts[newItemId].description = "";
+        nbWallet[msg.sender] = nbWallet[msg.sender] + 1;
         _safeMint(msg.sender, newItemId);
 
         return newItemId;
