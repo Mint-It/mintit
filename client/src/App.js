@@ -92,7 +92,7 @@ class App extends React.Component {
       <ToastContainer position="top-center" />
                 <header className="text-gray-600 body-font">
   <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-  <a href='/'><img className="w-22 h-10" alt="logo" src={logoMintit} /></a>
+  <NavLink to={'/'}><img className="w-22 h-10" alt="logo" src={logoMintit} /></NavLink>
 
     <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 flex flex-wrap items-center text-base justify-center">
       <NavLink to={'/explore'} className={({ isActive }) => 
