@@ -6,7 +6,26 @@ class Explore extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        collections: []
+        collections: [],
+        filterStage: -1,
+        filterCategory: -1,
+        stageArray: [
+            {id:-1, name:"All"},
+            {id:0, name:"Soon"},
+            {id:1, name:"Whitelist"},
+            {id:2, name:"Presale"},
+            {id:3, name:"Sale"}
+            {id:4, name:"Soldout"}
+            {id:5, name:"Reveal"}
+        ],
+        categoryArray: [
+          {id:-1, name:"All"},
+          {id:0, name:"Art"},
+          {id:1, name:"Collectibles"},
+          {id:2, name:"Musique"},
+          {id:3, name:"Photographie"},
+          {id:4, name:"Sports"},
+        ]
       };
     }
 
@@ -19,28 +38,54 @@ class Explore extends React.Component {
       this.setState({collections: allCollections});
     }
 
+    selectPhase(phase) {
+      console.log("phase : " + phase);
+      this.setState({filterStage: phase});
+    }
+
+    buttonStageStyle(buttonPhase) {
+      console.log("button style " + buttonPhase);
+      if (buttonPhase == this.state.filterStage)
+        return "py-1 px-4 bg-red-500 text-white focus:outline-none";
+      else
+        return "py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500";
+    }
+
+    selectCategory(category) {
+      this.setState({filterCategory: category});
+    }
+
+    buttonCatStyle(buttonCat) {
+      if (buttonCat == this.state.filterCategory)
+        return "py-1 px-4 bg-red-500 text-white focus:outline-none";
+      else
+        return "py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500";
+    }
+
     render() {
         return (
         <div>
           <div className="flex flex-col text-center w-full">
-          <div className="flex mx-auto border-2 border-red-500 rounded overflow-hidden mt-6">
-        <button className="py-1 px-4 bg-red-500 text-white focus:outline-none">Nouveautés</button>
-        <button className="py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500">Art</button>
-        <button className="py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500">Collectibles</button>
-        <button className="py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500">Musique</button>
-        <button className="py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500">Photographie</button>
-        <button className="py-1 px-4 text-gray-500 focus:outline-none border-l-2 border-red-500">Sports</button>
-      </div>
-      </div>
-      <section className="text-gray-600 body-font">
-      <div className="container px-5 py-5 mx-auto">
-        <div className="flex flex-wrap -m-4">
-        {this.state.collections.map(collection => (
-          <CollectionCard parentState={this.props.parentState} collectionAddress={collection} key={collection}/>
-        ))}
-        </div>
-      </div>
-</section>
+            <div className="flex mx-auto border-2 border-red-500 rounded overflow-hidden mt-6">
+              {this.state.categoryArray.map(category => (
+              <button className={this.buttonCatStyle(category.id)} onClick={() => this.selectCategory(category.id)} >{category.name}</button>
+              ))}
+            </div>
+            <div className="flex mx-auto border-2 border-red-500 rounded overflow-hidden mt-6">
+              {this.state.stageArray.map(stage => (
+              <button className={this.buttonStageStyle(stage.id)} onClick={() => this.selectPhase(stage.id)} >{stage.name}</button>
+              ))}
+            </div>
+          </div>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-5 mx-auto">
+              <div className="flex flex-wrap -m-4">
+                {this.state.collections.map(collection => (
+                <CollectionCard parentState={this.props.parentState} collectionAddress={collection} key={collection} filterStage={this.state.filterStage} filterCategory={this.state.filterCategory}/>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
         )
     }
