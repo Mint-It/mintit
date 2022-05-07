@@ -7,9 +7,17 @@ class CollectionCard extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0},
+        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0, "category" : ""},
         stage : -1,
-        category : -1
+        category : -1,
+        categoryArray: [
+          {id:-1, name:"All"},
+          {id:0, name:"Arts"},
+          {id:1, name:"Collectibles"},
+          {id:2, name:"Music"},
+          {id:3, name:"Photographie"},
+          {id:4, name:"Sports"}
+        ]
       };
     }
 
@@ -21,7 +29,11 @@ class CollectionCard extends React.Component {
         const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.props.collectionAddress);
         const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
         this.setState({collectionInfos : infosNft});
-        this.setState({stage : await contractNFT.methods.sellingStage().call({ from: this.props.parentState.currentAccount })})
+        this.setState({stage : await contractNFT.methods.sellingStage().call({ from: this.props.parentState.currentAccount })});
+        this.state.categoryArray.forEach((cat) => {
+            if (cat.name == this.state.collectionInfos.category) 
+              this.setState({category: cat.id});
+        });
     }
 
     renderCollection = () => {
@@ -58,7 +70,7 @@ class CollectionCard extends React.Component {
     render() {
       return (
         <div  className="p-4 md:w-1/3" key={this.props.collectionAddress}>
-        {(this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.category == this.state.category) ? this.renderCollection() : null} 
+        {((this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? this.renderCollection() : null} 
         </div>
       )
   }
