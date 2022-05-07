@@ -1,9 +1,7 @@
 // Home.js
 import React from 'react';
 import Web3 from "web3";
-import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
 import MintitNFTCollection from "../contracts/MintitNFTCollection.json";
-import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class Home extends React.Component {

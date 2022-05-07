@@ -3,8 +3,6 @@ import React from 'react';
 import artist from '../assets/img/artist.jpg';
 import Web3 from "web3";
 import { toast } from 'react-toastify';
-import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
-import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Artist extends React.Component {
 

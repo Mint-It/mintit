@@ -1,8 +1,6 @@
 // Create.js
 import React from 'react';
 import Web3 from "web3";
-import MintitNFTCollectionManagerContract from "../contracts/MintitNFTCollectionManager.json";
-import { MintitNFTCollectionManagerContractAddress } from "../contractAddresses";
 
 class Create extends React.Component {
   

@@ -1,1 +1,0 @@
-export const MintitNFTCollectionManagerContractAddress = "0xaFD6B81f3CD3c1B19468B1Ab5C6a7A6726da0638"

@@ -7,7 +7,6 @@ import { faWallet, faUser, faHandHoldingDollar } from '@fortawesome/free-solid-s
 import logoMintit from './assets/img/mintit_logo.png';
 import { ToastContainer, toast } from 'react-toastify';
 import MintitNFTCollectionManagerContract from "./contracts/MintitNFTCollectionManager.json";
-import { MintitNFTCollectionManagerContractAddress } from "./contractAddresses";
 import "./App.css";
 import 'react-toastify/dist/ReactToastify.min.css';
 import Home from './components/Home';
@@ -39,7 +38,8 @@ class App extends React.Component {
       this.setState({ web3: web3});
       const accounts = await web3.eth.requestAccounts();
       if (accounts.length !== 0) {
-        const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContractAddress);
+        // Get the contract address (to confirm)
+        const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContract.networks[5777].address);
         this.setState({currentAccount: accounts[0], contractNFTManager: contract});
       } else {
         console.log("No authorized account found");
