@@ -34,8 +34,8 @@ class Explore extends React.Component {
     };
 
     getAllCollections = async () => {
-      const allCollections = await this.props.parentState.contractNFTManager.methods.getCollectionArray().call({ from: this.props.parentState.currentAccount });
-      this.setState({collections: allCollections});
+      var allCollections = await this.props.parentState.contractNFTManager.methods.getCollectionArray().call({ from: this.props.parentState.currentAccount });
+      this.setState({collections: Array.from(allCollections).reverse()});
     }
 
     selectPhase(phase) {
