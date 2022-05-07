@@ -7,7 +7,9 @@ class CollectionCard extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0}
+        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0},
+        stage : -1,
+        category : -1
       };
     }
 
@@ -19,11 +21,12 @@ class CollectionCard extends React.Component {
         const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.props.collectionAddress);
         const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
         this.setState({collectionInfos : infosNft});
+        this.setState({stage : await contractNFT.methods.sellingStage().call({ from: this.props.parentState.currentAccount })})
     }
 
-    render = () => {
+    renderCollection = () => {
       return (
-      <div className="p-4 md:w-1/3" key={this.props.collectionAddress}>
+      //<div  className="p-4 md:w-1/3" key={this.props.collectionAddress}>
         <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
           <img className="lg:h-48 md:h-36 w-full object-cover object-center" src={this.state.collectionInfos.banner} alt="blog" />
           <div className="p-6">
@@ -48,10 +51,17 @@ class CollectionCard extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      //</div>
       )
     }
 
+    render() {
+      return (
+        <div  className="p-4 md:w-1/3" key={this.props.collectionAddress}>
+        {(this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.category == this.state.category) ? this.renderCollection() : null} 
+        </div>
+      )
+  }
 }
 
 export default CollectionCard;

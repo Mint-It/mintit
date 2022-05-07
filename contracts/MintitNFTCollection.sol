@@ -23,12 +23,12 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         string name;
         string symbol;
         uint maxSupply;
-        uint price;
-        uint presalePrice;
         string description;
         string banner;
         string baseURI;
         string baseExtension;
+        uint price;
+        uint presalePrice;
     }
 
     Infos private collectionInfo;
@@ -44,6 +44,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     // The different stages of selling the collection
     enum Stages {
         Config,
+        PublicWhitelist,
         Presale,
         Sale,
         SoldOut,
