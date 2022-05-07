@@ -69,7 +69,7 @@ class CollectionCard extends React.Component {
 
     render() {
       return (
-        <div  className="p-4 md:w-1/3" key={this.props.collectionAddress}>
+        <div  className={((this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? "p-4 md:w-1/3" : ""} key={this.props.collectionAddress}>
         {((this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? this.renderCollection() : null} 
         </div>
       )
