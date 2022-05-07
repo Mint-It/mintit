@@ -22,9 +22,7 @@ class Artist extends React.Component {
         })
       .on('data', function(event){
         console.log(event.returnValues);
-        toast.success("Artist updated", {
-          position: toast.POSITION.TOP_CENTER
-        });
+        toast.success("Artist updated");
       })
     };
 
@@ -39,14 +37,10 @@ class Artist extends React.Component {
     setArtist = async () => {
         try{
           const test = await this.props.parentState.contractNFTManager.methods.setArtist(this.state.artistName, this.state.artistDescription).send({ from: this.props.parentState.currentAccount });
-          toast.info("Transaction sent", {
-            position: toast.POSITION.TOP_CENTER
-          });
+          toast.info("Transaction sent");
         } catch (error) {
             // Catch any errors for any of the above operations.
-            toast.error(error.message, {
-              position: toast.POSITION.TOP_CENTER
-            });
+            toast.error(error.message);
             console.error(error);
           }
     }
@@ -57,9 +51,7 @@ class Artist extends React.Component {
         this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description']});
       } catch (error) {
           // Catch any errors for any of the above operations.
-          toast.error(error.message, {
-            position: toast.POSITION.TOP_CENTER
-          });
+          toast.error(error.message);
           console.error(error);
         }
   }

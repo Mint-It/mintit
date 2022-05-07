@@ -42,16 +42,12 @@ class App extends React.Component {
         const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContract.networks[networkId].address);
         this.setState({currentAccount: accounts[0], contractNFTManager: contract});
       } else {
-        toast.error("No authorized account found.", {
-          position: toast.POSITION.TOP_CENTER
-        });
+        toast.error("No authorized account found.");
       }
       
     } catch (error) {
       // Catch any errors for any of the above operations.
-      toast.error("Failed to load web3, accounts, or contract. Check console for details.", {
-        position: toast.POSITION.TOP_CENTER
-      });
+      toast.error("Failed to load web3, accounts, or contract. Check console for details.");
       console.error(error);
     }
   }
@@ -93,7 +89,7 @@ class App extends React.Component {
     return (
       <Router>
       <div className="App">
-      <ToastContainer />
+      <ToastContainer position="top-center" />
                 <header className="text-gray-600 body-font">
   <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
   <a href='/'><img className="w-22 h-10" alt="logo" src={logoMintit} /></a>
