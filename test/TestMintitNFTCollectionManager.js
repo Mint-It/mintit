@@ -16,19 +16,19 @@ contract("MintitNFTCollectionManager", accounts => {
     })    
 
     it("...Create new NFT collection", async () => {
-        let tx = await mintitMgtInstance.createMintitNFTCollection("My duss", "DUSS", {from: artist });
+        let tx = await mintitMgtInstance.createMintitNFTCollection("DUSS", "DUSS", {from: artist });
         truffleAssert.eventEmitted(tx, 'MintitNFTCollectionCreated', (ev) => {
             collectionAddress = ev._collectionAddress;
-            return ev._collectionName == "My duss";
+            return ev._collectionName == "DUSS";
         });
         truffleAssert.eventEmitted(tx, 'ArtistUpdated', (ev) => {
-            return ev._artistAddress == artist && ev._artistName == "My duss" && ev._created == true;
+            return ev._artistAddress == artist && ev._artistName == "DUSS" && ev._created == true;
         });
     });
 
     it("...Check that the Artist was created with the name of its first collection by default", async () => {
         let artistInstance = await mintitMgtInstance.getArtistDetails(artist);
-        assert.equal(artistInstance.name, "My duss", "Artist name should be set to My duss");
+        assert.equal(artistInstance.name, "DUSS", "Artist name should be set to DUSS");
         assert.equal(artistInstance.verified, false, "Artist should not be verified by default");
     });
 
@@ -67,7 +67,7 @@ contract("MintitNFTCollectionManager", accounts => {
     it("...check created NFT collection", async () => {
         mintitNFTinstance = await MintitNFTCollection.at(collectionAddress);
         let name = await mintitNFTinstance.name();
-        assert.equal(name, "My duss", "Collection name should be set to My duss");
+        assert.equal(name, "DUSS", "Collection name should be set to My duss");
     });
 
     it("...check collection array retrieval", async () => {
@@ -81,7 +81,6 @@ contract("MintitNFTCollectionManager", accounts => {
     });
 
     it("...Create new detailled NFT collection", async () => {
-        //let tx = await mintitMgtInstance.createMintitNFTCollection("My duss2", "DUSS2", {from: artist });
         let tx = await mintitMgtInstance.createDetailledMintitNFTCollection("Collection 2", "TUSS",
                                             100, 1000000, 2000000, "http://", "description", "Arts",
                                             "http://ssssssss", ".json", {from: artist });
