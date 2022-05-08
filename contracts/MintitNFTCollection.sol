@@ -57,7 +57,14 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         SoldOut,
         Reveal
     }
+
+    struct Interval{
+        uint start;
+        uint end;
+    }
+
     Stages public sellingStage;
+    mapping(uint => Interval[]) private calendar;
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
@@ -79,6 +86,29 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         collectionInfo.baseExtension = _baseExtension;
         collectionInfo.name = name_;
         collectionInfo.symbol = symbol_;
+    }
+
+    /** 
+    * @notice Allows to set dates for each sales
+    *
+    * @param dates Array containing the startand end dates of all stages
+   **/
+    function setCalendar(uint[] memory dates) external onlyArtist {
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the dates.");
+        require (dates.length % 3 == 0, "wrong date array");
+        for (uint i = 0; i < 6; i++) {
+            uint length = calendar[dates[i]].length;
+            if (length > 0) {
+                for (uint j = 0; j < length; j++)
+                    calendar[dates[i]].pop();
+            }
+        }
+        for (uint i = 0; i < dates.length; i+=3) {
+            Interval memory interval;
+            interval.start = dates[i+1];
+            interval.end = dates[i+2];
+            calendar[dates[i]].push(interval);
+        }
     }
 
     /** 
