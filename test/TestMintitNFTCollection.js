@@ -10,6 +10,7 @@ contract("MintitNFTCollectionManager", accounts => {
     let address  = accounts[1];
     let artist = accounts[2];
     let user = accounts[3];
+    let userNotWL = accounts[4];
 
     beforeEach(async () => {
         mintitMgtInstance = await MintitNFTCollectionManager.deployed();
@@ -52,14 +53,37 @@ contract("MintitNFTCollectionManager", accounts => {
         await truffleAssert.fails(mintitNFTinstance.MintArt({from: user }));
     });
 
+    it("...Move to Whitelist", async () => {
+        let nftId = await mintitNFTinstance.setUpStage(1, {from: artist });
+        let stage = await mintitNFTinstance.sellingStage({from: user });
+        assert.equal(stage, 1, "Should be stage Whitelist");
+    });
+
+    it("...Add user to Public Whitelist", async () => {
+        let tx = await mintitNFTinstance.addPublicWhitelist({from: user });
+        let result = await mintitNFTinstance.isPublicWhiteListed(user);
+        assert.equal(result, true, "Should be in public Whitelist");
+    });
+
     it("...Move to Presale", async () => {
-        let nftId = await mintitNFTinstance.setUpPresale({from: artist });
+        let nftId = await mintitNFTinstance.setUpStage(2, {from: artist });
         let stage = await mintitNFTinstance.sellingStage({from: user });
         assert.equal(stage, 2, "Should be stage Presale");
     });
 
+    it("...mint a NFT in a presale should fail if not whitelisted", async () => {
+        await truffleAssert.fails(mintitNFTinstance.PresaleMintArt([], {from: userNotWL, value: web3.utils.toWei("3", "ether") }));
+    });
+
+    it("...mint a NFT in a presale", async () => {
+        let tx = await mintitNFTinstance.PresaleMintArt([], {from: user, value: web3.utils.toWei("3", "ether") });
+        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
+            return ev.tokenId == 1;
+        });
+    });
+
     it("...Move to Sale", async () => {
-        let nftId = await mintitNFTinstance.setUpSale({from: artist });
+        let nftId = await mintitNFTinstance.setUpStage(3, {from: artist });
         let stage = await mintitNFTinstance.sellingStage({from: user });
         assert.equal(stage, 3, "Should be stage Sale");
     });
@@ -71,13 +95,13 @@ contract("MintitNFTCollectionManager", accounts => {
     it("...mint a NFT", async () => {
         let tx = await mintitNFTinstance.MintArt({from: user, value: web3.utils.toWei("4", "ether") });
         truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
-            return ev.tokenId == 1;
+            return ev.tokenId == 2;
         });
         //assert.equal(nftId, 1, "First mint should have id 1");
     });
 
     it("...check user balance", async () => {
         let nbNft = await mintitNFTinstance.balanceOf(user);
-        assert.equal(nbNft, 1, "user should have 1 NFT");
+        assert.equal(nbNft, 2, "user should have 2 NFT");
     });
 });
