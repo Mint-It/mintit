@@ -94,7 +94,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @param dates Array containing the startand end dates of all stages
    **/
     function setCalendar(uint[] memory dates) external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the dates.");
+        require(isStage(Stages.Config), "Should be in Config stage to change the dates.");
         require (dates.length % 3 == 0, "wrong date array");
         for (uint i = 0; i < 6; i++) {
             uint length = calendar[dates[i]].length;
@@ -123,7 +123,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the max supply during the config stage
     **/
     function setMaxSupply(uint _amount) external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the max supply.");
+        require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxSupply = _amount;
     }
 
@@ -131,7 +131,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the max supply during the config stage
     **/
     function setBaseURI(string memory __baseURI) external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseURI = __baseURI;
     }
 
@@ -139,7 +139,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the max supply during the config stage
     **/
     function setBaseExtension(string memory _baseExtension) external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseExtension = _baseExtension;
     }
 
@@ -147,7 +147,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the price of a NFT during the config stage
     **/
     function setPrice(uint _price) external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.price = _price;
     }
 
@@ -155,7 +155,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the price of a NFT during the config stage
     **/
     function setPresalePrice(uint _price) external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.presalePrice = _price;
     }
 
@@ -173,7 +173,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     **/
     function addPublicWhitelist() public {
-        require(getCurrentStage() == Stages.PublicWhitelist, "Should be in WL stage.");
+        require(isStage(Stages.PublicWhitelist), "Should be in WL stage.");
         require(publicWL[msg.sender] == true, "Sender already whitelisted");
         publicWL[msg.sender] = true;
     } 
@@ -200,12 +200,19 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     }
 
     /** 
-    * @notice Allows to get details information of the NFT collection
+    * @notice check if the mint phase is the one provided in parameter
     *
-    * @return The infos of NFT collection
+    * @return a boolean
     **/
-    function getCurrentStage() public view returns (Stages) {
-        return (sellingStage);
+    function isStage(Stages stage) internal view returns (bool) {
+        if (sellingStage == stage)
+            return true;
+
+        for (uint i=0; i<calendar[uint(stage)].length;i++) {
+            if (block.timestamp < calendar[uint(stage)][i].start && block.timestamp < calendar[uint(stage)][i].end)
+                return true;
+        }
+        return false;
     }
 
     /** 
@@ -221,7 +228,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the sellinStep to Presale
     **/
     function setUpPresale() external onlyArtist {
-        require(getCurrentStage() == Stages.Config, "Should be in Config stage to go to Presale.");
+        require(isStage(Stages.Config), "Should be in Config stage to go to Presale.");
         sellingStage = Stages.Presale;
     }
 
@@ -229,7 +236,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the sellinStep to Sale
     **/
     function setUpSale() external onlyArtist {
-        require(getCurrentStage() == Stages.Presale, "Should be in Presale stage to go to Sale.");
+        require(isStage(Stages.Presale), "Should be in Presale stage to go to Sale.");
         sellingStage = Stages.Sale;
     }
 
@@ -240,7 +247,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant returns (uint256)
     {
-        require(getCurrentStage() == Stages.Presale, "Presale has not started yet.");
+        require(isStage(Stages.Presale), "Presale has not started yet.");
         require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
         require((isPrivateWhiteListed(msg.sender, _proof) || publicWL[msg.sender] == true), "Not on the whitelist");
         require(msg.value >= collectionInfo.presalePrice, "Not enought funds.");
@@ -260,7 +267,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function MintArt() external payable nonReentrant returns (uint256)
     {
-        require(getCurrentStage() == Stages.Sale, "Sale has not started yet.");
+        require(isStage(Stages.Sale), "Sale has not started yet.");
         require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
         require(msg.value >= collectionInfo.price, "Not enought funds.");
         require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
