@@ -33,8 +33,11 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
 
     Infos private collectionInfo;
 
-   // merkle tree to check if address is in whitelist
-    bytes32 private whiteList;
+   // merkle tree to check if address is in the private whitelist
+    bytes32 private privateWL;
+
+   // mapping to check if address is in the public whitelist
+    mapping(address => bool) private publicWL;
 
     struct Arts{
       string description;
@@ -83,7 +86,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the max supply during the config stage
     **/
     function setMaxSupply(uint _amount) external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to change the max supply.");
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the max supply.");
         collectionInfo.maxSupply = _amount;
     }
 
@@ -91,7 +94,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the max supply during the config stage
     **/
     function setBaseURI(string memory __baseURI) external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
         collectionInfo.baseURI = __baseURI;
     }
 
@@ -99,7 +102,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the max supply during the config stage
     **/
     function setBaseExtension(string memory _baseExtension) external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
         collectionInfo.baseExtension = _baseExtension;
     }
 
@@ -107,7 +110,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the price of a NFT during the config stage
     **/
     function setPrice(uint _price) external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
         collectionInfo.price = _price;
     }
 
@@ -115,7 +118,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the price of a NFT during the config stage
     **/
     function setPresalePrice(uint _price) external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to change the base URI.");
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to change the base URI.");
         collectionInfo.presalePrice = _price;
     }
 
@@ -124,20 +127,30 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     * @param _newWhiteList The new Merkle Root
     **/
-    function setWhitelist(bytes32 _newWhiteList) external onlyArtist {
-        whiteList = _newWhiteList;
+    function setPrivateWhitelist(bytes32 _newWhiteList) external onlyArtist {
+        privateWL = _newWhiteList;
     }
- 
+
+    /**
+    * @notice Add sender adress to the public white list 
+    *
+    **/
+    function addPublicWhitelist() public {
+        require(getCurrentStage() == Stages.PublicWhitelist, "Should be in WL stage.");
+        require(publicWL[msg.sender] == true, "Sender already whitelisted");
+        publicWL[msg.sender] = true;
+    } 
+
     /** 
     * @notice Returns true if a leaf can be proved to be a part of a Merkle tree defined by root
     *
-    * @param account Account to verify if whitelisted
+    * @param account Account to verify if private whitelisted
     * @param proof The Merkle Proof
     *
     * @return True if a account can be proved to be a part of the whiteList merkle tree
     **/
-    function isWhiteListed(address account, bytes32[] calldata proof) internal view returns(bool) {
-        return MerkleProof.verify(proof, whiteList, keccak256(abi.encodePacked(account)));
+    function isPrivateWhiteListed(address account, bytes32[] calldata proof) internal view returns(bool) {
+        return MerkleProof.verify(proof, privateWL, keccak256(abi.encodePacked(account)));
     }
 
     /**
@@ -154,6 +167,15 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     * @return The infos of NFT collection
     **/
+    function getCurrentStage() public view returns (Stages) {
+        return (sellingStage);
+    }
+
+    /** 
+    * @notice Allows to get details information of the NFT collection
+    *
+    * @return The infos of NFT collection
+    **/
     function getCollectionInfos() external view returns (Infos memory) {
         return (collectionInfo);
     }
@@ -162,7 +184,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the sellinStep to Presale
     **/
     function setUpPresale() external onlyArtist {
-        require(sellingStage == Stages.Config, "Should be in Config stage to go to Presale.");
+        require(getCurrentStage() == Stages.Config, "Should be in Config stage to go to Presale.");
         sellingStage = Stages.Presale;
     }
 
@@ -170,7 +192,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     * @notice Allows to change the sellinStep to Sale
     **/
     function setUpSale() external onlyArtist {
-        require(sellingStage == Stages.Presale, "Should be in Presale stage to go to Sale.");
+        require(getCurrentStage() == Stages.Presale, "Should be in Presale stage to go to Sale.");
         sellingStage = Stages.Sale;
     }
 
@@ -181,9 +203,9 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant returns (uint256)
     {
-        require(sellingStage == Stages.Presale, "Presale has not started yet.");
+        require(getCurrentStage() == Stages.Presale, "Presale has not started yet.");
         require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
-        require(isWhiteListed(msg.sender, _proof), "Not on the whitelist");
+        require((isPrivateWhiteListed(msg.sender, _proof) || publicWL[msg.sender] == true), "Not on the whitelist");
         require(msg.value >= collectionInfo.presalePrice, "Not enought funds.");
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
@@ -199,7 +221,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function MintArt() external payable nonReentrant returns (uint256)
     {
-        require(sellingStage == Stages.Sale, "Sale has not started yet.");
+        require(getCurrentStage() == Stages.Sale, "Sale has not started yet.");
         require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
         require(msg.value >= collectionInfo.price, "Not enought funds.");
         _tokenIds.increment();
