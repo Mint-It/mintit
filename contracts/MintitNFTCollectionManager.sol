@@ -29,7 +29,7 @@ contract MintitNFTCollectionManager is Artists, Users{
     function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
         // deploy NFT collection
         collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender,
-                                                  0, 0, 0, "", "", "", "");
+                                                  0, 0, 0, "", "", "", "", "");
         
         // create the artist if not exist
         if (artists[msg.sender].created == false) {
@@ -48,11 +48,11 @@ contract MintitNFTCollectionManager is Artists, Users{
       */
     function createDetailledMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol, 
                                         uint _maxSupply, uint _presalePrice, uint _price,
-                                        string memory _banner, string memory _description,
+                                        string memory _banner, string memory _description, string memory _category,
                                         string memory _newBaseURI, string memory _baseExtension) external returns (address collectionAddress) {
         // deploy NFT collection
         collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender,
-                                _maxSupply, _presalePrice, _price, _banner, _description,
+                                _maxSupply, _presalePrice, _price, _banner, _description, _category,
                                 _newBaseURI, _baseExtension);
         
         // create the artist if not exist
