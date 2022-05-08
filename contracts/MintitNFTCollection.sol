@@ -174,7 +174,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function addPublicWhitelist() public {
         require(isStage(Stages.PublicWhitelist), "Should be in WL stage.");
-        require(publicWL[msg.sender] == true, "Sender already whitelisted");
+        require(publicWL[msg.sender] == false, "Sender already whitelisted");
         publicWL[msg.sender] = true;
     } 
 
@@ -188,6 +188,17 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     **/
     function isPrivateWhiteListed(address account, bytes32[] calldata proof) internal view returns(bool) {
         return MerkleProof.verify(proof, privateWL, keccak256(abi.encodePacked(account)));
+    }
+
+    /** 
+    * @notice Returns true if a address is whitelisted
+    *
+    * @param account Account to verify if public whitelisted
+    *
+    * @return True if a account is whitelisted for public sale
+    **/
+    function isPublicWhiteListed(address account) public view returns(bool) {
+        return publicWL[account];
     }
 
     /**
@@ -225,19 +236,11 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     }
 
     /** 
-    * @notice Allows to change the sellinStep to Presale
+    * @notice Allows to change the sellinStage value
     **/
-    function setUpPresale() external onlyArtist {
-        require(isStage(Stages.Config), "Should be in Config stage to go to Presale.");
-        sellingStage = Stages.Presale;
-    }
-
-    /** 
-    * @notice Allows to change the sellinStep to Sale
-    **/
-    function setUpSale() external onlyArtist {
-        require(isStage(Stages.Presale), "Should be in Presale stage to go to Sale.");
-        sellingStage = Stages.Sale;
+    function setUpStage(Stages stage) external onlyArtist {
+        require(isStage(Stages(uint(stage) - 1)), "Should be in previous stage");
+        sellingStage = stage;
     }
 
     /**
