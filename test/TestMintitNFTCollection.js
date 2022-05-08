@@ -9,7 +9,7 @@ contract("MintitNFTCollectionManager", accounts => {
     let ownerAddress = accounts[0];
     let address  = accounts[1];
     let artist = accounts[2];
-    let user = accounts[3];
+    let user = accounts[5];
     let userNotWL = accounts[4];
 
     beforeEach(async () => {
@@ -49,6 +49,15 @@ contract("MintitNFTCollectionManager", accounts => {
         assert.equal(supply['maxSupply'], 50, "Supply should be set to 50");
     });
 
+    it("...check calendar", async () => {
+        let tx = await mintitNFTinstance.setCalendar([1, 1651960495, 1652133295], {from: artist });
+        tx = await mintitNFTinstance.addPublicWhitelist({from: user });
+        let result = await mintitNFTinstance.isPublicWhiteListed(user);
+        assert.equal(result, true, "Should be in public Whitelist");
+        //console.log(stage);
+        //assert.equal(stage, true, "Should be stage Whitelist");
+    });
+
     it("...mint a NFT should fail if Sale did not start yet", async () => {
         await truffleAssert.fails(mintitNFTinstance.MintArt({from: user }));
     });
@@ -59,11 +68,11 @@ contract("MintitNFTCollectionManager", accounts => {
         assert.equal(stage, 1, "Should be stage Whitelist");
     });
 
-    it("...Add user to Public Whitelist", async () => {
+    /*it("...Add user to Public Whitelist", async () => {
         let tx = await mintitNFTinstance.addPublicWhitelist({from: user });
         let result = await mintitNFTinstance.isPublicWhiteListed(user);
         assert.equal(result, true, "Should be in public Whitelist");
-    });
+    });*/
 
     it("...Move to Presale", async () => {
         let nftId = await mintitNFTinstance.setUpStage(2, {from: artist });
@@ -104,4 +113,6 @@ contract("MintitNFTCollectionManager", accounts => {
         let nbNft = await mintitNFTinstance.balanceOf(user);
         assert.equal(nbNft, 2, "user should have 2 NFT");
     });
+
+
 });

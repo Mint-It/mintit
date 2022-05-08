@@ -65,6 +65,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
 
     Stages public sellingStage;
     mapping(uint => Interval[]) private calendar;
+    mapping(uint => bool) private calendarSet;
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
@@ -86,7 +87,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         collectionInfo.baseExtension = _baseExtension;
         collectionInfo.name = name_;
         collectionInfo.symbol = symbol_;
-    }
+   }
 
     /** 
     * @notice Allows to set dates for each sales
@@ -97,10 +98,10 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
         require(isStage(Stages.Config), "Should be in Config stage to change the dates.");
         require (dates.length % 3 == 0, "wrong date array");
         for (uint i = 0; i < 6; i++) {
-            uint length = calendar[dates[i]].length;
+            uint length = calendar[i].length;
             if (length > 0) {
                 for (uint j = 0; j < length; j++)
-                    calendar[dates[i]].pop();
+                    calendar[i].pop();
             }
         }
         for (uint i = 0; i < dates.length; i+=3) {
@@ -220,7 +221,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
             return true;
 
         for (uint i=0; i<calendar[uint(stage)].length;i++) {
-            if (block.timestamp < calendar[uint(stage)][i].start && block.timestamp < calendar[uint(stage)][i].end)
+            if (block.timestamp > calendar[uint(stage)][i].start && block.timestamp < calendar[uint(stage)][i].end)
                 return true;
         }
         return false;
