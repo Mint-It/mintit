@@ -36,7 +36,7 @@ class Create extends React.Component {
     }
 
     createNFTCollection = async () => {
-      const addressNFTContract = await this.props.parentState.contractNFTManager.methods.createDetailledMintitNFTCollection(this.state.name, this.state.symbol, this.state.maxSupply, Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice)), Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice)), this.state.banner, this.state.description, "Art", this.state.newBaseURI, "jpg").send({ from: this.props.parentState.currentAccount });
+      const addressNFTContract = await this.props.parentState.contractNFTManager.methods.createDetailledMintitNFTCollection(this.state.name, this.state.symbol, this.state.maxSupply, Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice)), Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice)), this.state.banner, this.state.description, "Arts", this.state.newBaseURI, "jpg").send({ from: this.props.parentState.currentAccount });
       toast.info("Transaction sent");
     }
 
