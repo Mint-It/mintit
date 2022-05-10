@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, useParams } from 'react-router-dom';
 import React from 'react';
 import Web3 from "web3";
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -76,11 +76,16 @@ class App extends React.Component {
   }
 
   routesPage = () => {
+    const CollectionWrapper = (props) => {
+      const params = useParams();
+      return <Collection parentState={this.state} {...{...props, match: {params}} } />
+    }
     return (
       <Routes>
         <Route exact path='/' element={<Home parentState={this.state}/>} />
         <Route exact path='/create' element={<Create parentState={this.state}/>} />
         <Route exact path='/explore' element={<Explore parentState={this.state}/>} />
+        <Route exact path='/explore/:colAddress' element={<CollectionWrapper />} />
         <Route exact path='/artist' element={<Artist parentState={this.state}/>} />
         <Route exact path='/collection' element={<Collection parentState={this.state}/>} />
       </Routes>
