@@ -17,7 +17,7 @@ contract Artists is Ownable{
       string description;
       bool created;
       bool verified;
-      mapping(address => MintitNFTCollection) collections;
+      address[] collections;
     }
     mapping(address => artist) internal artists;
     // Array of artist addresses
@@ -67,7 +67,7 @@ contract Artists is Ownable{
       * @return description of the artist
       * @return verified information about the artist
       */    
-    function getArtistDetails(address artistAddress) public view returns (string memory name, string memory description, bool verified) {
-        return (artists[artistAddress].name, artists[artistAddress].description, artists[artistAddress].verified);
+    function getArtistDetails(address artistAddress) public view returns (string memory name, string memory description, bool verified, address[] memory collections) {
+        return (artists[artistAddress].name, artists[artistAddress].description, artists[artistAddress].verified, artists[artistAddress].collections);
     }
 }

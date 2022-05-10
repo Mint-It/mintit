@@ -35,7 +35,8 @@ contract MintitNFTCollectionManager is Artists, Users{
         if (artists[msg.sender].created == false) {
             setArtist(_collectionName, "");
         }
-        artists[msg.sender].collections[collectionAddress] = MintitNFTCollection(collectionAddress);
+        //artists[msg.sender].collections[collectionAddress] = MintitNFTCollection(collectionAddress);
+        artists[msg.sender].collections.push(collectionAddress);
         collectionArray.push(collectionAddress);
 
         emit MintitNFTCollectionCreated(_collectionName, collectionAddress, block.timestamp);
@@ -59,8 +60,8 @@ contract MintitNFTCollectionManager is Artists, Users{
         if (artists[msg.sender].created == false) {
             setArtist(_collectionName, "");
         }
-        MintitNFTCollection collection = MintitNFTCollection(collectionAddress);
-        artists[msg.sender].collections[collectionAddress] = collection;
+        //MintitNFTCollection collection = MintitNFTCollection(collectionAddress);
+        artists[msg.sender].collections.push(collectionAddress);
         collectionArray.push(collectionAddress);
 
         emit MintitNFTCollectionCreated(_collectionName, collectionAddress, block.timestamp);
