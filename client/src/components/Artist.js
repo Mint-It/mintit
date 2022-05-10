@@ -17,12 +17,10 @@ class Artist extends React.Component {
     componentDidMount = async () => {
       this.getArtist();
       this.props.parentState.contractNFTManager.events.ArtistUpdated([])
-      .on("connected", function(subscriptionId){
-        console.log(subscriptionId);
-        })
       .on('data', function(event){
         console.log(event.returnValues);
-        toast.success("Artist updated");
+        if(event.returnValues["_created"]) toast.success("Artist created");
+        else toast.success("Artist updated");
       })
     };
 
@@ -36,7 +34,7 @@ class Artist extends React.Component {
 
     setArtist = async () => {
         try{
-          const test = await this.props.parentState.contractNFTManager.methods.setArtist(this.state.artistName, this.state.artistDescription).send({ from: this.props.parentState.currentAccount });
+          const artist = await this.props.parentState.contractNFTManager.methods.setArtist(this.state.artistName, this.state.artistDescription).send({ from: this.props.parentState.currentAccount });
           toast.info("Transaction sent");
         } catch (error) {
             // Catch any errors for any of the above operations.

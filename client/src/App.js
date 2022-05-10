@@ -13,6 +13,7 @@ import Home from './components/Home';
 import Create from './components/Create';
 import Explore from './components/Explore';
 import Artist from './components/Artist';
+import Collection from './components/Collection';
 import Error from './components/Error';
 
 library.add(faWallet, faUser, faHandHoldingDollar);
@@ -81,6 +82,7 @@ class App extends React.Component {
         <Route exact path='/create' element={<Create parentState={this.state}/>} />
         <Route exact path='/explore' element={<Explore parentState={this.state}/>} />
         <Route exact path='/artist' element={<Artist parentState={this.state}/>} />
+        <Route exact path='/collection' element={<Collection parentState={this.state}/>} />
       </Routes>
     )
   }
