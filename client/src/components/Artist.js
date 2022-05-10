@@ -64,6 +64,27 @@ class Artist extends React.Component {
   <img className="w-full h-full object-cover" alt="artist" src={artist} />
   </div>
   <div className="container px-5 py-5 mx-auto flex">
+  <div className="mr-6 lg:w-2/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
+  <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">My Collections</h2>
+
+  <div className="flex flex-wrap -m-4">
+      <div className="p-4 md:w-1/3">
+        <div className="flex rounded-lg h-full bg-gray-100 p-8 flex-col">
+          <div className="flex items-center mb-3">
+            <h2 className="text-gray-900 text-lg title-font font-medium">Collection 1</h2>
+          </div>
+          <div className="flex-grow">
+            <p className="leading-relaxed text-base">Afficher les datas</p>
+            <a className="mt-3 text-red-500 inline-flex items-center">Manage collection
+              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+</div>
+  </div>
     <div className="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
       <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Artist</h2>
       <p className="leading-relaxed mb-5 text-gray-600">Set my artist profile</p>
