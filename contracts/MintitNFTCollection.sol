@@ -216,7 +216,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     * @return a boolean
     **/
-    function isStage(Stages stage) internal view returns (bool) {
+    function isStage(Stages stage) public view returns (bool) {
         if (sellingStage == stage)
             return true;
 
