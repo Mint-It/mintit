@@ -65,7 +65,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
 
     Stages public sellingStage;
     mapping(uint => Interval[]) private calendar;
-    mapping(uint => bool) private calendarSet;
+    uint[] private calendarArray;
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
@@ -110,6 +110,25 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
             interval.end = dates[i+2];
             calendar[dates[i]].push(interval);
         }
+        calendarArray = dates;
+    }
+
+    /** 
+    * @notice Returns Mint stages calendar array
+    *
+    * @return uint[] table containing calendar infromation
+    **/
+    function getCalendar() public view returns(uint[] memory) {
+        return calendarArray;
+    }
+
+    /** 
+    * @notice Returns the adress of the artist of the collection
+    *
+    * @return address of the artist
+    **/
+    function getArtistAddress() public view returns(address) {
+        return artistAddress;
     }
 
     /** 
