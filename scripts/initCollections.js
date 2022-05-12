@@ -2,13 +2,14 @@ const Web3 = require('web3');
 var Tx = require('ethereumjs-tx').Transaction
 
 const MintitMgrContract = require('../client/src/contracts/MintitNFTCollectionManager.json');
+const MintitContract = require('../client/src/contracts/MintitNFTCollection.json');
 
-let owner = "0xf6a9333a400F490235B2526325365410353242e8";
-let artist1 = "0x8DF01286D8D54D3159586004dF92ff9012912feF";
-const privateKey1 = Buffer.from('74798b2f1b3c2aaf04fa1b81022e2e462fb843f3da31afaf7b60d6428d7eef76', 'hex');
+let owner = "0x46461745030D75cED0Fc9fbee2e9b53510475C7e";
+let artist1 = "0x2187949a573b37E2e9CE6Db0615D25bB5d9E6eEF";
+const privateKey1 = Buffer.from('b5e700b07ca0d5ff07070ff4c4f73b728d5c1dc2623979479924cfe848baca4b', 'hex');
 
-let artist2 = "0x1AB822dEA7EDf7c792437bb3D4812A535EAbd893";
-const privateKey2 = Buffer.from('fbb9fc7336c5a4f8b37c8ff146e365dce3a9ad8c165bb3fdfd9cf2a085f26ba7', 'hex');
+let artist2 = "0x6C3c20F3a3b09ba55D1fA3b298175AE80FEe9d83";
+const privateKey2 = Buffer.from('e9f6d4a694a268fc160284dab5f63ba7de1af919ab89179bd5d3f1c650d9341a', 'hex');
 
 const provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545'); 
 const web3 = new Web3(provider);
@@ -40,17 +41,31 @@ const initCollections = async () => {
     data = mintitMgr.methods.createDetailledMintitNFTCollection("THE META KONGZ", "DOSS", 10000, web3.utils.toWei("1", "ether"), web3.utils.toWei("2", "ether"), "https://lh3.googleusercontent.com/N2gH3NR0rAuMNMNqSUKLX-mD09ebWzel3D5AoTnta8eNN-VJ75YoeeNeKuKHXPsEVZpBc2L158QHbn-61hNZe9dX6Ri1Hco9qThN=h200", "Can you believe that you can change the world by pioneering a new utopia through the Meta Kongz Project? The world of 10,000 kongz is a multi-universe, and kongz exist everywhere. Would you like to change the world together?", "Arts", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
     sendMintitTransaction(data, cAddress, privateKey1, txCount)
 
-
     // Create Tyler Hobbs artist
     txCount = await web3.eth.getTransactionCount(artist2);
     data = mintitMgr.methods.setArtist("Tyler Hobbs", "I use programming to create artwork. From Austin, TX.").encodeABI();
     sendMintitTransaction(data, cAddress, privateKey2, txCount)
-    txCount = await web3.eth.getTransactionCount(artist2);
-    
+
+
     // Create Incomplete Control  NFT collection
     txCount = await web3.eth.getTransactionCount(artist2);
     data = mintitMgr.methods.createDetailledMintitNFTCollection("Incomplete Control by Tyler Hobbs", "BLOCKS", 80, web3.utils.toWei("3", "ether"), web3.utils.toWei("4", "ether"), "https://lh3.googleusercontent.com/gI2OEGj-wAogAC56WZq8VsFJd0FPEwBkTXjklcmahNJDEDxVxT2YoGKtOEEemt9jclk-EMv1jeRFkfa98__C0zpJ0DULxvAelzv1=h200", "Incomplete Control is about letting go, allowing room for error and imperfection. It is a meditation on the relation between analogue and computational aesthetics. The output space is a continuous spectrum. Each iteration has its own character to discover and enjoy, if you are willing to give it the time.", "Music", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png").encodeABI();
-    sendMintitTransaction(data, cAddress, privateKey2, txCount)
+    sendMintitTransaction(data, cAddress, privateKey2, txCount);
+
+    // Set Collection 2 to whitelist
+    let colArray = await  mintitMgr.methods.getCollectionArray().call({from:artist1});
+    let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[1]);
+    txCount = await web3.eth.getTransactionCount(artist1);
+    // white list from 01/05/2022 to 01/07/2022
+    data = mintitNFT.methods.setCalendar([1, 1651428000, 1656698400]).encodeABI();
+    sendMintitTransaction(data, colArray[1], privateKey1, txCount);
+ 
+    // Set Collection 3 to Public Sale
+    mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
+    txCount = await web3.eth.getTransactionCount(artist2);
+    // white list from 01/05/2022 to 01/07/2022
+    data = mintitNFT.methods.setCalendar([3, 1651428000, 1656698400]).encodeABI();
+    sendMintitTransaction(data, colArray[2], privateKey2, txCount);
 
     console.log("---------------------------");
     console.log(" List of NFT collection adresses");
@@ -82,7 +97,8 @@ function sendMintitTransaction(data, address, privatekey, txCount) {
        web3.eth.sendSignedTransaction(raw, (err, txHash) => {
             console.log('txHash: ', txHash)
             console.log(err)
-       })
+       }).on('receipt', console.log);
+
 }
 
   
