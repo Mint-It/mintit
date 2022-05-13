@@ -38,10 +38,10 @@ class Collection extends React.Component {
       this.setState({collectionInfos : infosNft});
       this.setState({isConfig : await contractNFT.methods.isStage(0).call()});
       this.setState({isPublicWhitelist : await contractNFT.methods.isStage(1).call()});
-      this.setState({isPrivateWhitelist : await contractNFT.methods.isStage(2).call()});
-      this.setState({isPresale : await contractNFT.methods.isStage(3).call()});
-      this.setState({isSale : await contractNFT.methods.isStage(4).call()});
-      this.setState({isSoldout : await contractNFT.methods.isStage(5).call()});
+      //this.setState({isPrivateWhitelist : await contractNFT.methods.isStage(2).call()});
+      this.setState({isPresale : await contractNFT.methods.isStage(2).call()});
+      this.setState({isSale : await contractNFT.methods.isStage(3).call()});
+      this.setState({isSoldout : await contractNFT.methods.isStage(4).call()});
       this.setState({totalSupply : await contractNFT.methods.totalSupply().call()});
       this.setState({artistAddress : await contractNFT.methods.getArtistAddress().call()});
       const artistDatas = await this.props.parentState.contractNFTManager.methods.getArtistDetails(this.state.artistAddress).call({ from:  this.props.parentState.currentAccount });
