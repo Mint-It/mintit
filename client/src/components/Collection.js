@@ -4,6 +4,7 @@ import Web3 from "web3";
 import MintitNFTCollection from "../contracts/MintitNFTCollection.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import NFTCard from './NFTCard';
+import { toast } from 'react-toastify';
 
 class Collection extends React.Component {
     constructor(props) {
@@ -12,12 +13,8 @@ class Collection extends React.Component {
         collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0, "presalePrice" : 0, category : ""},
         collectionAddress: "",
         artistAddress: "",
-        isConfig: false,
-        isPublicWhitelist: false,
-        isPrivateWhitelist: false,
-        isPresale: false,
-        isSale: false,
-        isSoldout: false,
+        calendar : [],
+        isSelectedStage: [false, false, false, false, false],        
         iamWhitelisted: false,
         artistName: "",
         artistDescription: ""
@@ -27,6 +24,12 @@ class Collection extends React.Component {
     componentDidMount = async () => {
       this.getCollection();
       console.log("Address:" + this.state.collectionAddress);
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      contractNFT.events.Transfer([])
+      .on('data', function(event){
+        console.log(event.returnValues);
+        toast.success("Mint Successful");
+      })
     };
 
     getCollection = async () => {
@@ -36,19 +39,30 @@ class Collection extends React.Component {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
       const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
       this.setState({collectionInfos : infosNft});
-      this.setState({isConfig : await contractNFT.methods.isStage(0).call()});
-      this.setState({isPublicWhitelist : await contractNFT.methods.isStage(1).call()});
-      //this.setState({isPrivateWhitelist : await contractNFT.methods.isStage(2).call()});
-      this.setState({isPresale : await contractNFT.methods.isStage(2).call()});
-      this.setState({isSale : await contractNFT.methods.isStage(3).call()});
-      this.setState({isSoldout : await contractNFT.methods.isStage(4).call()});
+      this.setState({calendar : await contractNFT.methods.getCalendar().call()});
       this.setState({totalSupply : await contractNFT.methods.totalSupply().call()});
       this.setState({artistAddress : await contractNFT.methods.getArtistAddress().call()});
       const artistDatas = await this.props.parentState.contractNFTManager.methods.getArtistDetails(this.state.artistAddress).call({ from:  this.props.parentState.currentAccount });
       this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description']});
-      if (this.state.isPublicWhitelist)
-        this.setState({iamWhitelisted : await contractNFT.methods.isPublicWhiteListed(this.props.parentState.currentAccount).call({ from: this.props.parentState.currentAccount })});
 
+      let i;
+      let now = parseInt(Date.now()/1000);
+      let isSelectedStage = [false, false, false, false, false];
+      for (i=0;i<this.state.calendar.length;i+=3) {
+        if (this.state.calendar[i+1] < now && this.state.calendar[i+2] > now)
+          isSelectedStage[this.state.calendar[i]] = true;    
+      }
+      if (this.state.totalSupply == this.state.collectionInfos.maxSupply) {
+        for (i=0;i<isSelectedStage.length;i++) {
+          isSelectedStage[i] = false;
+        }
+        isSelectedStage[4] = true;
+      }
+      this.setState({isSelectedStage : isSelectedStage});
+      console.log("state :" + this.state.isSelectedStage);
+
+      if (this.state.isSelectedStage[1])
+        this.setState({iamWhitelisted : await contractNFT.methods.isPublicWhiteListed(this.props.parentState.currentAccount).call({ from: this.props.parentState.currentAccount })});
     }
 
     addWhitelist() {
@@ -58,14 +72,14 @@ class Collection extends React.Component {
 
     mint() {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      if (this.state.isPresale)
+      if (this.state.isSelectedStage[2])
         contractNFT.methods.PresaleMintArt([]).send({from: this.props.parentState.currentAccount, value: this.state.collectionInfos.presalePrice });
-      else if (this.state.isSale)
+      else if (this.state.isSelectedStage[3])
         contractNFT.methods.MintArt().send({from: this.props.parentState.currentAccount, value: this.state.collectionInfos.price });
     }
 
     renderSoon() {
-      if (this.state.isConfig) {
+      if (this.state.isSelectedStage[0]) {
         return (
           <section class="text-gray-600 body-font">
             <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Collection coming soon
@@ -81,7 +95,7 @@ class Collection extends React.Component {
     }
 
     renderPublicWhitelist () {
-      if (this.state.isPublicWhitelist && !this.state.iamWhitelisted) {
+      if (this.state.isSelectedStage[1] && !this.state.iamWhitelisted) {
         return (
           <section class="text-gray-600 body-font">
             <div class="container px-5 py-24 mx-auto">
@@ -93,7 +107,7 @@ class Collection extends React.Component {
           </section>
         )
       }
-      else if (this.state.iamWhitelisted) {
+      else if (this.state.isSelectedStage[1] && this.state.iamWhitelisted) {
         return (
           <section class="text-gray-600 body-font">
             <div class="container px-5 py-24 mx-auto">
@@ -113,9 +127,9 @@ class Collection extends React.Component {
     }
 
     renderSale () {
-      if ((this.state.isPresale && this.state.iamWhitelisted) || this.state.isSale) {
+      if ((this.state.isSelectedStage[2] && this.state.iamWhitelisted) || this.state.isSelectedStage[3]) {
         let price = "";
-        if (this.state.isSale)
+        if (this.state.isSelectedStage[3])
           price = Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.price));
         else
           price = Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.presalePrice));
@@ -131,18 +145,6 @@ class Collection extends React.Component {
           </section>
         )
       }
-      else if (this.state.isSale){
-        return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-                <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are not Whitelisted</h1>
-                <button class="flex-shrink-0 text-gray-700 bg-gray-100 border-0 py-2 px-8 focus:outline-none rounded text-lg mt-10 sm:mt-0">Mint</button>
-              </div>
-            </div>
-          </section> 
-        )       
-      }
       else 
         return(
           <section class="text-gray-600 body-font">
@@ -151,7 +153,7 @@ class Collection extends React.Component {
     }
 
     renderNFTCollection () {
-      if (this.state.isSoldout) {
+      if (this.state.isSelectedStage[4]) {
         let items=[];
         let i;
         for (i=0;i<this.state.totalSupply;i++)
@@ -166,7 +168,7 @@ class Collection extends React.Component {
               </div>
               <div class="flex flex-wrap -m-4">
                 {items.map((item, index) => (
-                  <NFTCard parentState={this.props.parentState} collectionAddress={this.state.collectionAddress} key={index} tokenId={index}/>
+                  <NFTCard parentState={this.props.parentState} collectionAddress={this.state.collectionAddress} key={index+1} tokenId={index+1}/>
                 ))}
               </div>
             </div>
@@ -182,17 +184,12 @@ class Collection extends React.Component {
     }
 
     render() {
-      let stageElement = "";
-      if (this.state.isConfig)
-        stageElement = this.renderSoon();
-      if (this.state.isPublicWhitelist)
-        stageElement += this.renderPublicWhitelist();
       return (
           <div>
             <section class="text-gray-600 body-font">
               <div class="container mx-auto flex px-5 py-5 md:flex-row flex-col items-center">
                 <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
-                  <img class="object-cover object-center rounded" alt="hero" src={this.state.collectionInfos.banner}  />
+                  <img class="lg:h-48 md:h-36 w-full object-cover object-center" alt="hero" src={this.state.collectionInfos.banner}  />
                 </div>
                 <div class="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
                   <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">{this.state.collectionInfos.name}

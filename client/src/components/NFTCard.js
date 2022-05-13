@@ -8,7 +8,8 @@ class NFTCard extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-          tokenURI : ""
+          tokenURI : "",
+          tokenOwner : ""
       };
     }
 
@@ -26,9 +27,9 @@ class NFTCard extends React.Component {
       return (
       <div class="p-4 lg:w-1/4 md:w-1/2">
         <div class="h-full flex flex-col items-center text-center">
-          <img alt="team" class="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4" src="https://dummyimage.com/200x200" />
+          <img alt="team" class="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4" src={this.state.tokenURI} />
           <div class="w-full">
-            <h2 class="title-font font-medium text-lg text-gray-900">Alper Kamu</h2>
+            <h2 class="title-font font-medium text-lg text-gray-900">{this.state.tokenOwner.slice(0,5)+'...'+this.state.tokenOwner.slice(38,42)}</h2>
             <h3 class="text-gray-500 mb-3">UI Developer</h3>
             <p class="mb-4">DIY tote bag drinking vinegar cronut adaptogen squid fanny pack vaporware.</p>
             <span class="inline-flex">
