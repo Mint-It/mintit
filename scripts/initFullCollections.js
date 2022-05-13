@@ -11,6 +11,12 @@ const privateKey1 = Buffer.from('b5e700b07ca0d5ff07070ff4c4f73b728d5c1dc26239794
 let artist2 = "0x6C3c20F3a3b09ba55D1fA3b298175AE80FEe9d83";
 const privateKey2 = Buffer.from('e9f6d4a694a268fc160284dab5f63ba7de1af919ab89179bd5d3f1c650d9341a', 'hex');
 
+let user1 = "0x25e12d99A4466DB9aDC520667d9F8d3A024Fe35b";
+const puser1 = Buffer.from('977ab404c138f6ecf5960ed8059efb5829b31c5fb9688c29f6d541510461eb13', 'hex');
+
+let user2 = "0xa23A5b6aff1DAedCFB13523b385d713B3cb8BaED";
+const puser2 = Buffer.from('d1e0d6a1fc054d4e3e97d6500fe14df3ad60f631071fc5c9ba238a7491d09dea', 'hex');
+
 const provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545'); 
 const web3 = new Web3(provider);
 let artists = [
@@ -23,13 +29,13 @@ let col = [
 "https://lh3.googleusercontent.com/uYwlGK1Flj_QxlwFV-6o80nHbCY40Q_67gxYZiv5DNtTFDZaQG0AGwZ3Ir1YOa26z08ygce3UeCiGG--NaAuiFezySlpC9SbZyHOiWA=h200",
 "OS Holder number doesn't include STAKED CBWC. 73% unique holders currently staked to earn the $ARK utility token.",
 "Arts", "https://cryptobearwatchclub.mypinata.cloud/ipfs/QmX8kGmiRD5crgp3WZHgch2M7wEhCyStev9vpqxycQ713p/", ".png",
-[1, getTs()-3600, getTs() + 36000]],
+[1, getTs()-3600, getTs() + 3600, 2, getTs()+3600, getTs() + 7200, 3, getTs()+7200, getTs() + 10000]],
 [1, "Karafuru", "Karafuru", 5555, "0.8", "1.2",
 "https://lh3.googleusercontent.com/wagZQjBQU0NZnTjlHHdBjDCgE0AvP1K4WGNYsCSTTj2Gib2N0LbE4uWC76w510bbyXFtqWTqj_1rlK_ZZ0KfZvGYuEBA5NivGuBnIw=h200",
 "Karafuru is home to 5,555 generative arts where colors reign supreme. Leave the drab reality and enter the world of Karafuru by Museum of Toys.",
 "Arts", "https://opensea.mypinata.cloud/ipfs/QmdJ8S7YfZmXQJYdieyHJhNpAUnqQ8KEQsgZ4EAdwYk7tx/", ".jpg",
 [2, getTs()-3600, getTs() + 36000]],
-[1, "Quirkies Originals", "", 5000, "3", "4",
+[1, "Quirkies Originals", "", 20, "0.05", "0.08",
 "https://lh3.googleusercontent.com/TS2mwNzus7SqEjSjKVu7Gmj1lpnZc4u8x-wrvTlZvU7jEVMHLi3edj7TyudKaKvSM79x_0ORmQc0ATXotUJsBNrrE8j5MY4piS7aM6Q=h200",
 "5,000 Quirkies brought into the metaverse to celebrate everyone's quirks",
 "Arts", "http://metadata.quirkies.io/", ".png",
@@ -76,12 +82,32 @@ const initCollections = async () => {
 
     let colArray = await  mintitMgr.methods.getCollectionArray().call({from:artist1});
     for (i=0;i<3;i++) {
-
         let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[i]);
         txCount = await web3.eth.getTransactionCount(artists[col[i][0]][2]);
         data = mintitNFT.methods.setCalendar(col[i][11]).encodeABI();
         sendMintitTransaction(data, colArray[i], Buffer.from(artists[col[i][0]][3], 'hex'), txCount);
+    }
 
+    // change max
+    let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
+    txCount = await web3.eth.getTransactionCount(artists[1][2]);
+    data = mintitNFT.methods.setMaxNbPerWallet(20).encodeABI();
+    sendMintitTransaction(data, colArray[2], Buffer.from(artists[1][3], 'hex'), txCount);
+
+    // mint NFT
+    for (i=0;i<10;i++) {
+        let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
+        txCount = await web3.eth.getTransactionCount(user1);
+        data = mintitNFT.methods.MintArt().encodeABI();
+        sendMintitValueTransaction(data, colArray[2], puser1, txCount, "0.08");        
+    }
+
+    // mint NFT
+    for (i=0;i<7;i++) {
+        let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
+        txCount = await web3.eth.getTransactionCount(user2);
+        data = mintitNFT.methods.MintArt().encodeABI();
+        sendMintitValueTransaction(data, colArray[2], puser2, txCount, "0.08");        
     }
 
     console.log("---------------------------");
@@ -118,5 +144,27 @@ function sendMintitTransaction(data, address, privatekey, txCount) {
 
 }
 
+function sendMintitValueTransaction(data, address, privatekey, txCount, value) {
+    const txObject = {
+        nonce:    web3.utils.toHex(txCount),
+        gasLimit: web3.utils.toHex(5000000), // Raise the gas limit to a much higher amount
+        gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+        to: address,
+        value: web3.utils.toHex(web3.utils.toWei(value, 'ether')),
+        data: data
+       }
+
+       // Sign the transaction
+       const tx = new Tx(txObject, { chain: 'mainnet' })
+       tx.sign(privatekey)
+       const serializedTransaction = tx.serialize()
+       const raw = '0x' + serializedTransaction.toString('hex')
+       // Broadcast the transaction
+       web3.eth.sendSignedTransaction(raw, (err, txHash) => {
+            console.log('txHash: ', txHash)
+            console.log(err)
+       }).on('receipt', console.log);
+
+}
   
 initCollections();
