@@ -10,6 +10,13 @@ class CollectionCard extends React.Component {
       this.state = {
         collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0, "category" : ""},
         stage : -1,
+        isConfig: false,
+        isPublicWhitelist: false,
+        isPrivateWhitelist: false,
+        isPresale: false,
+        isSale: false,
+        isSoldout: false,
+        isSelectedStage: [false, false, false, false, false],
         category : -1,
         categoryArray: [
           {id:-1, name:"All"},
@@ -31,6 +38,14 @@ class CollectionCard extends React.Component {
         const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
         this.setState({collectionInfos : infosNft});
         this.setState({stage : await contractNFT.methods.sellingStage().call({ from: this.props.parentState.currentAccount })});
+        this.setState({isConfig : await contractNFT.methods.isStage(0).call()});
+        this.setState({isPublicWhitelist : await contractNFT.methods.isStage(1).call()});
+        //this.setState({isPrivateWhitelist : await contractNFT.methods.isStage(2).call()});
+        this.setState({isPresale : await contractNFT.methods.isStage(2).call()});
+        this.setState({isSale : await contractNFT.methods.isStage(3).call()});
+        this.setState({isSoldout : await contractNFT.methods.isStage(4).call()});
+        this.setState({isSelectedStage : [this.state.isConfig, this.state.isPublicWhitelist, this.state.isPresale, this.state.isSale, this.state.isSoldout]});
+        console.log("Filter : " + this.props.filterStage + ":isSelected : " + this.state.isSelectedStage);
         this.state.categoryArray.forEach((cat) => {
             if (cat.name == this.state.collectionInfos.category) 
               this.setState({category: cat.id});
@@ -67,9 +82,12 @@ class CollectionCard extends React.Component {
     }
 
     render() {
+      //const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.props.collectionAddress);
+      //let isSelectedStage =  await contractNFT.methods.isStage(this.state.stage).call();
+
       return (
-        <div  className={((this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? "p-4 md:w-1/3" : ""} key={this.props.collectionAddress}>
-        {((this.props.filterStage == -1 || this.props.filterStage == this.state.stage) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? this.renderCollection() : null} 
+        <div  className={((this.props.filterStage == -1 || this.state.isSelectedStage[this.props.filterStage]) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? "p-4 md:w-1/3" : ""} key={this.props.collectionAddress}>
+        {((this.props.filterStage == -1 || this.state.isSelectedStage[this.props.filterStage]) && (this.props.filterCategory == -1 || this.props.filterCategory == this.state.category)) ? this.renderCollection() : null} 
         </div>
       )
   }
