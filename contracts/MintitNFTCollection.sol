@@ -150,6 +150,13 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
+    function setMaxNbPerWallet(uint _amount) external onlyArtist {
+        require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
+        collectionInfo.maxPerWallet = _amount;
+    }
+    /** 
+    * @notice Allows to change the max supply during the config stage
+    **/
     function setBaseURI(string memory __baseURI) external onlyArtist {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseURI = __baseURI;
@@ -235,7 +242,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     * @return a boolean
     **/
-    function isStage(Stages stage) public view returns (bool) {
+    function isStage(Stages stage) internal view returns (bool) {
         if (sellingStage == stage)
             return true;
 
@@ -271,7 +278,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant returns (uint256)
     {
         require(isStage(Stages.Presale), "Presale has not started yet.");
-        require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
+        require(totalSupply() < collectionInfo.maxSupply, "All NFT are sold");
         require((isPrivateWhiteListed(msg.sender, _proof) || publicWL[msg.sender] == true), "Not on the whitelist");
         require(msg.value >= collectionInfo.presalePrice, "Not enought funds.");
         require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
@@ -291,7 +298,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     function MintArt() external payable nonReentrant returns (uint256)
     {
         require(isStage(Stages.Sale), "Sale has not started yet.");
-        require(totalSupply() + 1 < collectionInfo.maxSupply, "All NFT are sold");
+        require(totalSupply() < collectionInfo.maxSupply, "All NFT are sold");
         require(msg.value >= collectionInfo.price, "Not enought funds.");
         require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
         _tokenIds.increment();
