@@ -26,9 +26,8 @@ class Collection extends React.Component {
       console.log("Address:" + this.state.collectionAddress);
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
 
-      //contractNFT.events.Transfer([]).on('data', function(event){
       contractNFT.events.Transfer([]).on('data', (event) => {
-          console.log(event.returnValues);
+        console.log(event.returnValues);
         toast.success("Mint Successful");
         this.getCollection();
       })
@@ -128,6 +127,82 @@ class Collection extends React.Component {
         )
     }
 
+    formatDate(dateTS) {
+      var date = new Date(dateTS);
+      return date.toLocaleString();
+      return date.getDate()+
+          "/"+(date.getMonth()+1)+
+          "/"+date.getFullYear()+
+          " "+date.getHours()+
+          ":"+date.getMinutes()+
+          ":"+date.getSeconds();
+    }
+
+    renderCalendarItem(i) {
+      if (i%3 == 0) {
+        let stageValue = this.state.calendar[i];
+        let stage = "";
+        switch (stageValue) {
+          case "0":
+            stage = "Configuration";
+            break;
+          case "1":
+            stage = "Public whitelist";
+            break;
+          case "2":
+            stage = "Presale";
+            break;
+          case "3":
+            stage = "Sale";
+            break;
+          default:
+            stage = "";
+        }
+        let classVal = "px-4 py-3";
+        let start = this.formatDate(this.state.calendar[i+1]*1000);
+        let end = this.formatDate(this.state.calendar[i+2]*1000);
+        if (this.state.calendar[i+1]*1000 < Date.now() && this.state.calendar[i+2]*1000 > Date.now())
+        classVal = "text-red-500 px-4 py-3";
+        return (
+          <React.Fragment>
+          <tr>
+          <td class={classVal}>{stage}</td>
+          <td class={classVal}>{start}</td>
+          <td class={classVal}>{end}</td>
+          </tr>
+          </React.Fragment>
+        )
+      }
+      else {
+        return (
+          <React.Fragment>
+          </React.Fragment>
+        )
+      }
+
+    }
+
+    renderCalendar () {
+      return (
+        <div class="lg:w-2/3 w-full mx-auto overflow-auto">
+        <table class="table-auto w-full text-left whitespace-no-wrap">
+          <thead>
+            <tr>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Stage</th>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Start date</th>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">End date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.calendar.map((item, index) => (
+                this.renderCalendarItem(index)
+            ))}
+          </tbody>
+        </table>
+      </div>
+      )
+    }
+
     renderSale () {
       if ((this.state.isSelectedStage[2] && this.state.iamWhitelisted) || this.state.isSelectedStage[3]) {
         let price = "";
@@ -142,6 +217,17 @@ class Collection extends React.Component {
               <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
                 <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Mint a NFT</h1>
                 <button class="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0" onClick={() => this.mint()}>Mint { price} ETH</button>
+              </div>
+            </div>
+          </section>
+        )
+      }
+      else if ((this.state.isSelectedStage[2] && !this.state.iamWhitelisted)) {
+        return (
+          <section class="text-gray-600 body-font">
+            <div class="container px-5 py-24 mx-auto">
+              <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+                <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are not whitelisted</h1>
               </div>
             </div>
           </section>
@@ -208,6 +294,7 @@ class Collection extends React.Component {
                   <br></br>
                   Max mint per wallet : {this.state.collectionInfos.maxPerWallet}
                   </p>
+                  {this.renderCalendar()}
                   </div>
               </div>
             </section>
