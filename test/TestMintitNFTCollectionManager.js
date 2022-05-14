@@ -16,7 +16,9 @@ contract("MintitNFTCollectionManager", accounts => {
     })    
 
     it("...Create new NFT collection", async () => {
-        let tx = await mintitMgtInstance.createMintitNFTCollection("DUSS", "DUSS", {from: artist });
+        let tx = await mintitMgtInstance.createMintitNFTCollection("DUSS", "TUSS",
+                                            [10000, 1000000, 2000000, 2], ["http://", "description", "Arts",
+                                            "http://ssssssss", ".json"], {from: artist });
         truffleAssert.eventEmitted(tx, 'MintitNFTCollectionCreated', (ev) => {
             collectionAddress = ev._collectionAddress;
             return ev._collectionName == "DUSS";
@@ -81,9 +83,9 @@ contract("MintitNFTCollectionManager", accounts => {
     });
 
     it("...Create new detailled NFT collection", async () => {
-        let tx = await mintitMgtInstance.createDetailledMintitNFTCollection("Collection 2", "TUSS",
-                                            100, 1000000, 2000000, "http://", "description", "Arts",
-                                            "http://ssssssss", ".json", {from: artist });
+        let tx = await mintitMgtInstance.createMintitNFTCollection("Collection 2", "TUSS",
+                                            [100, 1000000, 2000000, 5], ["http://", "description", "Arts",
+                                            "http://ssssssss", ".json"], {from: artist });
         truffleAssert.eventEmitted(tx, 'MintitNFTCollectionCreated', (ev) => {
             collectionAddress = ev._collectionAddress;
             return ev._collectionName == "Collection 2";

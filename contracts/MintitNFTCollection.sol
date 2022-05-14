@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
 /** 
   * @title Mint It NFT collection
@@ -13,7 +14,7 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
+contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitter {
     using Strings for uint256;
     using Counters for Counters.Counter;
     address artistAddress;
@@ -66,27 +67,29 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     Stages public sellingStage;
     mapping(uint => Interval[]) private calendar;
     uint[] private calendarArray;
+    uint private teamLength;
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
-    constructor(string memory name_, string memory symbol_, address _artist,
-                uint _maxSupply, uint _presalePrice, uint _price,
-                string memory _banner, string memory _description, string memory _category,
-                string memory _newBaseURI, string memory _baseExtension) ERC721 (name_, symbol_) {
+    constructor(address[] memory _payees, uint256[] memory _shares,
+                string memory name_, string memory symbol_, address _artist,
+                uint[] memory _intParams, string[] memory _strParams) 
+                ERC721 (name_, symbol_) PaymentSplitter(_payees, _shares) {
         sellingStage = Stages.Config;
         artistAddress = _artist;
-        collectionInfo.maxSupply = _maxSupply;
-        collectionInfo.maxPerWallet = 2;
-        collectionInfo.presalePrice = _presalePrice;
-        collectionInfo.category = _category;
-        collectionInfo.price = _price;
-        collectionInfo.banner = _banner;
-        collectionInfo.description = _description;
-        collectionInfo.baseURI = _newBaseURI;
-        collectionInfo.baseExtension = _baseExtension;
+        collectionInfo.maxSupply = _intParams[0];
+        collectionInfo.presalePrice = _intParams[1];
+        collectionInfo.price = _intParams[2];
+        collectionInfo.maxPerWallet = _intParams[3];
+        collectionInfo.banner = _strParams[0];
+        collectionInfo.description = _strParams[1];
+        collectionInfo.category = _strParams[2];
+        collectionInfo.baseURI = _strParams[3];
+        collectionInfo.baseExtension = _strParams[4];
         collectionInfo.name = name_;
         collectionInfo.symbol = symbol_;
+        teamLength = _payees.length;
    }
 
     /** 
@@ -275,7 +278,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     * @return newItemId The Id of the minted NFT
     **/
-    function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant returns (uint256)
+    function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant callerIsUser returns (uint256)
     {
         require(isStage(Stages.Presale), "Presale has not started yet.");
         require(totalSupply() < collectionInfo.maxSupply, "All NFT are sold");
@@ -295,7 +298,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
     *
     * @return newItemId The Id of the minted NFT
     **/
-    function MintArt() external payable nonReentrant returns (uint256)
+    function MintArt() external payable nonReentrant callerIsUser returns (uint256)
     {
         require(isStage(Stages.Sale), "Sale has not started yet.");
         require(totalSupply() < collectionInfo.maxSupply, "All NFT are sold");
@@ -327,8 +330,22 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard {
             : "";
     }
 
+    /**
+    * @notice Send shares to all payee
+    **/
+    function releaseAll() external {
+        for(uint i = 0 ; i < teamLength ; i++) {
+            release(payable(payee(i)));
+        }
+    }
+
     modifier onlyArtist() {
         require(_msgSender() == artistAddress, "Caller is not privileged");
+        _;
+    }
+    
+    modifier callerIsUser() {
+        require(tx.origin == msg.sender, "The caller is another contract");
         _;
     }
 }

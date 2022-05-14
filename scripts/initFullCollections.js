@@ -4,33 +4,33 @@ var Tx = require('ethereumjs-tx').Transaction
 const MintitMgrContract = require('../client/src/contracts/MintitNFTCollectionManager.json');
 const MintitContract = require('../client/src/contracts/MintitNFTCollection.json');
 
-let owner = "0x46461745030D75cED0Fc9fbee2e9b53510475C7e";
-let artist1 = "0x2187949a573b37E2e9CE6Db0615D25bB5d9E6eEF";
-const privateKey1 = Buffer.from('b5e700b07ca0d5ff07070ff4c4f73b728d5c1dc2623979479924cfe848baca4b', 'hex');
+let owner = "0xD07193529CB72bdb8620113C8444d1E63e5C0D6a";
+let artist1 = "0xA32709cE9e8eE20785f621f8C8b7b675C44c421b";
+const privateKey1 = Buffer.from('ba8378ed8457edc80633f9b8408d9de55e18f505edf0072070a5a93f792747b7', 'hex');
 
-let artist2 = "0x6C3c20F3a3b09ba55D1fA3b298175AE80FEe9d83";
-const privateKey2 = Buffer.from('e9f6d4a694a268fc160284dab5f63ba7de1af919ab89179bd5d3f1c650d9341a', 'hex');
+let artist2 = "0x17578077C690720c8A0e3FbEb715908D6809eFBF";
+const privateKey2 = Buffer.from('bb038f35f1fc47e2eaf1b47c2138e2b0aeae1d781b9a99b75cf90884ced40f11', 'hex');
 
-let user1 = "0x25e12d99A4466DB9aDC520667d9F8d3A024Fe35b";
-const puser1 = Buffer.from('977ab404c138f6ecf5960ed8059efb5829b31c5fb9688c29f6d541510461eb13', 'hex');
+let user1 = "0x78Cf7A6829eDEcACc022694d2623B47c8FC1Fd03";
+const puser1 = Buffer.from('0fab2b69c808e4774389cbd5c52b489bb58b2e075d72cb8a0dee8b3982150e60', 'hex');
 
-let user2 = "0xa23A5b6aff1DAedCFB13523b385d713B3cb8BaED";
-const puser2 = Buffer.from('d1e0d6a1fc054d4e3e97d6500fe14df3ad60f631071fc5c9ba238a7491d09dea', 'hex');
+let user2 = "0x58bA5FF62dEbf475EEAE1075934a8c96Cd66250a";
+const puser2 = Buffer.from('bf990407d6c37dadd5f3c50215fecedbaa15d3a7389e96ea6f866e7a30899e93', 'hex');
 
 const provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545'); 
 const web3 = new Web3(provider);
 let artists = [
-["CryptoBearWatchClub", "CBWC Deployer", "0x2187949a573b37E2e9CE6Db0615D25bB5d9E6eEF", "b5e700b07ca0d5ff07070ff4c4f73b728d5c1dc2623979479924cfe848baca4b"],
-["KarafuruDeployer", "", "0x6C3c20F3a3b09ba55D1fA3b298175AE80FEe9d83", "e9f6d4a694a268fc160284dab5f63ba7de1af919ab89179bd5d3f1c650d9341a"]
+["CryptoBearWatchClub", "CBWC Deployer", "0xA32709cE9e8eE20785f621f8C8b7b675C44c421b", "ba8378ed8457edc80633f9b8408d9de55e18f505edf0072070a5a93f792747b7"],
+["KarafuruDeployer", "", "0x17578077C690720c8A0e3FbEb715908D6809eFBF", "bb038f35f1fc47e2eaf1b47c2138e2b0aeae1d781b9a99b75cf90884ced40f11"]
 ];
 
 let col = [
-[0, "The CryptoBear Watch Club", "CBWC", 30, "0.5", "1",
+[0, "The CryptoBear Watch Club", "CBWC", 30, "0.2", "0.3",
 "https://lh3.googleusercontent.com/uYwlGK1Flj_QxlwFV-6o80nHbCY40Q_67gxYZiv5DNtTFDZaQG0AGwZ3Ir1YOa26z08ygce3UeCiGG--NaAuiFezySlpC9SbZyHOiWA=h200",
 "OS Holder number doesn't include STAKED CBWC. 73% unique holders currently staked to earn the $ARK utility token.",
 "Arts", "https://cryptobearwatchclub.mypinata.cloud/ipfs/QmX8kGmiRD5crgp3WZHgch2M7wEhCyStev9vpqxycQ713p/", ".png",
 [1, getTs()-3600, getTs() + 3600, 2, getTs()+3600, getTs() + 7200, 3, getTs()+7200, getTs() + 10000]],
-[1, "Karafuru", "Karafuru", 5555, "0.8", "1.2",
+[1, "Karafuru", "Karafuru", 5555, "0.4", "0.5",
 "https://lh3.googleusercontent.com/wagZQjBQU0NZnTjlHHdBjDCgE0AvP1K4WGNYsCSTTj2Gib2N0LbE4uWC76w510bbyXFtqWTqj_1rlK_ZZ0KfZvGYuEBA5NivGuBnIw=h200",
 "Karafuru is home to 5,555 generative arts where colors reign supreme. Leave the drab reality and enter the world of Karafuru by Museum of Toys.",
 "Arts", "https://opensea.mypinata.cloud/ipfs/QmdJ8S7YfZmXQJYdieyHJhNpAUnqQ8KEQsgZ4EAdwYk7tx/", ".jpg",
@@ -76,7 +76,7 @@ const initCollections = async () => {
     for (i=0;i<3;i++) {
         // Create NFT collection
         txCount = await web3.eth.getTransactionCount(artists[col[i][0]][2]);
-        data = mintitMgr.methods.createDetailledMintitNFTCollection(col[i][1], col[i][2], col[i][3], web3.utils.toWei(col[i][4], "ether"), web3.utils.toWei(col[i][5], "ether"), col[i][6], col[i][7], col[i][8], col[i][9], col[i][10]).encodeABI();
+        data = mintitMgr.methods.createMintitNFTCollection(col[i][1], col[i][2], [col[i][3], web3.utils.toWei(col[i][4], "ether"), web3.utils.toWei(col[i][5], "ether"), 2], [col[i][6], col[i][7], col[i][8], col[i][9], col[i][10]]).encodeABI();
         sendMintitTransaction(data, cAddress, Buffer.from(artists[col[i][0]][3], 'hex'), txCount)
     }
 
