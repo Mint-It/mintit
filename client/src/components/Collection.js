@@ -25,10 +25,12 @@ class Collection extends React.Component {
       this.getCollection();
       console.log("Address:" + this.state.collectionAddress);
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      contractNFT.events.Transfer([])
-      .on('data', function(event){
-        console.log(event.returnValues);
+
+      //contractNFT.events.Transfer([]).on('data', function(event){
+      contractNFT.events.Transfer([]).on('data', (event) => {
+          console.log(event.returnValues);
         toast.success("Mint Successful");
+        this.getCollection();
       })
     };
 
