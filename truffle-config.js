@@ -23,6 +23,12 @@ module.exports = {
         return new HDWalletProvider(`${process.env.MNEMONIC}`, `https://kovan.infura.io/v3/${process.env.INFURA_ID}`)
       },
       network_id: 42
+    },
+    fuji: {
+      provider: () => new HDWalletProvider(`${process.env.MNEMONIC}`, `https://api.avax-test.network/ext/bc/C/rpc`),
+      network_id: 43113,
+      timeoutBlocks: 200,
+      confirmations: 5
     }
   },
   // Configure your compilers
