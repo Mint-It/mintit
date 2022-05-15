@@ -2,7 +2,6 @@
 import React from 'react';
 import Web3 from "web3";
 import MintitNFTCollection from "../contracts/MintitNFTCollection.json";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import NFTCard from './NFTCard';
 import { toast } from 'react-toastify';
 
@@ -17,8 +16,17 @@ class Collection extends React.Component {
         isSelectedStage: [false, false, false, false, false],        
         iamWhitelisted: false,
         artistName: "",
-        artistDescription: ""
+        artistDescription: "",
+        txHashes : []
       };
+    }
+
+    isDuplicate(txHash) {
+      if (this.state.txHashes.includes(txHash)) return true;
+      let txHashes = this.state.txHashes;
+      txHashes.push(txHash);
+      this.setState({txHashes : txHashes});
+      return false;
     }
 
     componentDidMount = async () => {
@@ -27,10 +35,23 @@ class Collection extends React.Component {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
 
       contractNFT.events.Transfer([]).on('data', (event) => {
-        console.log(event.returnValues);
-        toast.success("Mint Successful");
-        this.getCollection();
-      })
+        console.log(event);
+        if(!this.isDuplicate(event.transactionHash)){
+          if (event.returnValues.to === this.props.parentState.currentAccount) {
+            toast.success("Mint Successful");
+            this.getCollection();
+          }
+        }
+      });
+      contractNFT.events.Whitelisted([]).on('data', (event) => {
+        console.log(event);
+        if(!this.isDuplicate(event.transactionHash)){
+          if (event.returnValues._userAddress === this.props.parentState.currentAccount) {
+            toast.success("You are whitelisted");
+            this.getCollection();
+          }
+        }
+      });      
     };
 
     getCollection = async () => {
@@ -53,7 +74,7 @@ class Collection extends React.Component {
         if (this.state.calendar[i+1] < now && this.state.calendar[i+2] > now)
           isSelectedStage[this.state.calendar[i]] = true;    
       }
-      if (this.state.totalSupply == this.state.collectionInfos.maxSupply) {
+      if (this.state.totalSupply === this.state.collectionInfos.maxSupply) {
         for (i=0;i<isSelectedStage.length;i++) {
           isSelectedStage[i] = false;
         }
@@ -66,17 +87,40 @@ class Collection extends React.Component {
         this.setState({iamWhitelisted : await contractNFT.methods.isPublicWhiteListed(this.props.parentState.currentAccount).call({ from: this.props.parentState.currentAccount })});
     }
 
-    addWhitelist() {
+    addWhitelist = async() => {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      contractNFT.methods.addPublicWhitelist().send({ from: this.props.parentState.currentAccount });
+      try {
+        await contractNFT.methods.addPublicWhitelist().send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        // Catch any errors for any of the above operations.
+        toast.error(error.message);
+        console.error(error);
+      }        
     }
 
-    mint() {
+    mint = async() => {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      if (this.state.isSelectedStage[2])
-        contractNFT.methods.PresaleMintArt([]).send({from: this.props.parentState.currentAccount, value: this.state.collectionInfos.presalePrice });
-      else if (this.state.isSelectedStage[3])
-        contractNFT.methods.MintArt().send({from: this.props.parentState.currentAccount, value: this.state.collectionInfos.price });
+      if (this.state.isSelectedStage[2]) {
+        try {
+          await contractNFT.methods.PresaleMintArt([]).send({from: this.props.parentState.currentAccount, value: this.state.collectionInfos.presalePrice });
+          toast.info("Mint transaction sent");
+        } catch (error) {
+          // Catch any errors for any of the above operations.
+          toast.error(error.message);
+          console.error(error);
+        }
+      }
+      else if (this.state.isSelectedStage[3]) {
+        try {
+          await contractNFT.methods.MintArt().send({from: this.props.parentState.currentAccount, value: this.state.collectionInfos.price });
+          toast.info("Mint transaction sent");
+        } catch (error) {
+          // Catch any errors for any of the above operations.
+          toast.error(error.message);
+          console.error(error);
+        }
+      }
     }
 
     renderSoon() {
@@ -128,18 +172,12 @@ class Collection extends React.Component {
     }
 
     formatDate(dateTS) {
-      var date = new Date(dateTS);
+      var date = new Date(dateTS );
       return date.toLocaleString();
-      return date.getDate()+
-          "/"+(date.getMonth()+1)+
-          "/"+date.getFullYear()+
-          " "+date.getHours()+
-          ":"+date.getMinutes()+
-          ":"+date.getSeconds();
     }
 
     renderCalendarItem(i) {
-      if (i%3 == 0) {
+      if (i%3 === 0) {
         let stageValue = this.state.calendar[i];
         let stage = "";
         switch (stageValue) {
