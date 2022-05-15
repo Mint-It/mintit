@@ -1,49 +1,56 @@
-# MintIt Smart Contracts
+# MintIt
 
-## Install and compile smart contracts
+## MintIt Smart Contracts
 
-npm install
-truffle compile
+### Install and compile smart contracts
 
-## Test smart contract
+`npm install`
 
-### MintitNFTCollectionManager
+`truffle compile`
 
-truffle test test/TestMintitNFTCollectionManager.js
+### Test smart contract
 
-### MintitNFTCollection
+#### MintitNFTCollectionManager
 
-truffle test test/TestMintitNFTCollection.js
+`truffle test test/TestMintitNFTCollectionManager.js`
 
-## Deploy smart contracts
+#### MintitNFTCollection
 
-### Deploy on ganache
+`truffle test test/TestMintitNFTCollection.js`
 
-truffle migrate --network develop
+### Deploy smart contracts
 
-### Deploy on Kovan euthereum testnet
+#### Deploy on ganache
 
-truffle migrate --network kovan
+`truffle migrate --network develop`
 
-### Deploy on Rinkeby euthereum testnet
+#### Deploy on Kovan euthereum testnet
 
-truffle migrate --network rinkeby
+`truffle migrate --network kovan`
 
-### Deploy on Fuji avalanche testnet
+#### Deploy on Rinkeby euthereum testnet
 
-truffle migrate --network fuji
+`truffle migrate --network rinkeby`
 
-## Init Smart contract with sample datas
+#### Deploy on Fuji avalanche testnet
 
-node scripts/initFullCollection.js
+`truffle migrate --network fuji`
 
-# Mintit dApp
+### Init Smart contract with sample datas
 
-## Install and launch
+`node scripts/initFullCollection.js`
 
-cd client
-npm install
-npm run start
+---
+
+## Mintit dApp
+
+### Install and launch
+
+`cd client`
+
+`npm install`
+
+`npm run start`
 
 
 
