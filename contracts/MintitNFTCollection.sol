@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /** 
   * @title Mint It NFT collection
@@ -14,7 +15,7 @@ import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitter {
+contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitter, Ownable {
     using Strings for uint256;
     using Counters for Counters.Counter;
     address artistAddress;
@@ -69,6 +70,9 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     uint[] private calendarArray;
     uint private teamLength;
 
+    /// @notice Event emitted each time a user get whitelisted
+    event Whitelisted(address _userAddress);
+
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
@@ -90,6 +94,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
         collectionInfo.name = name_;
         collectionInfo.symbol = symbol_;
         teamLength = _payees.length;
+        transferOwnership(_artist);
    }
 
     /** 
@@ -97,7 +102,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     *
     * @param dates Array containing the startand end dates of all stages
    **/
-    function setCalendar(uint[] memory dates) external onlyArtist {
+    function setCalendar(uint[] memory dates) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the dates.");
         require (dates.length % 3 == 0, "wrong date array");
         for (uint i = 0; i < 6; i++) {
@@ -137,7 +142,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setDetails(string memory _description, string memory _banner) external onlyArtist {
+    function setDetails(string memory _description, string memory _banner) external onlyOwner {
         collectionInfo.description = _description;
         collectionInfo.banner = _banner;
     }
@@ -145,7 +150,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setMaxSupply(uint _amount) external onlyArtist {
+    function setMaxSupply(uint _amount) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxSupply = _amount;
     }
@@ -153,14 +158,14 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setMaxNbPerWallet(uint _amount) external onlyArtist {
+    function setMaxNbPerWallet(uint _amount) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxPerWallet = _amount;
     }
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setBaseURI(string memory __baseURI) external onlyArtist {
+    function setBaseURI(string memory __baseURI) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseURI = __baseURI;
     }
@@ -168,7 +173,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the max supply during the config stage
     **/
-    function setBaseExtension(string memory _baseExtension) external onlyArtist {
+    function setBaseExtension(string memory _baseExtension) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseExtension = _baseExtension;
     }
@@ -176,7 +181,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the price of a NFT during the config stage
     **/
-    function setPrice(uint _price) external onlyArtist {
+    function setPrice(uint _price) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.price = _price;
     }
@@ -184,7 +189,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the price of a NFT during the config stage
     **/
-    function setPresalePrice(uint _price) external onlyArtist {
+    function setPresalePrice(uint _price) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.presalePrice = _price;
     }
@@ -194,7 +199,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     *
     * @param _newWhiteList The new Merkle Root
     **/
-    function setPrivateWhitelist(bytes32 _newWhiteList) external onlyArtist {
+    function setPrivateWhitelist(bytes32 _newWhiteList) external onlyOwner {
         privateWL = _newWhiteList;
     }
 
@@ -206,6 +211,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
         require(isStage(Stages.PublicWhitelist), "Should be in WL stage.");
         require(publicWL[msg.sender] == false, "Sender already whitelisted");
         publicWL[msg.sender] = true;
+        emit Whitelisted(msg.sender);
     } 
 
     /** 
@@ -268,7 +274,7 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     /** 
     * @notice Allows to change the sellinStage value
     **/
-    function setUpStage(Stages stage) external onlyArtist {
+    function setUpStage(Stages stage) external onlyOwner {
         require(isStage(Stages(uint(stage) - 1)), "Should be in previous stage");
         sellingStage = stage;
     }
@@ -337,11 +343,6 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
         for(uint i = 0 ; i < teamLength ; i++) {
             release(payable(payee(i)));
         }
-    }
-
-    modifier onlyArtist() {
-        require(_msgSender() == artistAddress, "Caller is not privileged");
-        _;
     }
     
     modifier callerIsUser() {
