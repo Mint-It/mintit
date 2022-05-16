@@ -56,9 +56,11 @@ class App extends React.Component {
 
   connectedWallet = () => {
     return (
+      <NavLink to={'/user'}>
       <div className='flex flex-wrap items-center text-base'>
         <p id="userWallet" className="text-lg text-gray-600 leading-3"><span id="userWalletSpan" className="text-red-500 font-bold text-base">{this.state.currentAccount.slice(0,5)+'...'+this.state.currentAccount.slice(38,42)}</span><br /><span style={{fontSize: "10px"}}>WALLET CONNECTED</span></p>
       </div>
+      </NavLink>
     )
   }
   
