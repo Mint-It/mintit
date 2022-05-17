@@ -140,11 +140,17 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
     }
 
     /** 
-    * @notice Allows to change the max supply during the config stage
+    * @notice Allows to change the banner
     **/
-    function setDetails(string memory _description, string memory _banner) external onlyOwner {
-        collectionInfo.description = _description;
+    function setBanner(string memory _banner) external onlyOwner {
         collectionInfo.banner = _banner;
+    }
+
+    /** 
+    * @notice Allows to change the description
+    **/
+    function setDescription(string memory _description) external onlyOwner {
+        collectionInfo.description = _description;
     }
 
     /** 
