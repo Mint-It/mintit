@@ -12,13 +12,46 @@ class CollectionManager extends React.Component {
       super(props);
       this.state = {
         collectionAddress: "",
+        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0, "presalePrice" : 0, maxPerWallet: 0, category : ""},        maxSupply: "",
+        maxSupply: "",
+        presalePrice: "",
+        mintPrice: "",
+        maxPerWallet: "",
+        banner: "",
+        newBaseURI: "",
+        baseExtension: "",
+        description: "",
+        category: ""
       }
+    }
+
+    handleChange = (evt) => {
+      const value = evt.target.value;
+      this.setState({
+        ...this.state,
+        [evt.target.name]: value
+      });
     }
 
     componentDidMount = async () => {
         this.getCollection();
         const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
     };
+
+    setMaxSupply = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setMaxSupply(this.state.maxSupply).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setPresalePrice = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setPresalePrice(this.state.presalePrice).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setPrice = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setPrice(this.state.price).send({ from: this.props.parentState.currentAccount });
+    }
 
     getCollection = async () => {
         const { colAddress } = this.props.match.params;
@@ -28,6 +61,11 @@ class CollectionManager extends React.Component {
         const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
         this.setState({collectionInfos : infosNft});
         console.log(infosNft)
+
+    }
+
+    setUpStage = async (stage) => {
+
     }
 
     render() {
@@ -38,43 +76,160 @@ class CollectionManager extends React.Component {
             
   <div className="container px-5 py-5 mx-auto flex flex-wrap flex-col">
     <TabList className="flex mx-auto flex-wrap">
-      <Tab className="cursor-pointer sm:px-6 py-3 w-1/2 sm:w-auto justify-center sm:justify-start border-b-2 title-font font-medium bg-gray-100 inline-flex items-center leading-none border-red-500 text-red-500 tracking-wider rounded-t">
+      <Tab className="cursor-pointer sm:px-6 py-3 w-1/2 sm:w-auto justify-center sm:justify-start border-b-2 title-font font-medium inline-flex items-center leading-none border-gray-200 hover:text-gray-900 tracking-wider">
         <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5 mr-3" viewBox="0 0 24 24">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        </svg>Collection
+        </svg>COLLECTION
       </Tab>
       <Tab className="cursor-pointer sm:px-6 py-3 w-1/2 sm:w-auto justify-center sm:justify-start border-b-2 title-font font-medium inline-flex items-center leading-none border-gray-200 hover:text-gray-900 tracking-wider">
         <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5 mr-3" viewBox="0 0 24 24">
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-        </svg>Phases
-      </Tab>
-      <Tab className="cursor-pointer sm:px-6 py-3 w-1/2 sm:w-auto justify-center sm:justify-start border-b-2 title-font font-medium inline-flex items-center leading-none border-gray-200 hover:text-gray-900 tracking-wider">
-        <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5 mr-3" viewBox="0 0 24 24">
-          <circle cx="12" cy="5" r="3"></circle>
-          <path d="M12 22V8M5 12H2a10 10 0 0020 0h-3"></path>
-        </svg>???
+        </svg>STAGE
       </Tab>
     </TabList>
   </div>
 </section>
-<TabPanel></TabPanel>
+<TabPanel>
+  <div className="lg:w-2/3 md:w-2/3 mx-auto">
+      <div className="flex flex-wrap -m-2">
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="name" className="leading-7 text-sm text-gray-600">Name</label>
+            <input placeholder={this.state.collectionInfos.name} type="text" id="name" name="name" maxLength="40" readOnly className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="symbol" className="leading-7 text-sm text-gray-600">Symbol</label>
+            <input type="text" placeholder={this.state.collectionInfos.symbol} id="symbol" name="symbol" maxLength="6" readOnly className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="maxSupply" className="leading-7 text-sm text-gray-600">Max supply</label>
+            <input required placeholder={this.state.collectionInfos.maxSupply} type="number" min="1" step="1" id="maxSupply" name="maxSupply" value={this.state.maxSupply} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change max supply</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="presalePrice" className="leading-7 text-sm text-gray-600">Presale price (ETH)</label>
+            <input type="number" placeholder={Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.presalePrice))} min="0" step="0.1" id="presalePrice" name="presalePrice" value={this.state.presalePrice} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change presale price</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="mintPrice" className="leading-7 text-sm text-gray-600">Mint price (ETH)</label>
+            <input type="number" placeholder={Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.price))} min="0" step="0.1" id="mintPrice" name="mintPrice" value={this.state.mintPrice} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change price</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="maxPerWallet" className="leading-7 text-sm text-gray-600">Max NFT per wallet</label>
+            <input type="number" placeholder={this.state.collectionInfos.maxPerWallet} min="1" step="1" id="maxPerWallet" name="maxPerWallet" value={this.state.maxPerWallet} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change max NFT</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="banner" className="leading-7 text-sm text-gray-600">Banner image URL</label>
+            <input type="url" placeholder={this.state.collectionInfos.banner} id="banner" name="banner" value={this.state.banner} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change banner</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+          <span className="mr-3">Category</span>
+            <div className="relative">
+              <select name="category" value={this.state.category} onChange={this.handleChange} className="w-full rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-base pl-3 pr-10">
+                <option value="Arts">Arts</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Music">Music</option>
+                <option value="Photographie">Photographie</option>
+                <option value="Sports">Sports</option>
+              </select>
+              <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
+                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4" viewBox="0 0 24 24">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change category</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="newBaseURI" className="leading-7 text-sm text-gray-600">Base URI</label>
+            <input type="text" placeholder={this.state.collectionInfos.baseURI} id="newBaseURI" name="newBaseURI" value={this.state.newBaseURI} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change base URI</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <span className="mr-3">Extension</span>
+            <div className="relative">
+              <select name="extension" value={this.state.extension} onChange={this.handleChange} className="w-full rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-base pl-3 pr-10">
+                <option value=".jpg">jpg</option>
+                <option value=".jpeg">jpeg</option>
+                <option value=".png">png</option>
+                <option value=".gif">gif</option>
+              </select>
+              <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
+                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4" viewBox="0 0 24 24">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="p-2 1/2">
+          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change extension</button>
+        </div>
+        <div className="p-2 w-1/2">
+          <div className="relative">
+            <label htmlFor="description" className="leading-7 text-sm text-gray-600">Description</label>
+            <textarea id="description"  placeholder={this.state.collectionInfos.description} name="description" value={this.state.description} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+          </div>
+        </div>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.createNFTCollection()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change description</button>
+        </div>
+      </div>
+    </div>
+</TabPanel>
 <TabPanel>
 <section className="text-gray-600 body-font">
   <div className="container px-5 pb-5 mx-auto flex flex-wrap">
     <div className="flex flex-wrap w-full">
-      <div className="lg:w-2/5 md:w-1/2 md:pr-10 md:py-6">
+      <div className="w-1/2 mt-5 mx-auto">
         <div className="flex relative pb-12">
           <div className="h-full w-10 absolute inset-0 flex items-center justify-center">
             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
           </div>
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500 inline-flex items-center justify-center text-white relative z-10">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
+            1
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Collection</h2>
-            <p className="leading-relaxed">VHS cornhole pop-up, try-hard 8-bit iceland helvetica. Kinfolk bespoke try-hard cliche palo santo offal.</p>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Config stage</h2>
+            <div className="w-1/3"> 
+                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
+                      </div>
           </div>
         </div>
         <div className="flex relative pb-12">
@@ -82,29 +237,26 @@ class CollectionManager extends React.Component {
             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
           </div>
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500 inline-flex items-center justify-center text-white relative z-10">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-            </svg>
+            2
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Phases</h2>
-            <p className="leading-relaxed">Vice migas literally kitsch +1 pok pok. Truffaut hot chicken slow-carb health goth, vape typewriter.</p>
-          </div>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Public Whitelist</h2>
+            <div className="w-1/3"> 
+                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
+                      </div>          </div>
         </div>
         <div className="flex relative pb-12">
           <div className="h-full w-10 absolute inset-0 flex items-center justify-center">
             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
           </div>
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500 inline-flex items-center justify-center text-white relative z-10">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-              <circle cx="12" cy="5" r="3"></circle>
-              <path d="M12 22V8M5 12H2a10 10 0 0020 0h-3"></path>
-            </svg>
+            3
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">STEP 3</h2>
-            <p className="leading-relaxed">Coloring book nar whal glossier master cleanse umami. Salvia +1 master cleanse blog taiyaki.</p>
-          </div>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Presale</h2>
+            <div className="w-1/3"> 
+                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
+                      </div>          </div>
         </div>
         <div className="flex relative pb-12">
           <div className="h-full w-10 absolute inset-0 flex items-center justify-center">
@@ -117,9 +269,10 @@ class CollectionManager extends React.Component {
             </svg>
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">STEP 4</h2>
-            <p className="leading-relaxed">VHS cornhole pop-up, try-hard 8-bit iceland helvetica. Kinfolk bespoke try-hard cliche palo santo offal.</p>
-          </div>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Sale</h2>
+            <div className="w-1/3"> 
+                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
+                      </div>          </div>
         </div>
         <div className="flex relative">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500 inline-flex items-center justify-center text-white relative z-10">
@@ -129,17 +282,16 @@ class CollectionManager extends React.Component {
             </svg>
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">FINISH</h2>
-            <p className="leading-relaxed">Pitchfork ugh tattooed scenester echo park gastropub whatever cold-pressed retro.</p>
-          </div>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">SoldOut</h2>
+            <div className="w-1/3"> 
+                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
+                      </div>          </div>
         </div>
       </div>
-      <img className="lg:w-3/5 md:w-1/2 object-cover object-center rounded-lg md:mt-0 mt-12" src="https://dummyimage.com/1200x500" alt="step" />
     </div>
   </div>
 </section>
 </TabPanel>
-<TabPanel></TabPanel>
 </Tabs>
         </div>
         )

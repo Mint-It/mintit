@@ -20,3 +20,11 @@
 .App-link {
   color: #09d3ac;
 }
+
+.react-tabs__tab--selected {
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+  --tw-border-opacity: 1;
+  border-color: rgb(240 68 68 / var(--tw-border-opacity));
+  color: rgb(240 68 68 / var(--tw-text-opacity));
+}
+
