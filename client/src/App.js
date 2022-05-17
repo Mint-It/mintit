@@ -14,6 +14,7 @@ import Create from './components/Create';
 import Explore from './components/Explore';
 import Artist from './components/Artist';
 import Collection from './components/Collection';
+import CollectionManager from './components/CollectionManager';
 import NFT from './components/NFT';
 import User from './components/User';
 import Error from './components/Error';
@@ -88,6 +89,10 @@ class App extends React.Component {
       const params = useParams();
       return <NFT parentState={this.state} {...{...props, match: {params}} } />
     }
+    const CollectionManagerWrapper = (props) => {
+      const params = useParams();
+      return <CollectionManager parentState={this.state} {...{...props, match: {params}} } />
+    }
     return (
       <Routes>
         <Route exact path='/' element={<Home parentState={this.state}/>} />
@@ -96,6 +101,7 @@ class App extends React.Component {
         <Route exact path='/explore/:colAddress' element={<CollectionWrapper />} />
         <Route exact path='/explore/:colAddress/:tokenid' element={<NFTWrapper />} />
         <Route exact path='/artist' element={<Artist parentState={this.state}/>} />
+        <Route exact path='/artist/:colAddress' element={<CollectionManagerWrapper />} />
         <Route exact path='/user' element={<User parentState={this.state}/>} />
         <Route exact path='/collection' element={<Collection parentState={this.state}/>} />
       </Routes>

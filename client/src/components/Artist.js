@@ -3,6 +3,7 @@ import React from 'react';
 import artist from '../assets/img/artist.jpg';
 import Web3 from "web3";
 import { toast } from 'react-toastify';
+import CollectionCard from './CollectionCard';
 
 class Artist extends React.Component {
 
@@ -10,7 +11,10 @@ class Artist extends React.Component {
       super(props);
       this.state = {
         artistName: "",
-        artistDescription: ""
+        artistDescription: "",
+        artistCollections: [],
+        filterStage: -1,
+        filterCategory: -1,
       }
     }
 
@@ -46,7 +50,7 @@ class Artist extends React.Component {
     getArtist = async () => {
       try{
         const artistDatas = await this.props.parentState.contractNFTManager.methods.getArtistDetails(this.props.parentState.currentAccount).call({ from:  this.props.parentState.currentAccount });
-        this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description']});
+        this.setState({artistName: artistDatas['name'], artistDescription: artistDatas['description'], artistCollections: artistDatas['collections']});
       } catch (error) {
           // Catch any errors for any of the above operations.
           toast.error(error.message);
@@ -57,7 +61,6 @@ class Artist extends React.Component {
     render() {
         return (
         <div>
-          
           <div className="flex flex-col text-center w-full">
           <section className="text-gray-600 body-font relative">
   <div className="absolute inset-0 bg-gray-300">
@@ -66,23 +69,11 @@ class Artist extends React.Component {
   <div className="container px-5 py-5 mx-auto flex">
   <div className="mr-6 lg:w-2/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
   <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">My Collections</h2>
-
   <div className="flex flex-wrap -m-4">
-      <div className="p-4 md:w-1/3">
-        <div className="flex rounded-lg h-full bg-gray-100 p-8 flex-col">
-          <div className="flex items-center mb-3">
-            <h2 className="text-gray-900 text-lg title-font font-medium">Collection 1</h2>
-          </div>
-          <div className="flex-grow">
-            <p className="leading-relaxed text-base">Afficher les datas</p>
-            <a className="mt-3 text-red-500 inline-flex items-center">Manage collection
-              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
+  {this.state.artistCollections.map(collection => (
+            <CollectionCard parentState={this.props.parentState} collectionAddress={collection} key={collection} manageLink={true} filterStage={this.state.filterStage} filterCategory={this.state.filterCategory} />
+ ))}
+     
 </div>
   </div>
     <div className="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
