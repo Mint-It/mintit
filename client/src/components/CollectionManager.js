@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import NFTCard from './NFTCard';
 import { toast } from 'react-toastify';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import DateTimePicker from 'react-datetime-picker';
 
 class CollectionManager extends React.Component {
     constructor(props) {
@@ -18,10 +19,12 @@ class CollectionManager extends React.Component {
         mintPrice: "",
         maxPerWallet: "",
         banner: "",
-        newBaseURI: "",
+        baseURI: "",
         baseExtension: "",
         description: "",
-        category: ""
+        category: "",
+        startDateWhitelist: new Date(),
+        endDateWhitelist: new Date()
       }
     }
 
@@ -45,12 +48,43 @@ class CollectionManager extends React.Component {
 
     setPresalePrice = async () => {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setPresalePrice(this.state.presalePrice).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await contractNFT.methods.setPresalePrice(Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice))).send({ from: this.props.parentState.currentAccount });
     }
 
     setPrice = async () => {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setPrice(this.state.price).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await contractNFT.methods.setPrice(Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice))).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setBaseExtension = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setBaseExtension(this.state.baseExtension).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setMaxNbPerWallet = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setMaxNbPerWallet(this.state.maxPerWallet).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setBanner = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setBanner(this.state.banner).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setDescription = async () => {
+      console.log(this.state.description);
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setDescription(this.state.description).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setBaseURI = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setBaseURI(this.state.baseURI).send({ from: this.props.parentState.currentAccount });
+    }
+
+    setCalendar = async () => {
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.setCalendar([1, 1652821948, 1652821988]).send({ from: this.props.parentState.currentAccount });
     }
 
     getCollection = async () => {
@@ -61,10 +95,6 @@ class CollectionManager extends React.Component {
         const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
         this.setState({collectionInfos : infosNft});
         console.log(infosNft)
-
-    }
-
-    setUpStage = async (stage) => {
 
     }
 
@@ -110,7 +140,7 @@ class CollectionManager extends React.Component {
             <input required placeholder={this.state.collectionInfos.maxSupply} type="number" min="1" step="1" id="maxSupply" name="maxSupply" value={this.state.maxSupply} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
-        <div className="p-2 1/2">
+        <div className="p-2 w-1/2">
           <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change max supply</button>
         </div>
         <div className="p-2 w-1/2">
@@ -119,8 +149,8 @@ class CollectionManager extends React.Component {
             <input type="number" placeholder={Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.presalePrice))} min="0" step="0.1" id="presalePrice" name="presalePrice" value={this.state.presalePrice} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change presale price</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setPresalePrice()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change presale price</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
@@ -128,8 +158,8 @@ class CollectionManager extends React.Component {
             <input type="number" placeholder={Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.price))} min="0" step="0.1" id="mintPrice" name="mintPrice" value={this.state.mintPrice} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change price</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setPrice()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change price</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
@@ -137,8 +167,8 @@ class CollectionManager extends React.Component {
             <input type="number" placeholder={this.state.collectionInfos.maxPerWallet} min="1" step="1" id="maxPerWallet" name="maxPerWallet" value={this.state.maxPerWallet} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change max NFT</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setMaxNbPerWallet()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change max NFT</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
@@ -146,8 +176,8 @@ class CollectionManager extends React.Component {
             <input type="url" placeholder={this.state.collectionInfos.banner} id="banner" name="banner" value={this.state.banner} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change banner</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setBanner()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change banner</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
@@ -168,17 +198,17 @@ class CollectionManager extends React.Component {
             </div>
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change category</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setCategory()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change category</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
-            <label htmlFor="newBaseURI" className="leading-7 text-sm text-gray-600">Base URI</label>
-            <input type="text" placeholder={this.state.collectionInfos.baseURI} id="newBaseURI" name="newBaseURI" value={this.state.newBaseURI} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+            <label htmlFor="baseURI" className="leading-7 text-sm text-gray-600">Base URI</label>
+            <input type="text" placeholder={this.state.collectionInfos.baseURI} id="baseURI" name="baseURI" value={this.state.baseURI} onChange={this.handleChange} className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change base URI</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setBaseURI()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change base URI</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
@@ -198,8 +228,8 @@ class CollectionManager extends React.Component {
             </div>
           </div>
         </div>
-        <div className="p-2 1/2">
-          <button onClick={() => this.setMaxSupply()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change extension</button>
+        <div className="p-2 w-1/2">
+          <button onClick={() => this.setBaseExtension()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change extension</button>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
@@ -208,7 +238,7 @@ class CollectionManager extends React.Component {
           </div>
         </div>
         <div className="p-2 w-1/2">
-          <button onClick={() => this.createNFTCollection()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change description</button>
+          <button onClick={() => this.setDescription()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Change description</button>
         </div>
       </div>
     </div>
@@ -226,10 +256,19 @@ class CollectionManager extends React.Component {
             1
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Config stage</h2>
-            <div className="w-1/3"> 
-                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
-                      </div>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Public Whitelist</h2>
+            <div className="flex flex-wrap -m-2"><div className="w-1/2 p-2"> 
+            <div className="relative">
+            <label htmlFor="startDateWhitelist" className="leading-7 text-sm text-gray-600">Starting date/time</label>
+            <DateTimePicker onChange={this.handleChange} value={this.state.startDateWhitelist} />
+            </div>
+            </div>
+            <div className="w-1/2 p-2"> 
+            <div className="relative">
+            <label htmlFor="endDateWhitelist" className="leading-7 text-sm text-gray-600">Ending date/time</label>
+            <DateTimePicker onChange={this.handleChange} value={this.state.endDateWhitelist} />
+            </div></div>
+            </div>
           </div>
         </div>
         <div className="flex relative pb-12">
@@ -240,10 +279,8 @@ class CollectionManager extends React.Component {
             2
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Public Whitelist</h2>
-            <div className="w-1/3"> 
-                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
-                      </div>          </div>
+            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Presale</h2>
+        </div>
         </div>
         <div className="flex relative pb-12">
           <div className="h-full w-10 absolute inset-0 flex items-center justify-center">
@@ -253,26 +290,8 @@ class CollectionManager extends React.Component {
             3
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Presale</h2>
-            <div className="w-1/3"> 
-                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
-                      </div>          </div>
-        </div>
-        <div className="flex relative pb-12">
-          <div className="h-full w-10 absolute inset-0 flex items-center justify-center">
-            <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
-          </div>
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500 inline-flex items-center justify-center text-white relative z-10">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </div>
-          <div className="flex-grow pl-4">
             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Sale</h2>
-            <div className="w-1/3"> 
-                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
-                      </div>          </div>
+            </div>
         </div>
         <div className="flex relative">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500 inline-flex items-center justify-center text-white relative z-10">
@@ -282,10 +301,9 @@ class CollectionManager extends React.Component {
             </svg>
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">SoldOut</h2>
-            <div className="w-1/3"> 
-                      <button onClick={() => this.setUpStage("f")}  className="flex mx-auto text-white bg-red-500 border-0 px-1 focus:outline-none hover:bg-red-600 rounded text-lg">Go to next stage</button>
-                      </div>          </div>
+          <button onClick={() => this.setCalendar()}  className="flex mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Set the calendar</button>
+
+            </div>
         </div>
       </div>
     </div>

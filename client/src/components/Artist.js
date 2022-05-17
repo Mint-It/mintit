@@ -87,7 +87,7 @@ class Artist extends React.Component {
         <label htmlFor="artistDescription" className="leading-7 text-sm text-gray-600">Description</label>
         <textarea id="artistDescription" name="artistDescription" value={this.state.artistDescription} onChange={this.handleChange} className="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
       </div>
-      <button onClick={() => this.setArtist()} className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">OK!</button>
+      <button onClick={() => this.setArtist()} className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded text-lg">Set my profile</button>
     </div>
   </div>
 </section>
