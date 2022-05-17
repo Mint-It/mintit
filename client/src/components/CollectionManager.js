@@ -23,8 +23,13 @@ class CollectionManager extends React.Component {
         baseExtension: "",
         description: "",
         category: "",
-        startDateWhitelist: new Date(),
-        endDateWhitelist: new Date()
+        startDateWhitelist: null,
+        endDateWhitelist: null,
+        startDatePresale: null,
+        endDatePresale: null,
+        startDateSale: null,
+        endDateSale: null,
+        calendar: []
       }
     }
 
@@ -40,6 +45,21 @@ class CollectionManager extends React.Component {
         this.getCollection();
         const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
     };
+
+    getCollection = async () => {
+      const { colAddress } = this.props.match.params;
+      this.state.collectionAddress = colAddress;
+      this.setState({collectionAddress : String(colAddress)});
+      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
+      const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
+      this.setState({collectionInfos : infosNft});
+      this.setState({calendar : await contractNFT.methods.getCalendar().call()});
+      for (let i=0;i<this.state.calendar.length;i+=3) {
+        if(this.state.calendar[i] == 1) this.setState({startDateWhitelist: new Date(this.state.calendar[i+1]*1000),endDateWhitelist: new Date(this.state.calendar[i+2]*1000)})
+        else if (this.state.calendar[i] == 2) this.setState({startDatePresale: new Date(this.state.calendar[i+1]*1000),endDatePresale: new Date(this.state.calendar[i+2]*1000)})
+        else if (this.state.calendar[i] == 3) this.setState({startDateSale: new Date(this.state.calendar[i+1]*1000),endDateSale: new Date(this.state.calendar[i+2]*1000)})
+      }
+  }
 
     setMaxSupply = async () => {
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
@@ -83,19 +103,12 @@ class CollectionManager extends React.Component {
     }
 
     setCalendar = async () => {
+      const arrayCalendar = [];
+      if((this.state.startDateWhitelist != null) && (this.state.endDateWhitelist != null)) arrayCalendar.push(1, Math.floor(this.state.startDateWhitelist.getTime()/1000), Math.floor(this.state.endDateWhitelist.getTime()/1000));
+      if((this.state.startDatePresale != null) && (this.state.endDatePresale != null)) arrayCalendar.push(2, Math.floor(this.state.startDatePresale.getTime()/1000), Math.floor(this.state.endDatePresale.getTime()/1000));
+      if((this.state.startDateSale != null) && (this.state.endDateSale != null)) arrayCalendar.push(3, Math.floor(this.state.startDateSale.getTime()/1000), Math.floor(this.state.endDateSale.getTime()/1000));
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setCalendar([1, 1652821948, 1652821988]).send({ from: this.props.parentState.currentAccount });
-    }
-
-    getCollection = async () => {
-        const { colAddress } = this.props.match.params;
-        this.state.collectionAddress = colAddress;
-        this.setState({collectionAddress : String(colAddress)});
-        const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-        const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
-        this.setState({collectionInfos : infosNft});
-        console.log(infosNft)
-
+      const infosNft = await contractNFT.methods.setCalendar(arrayCalendar).send({ from: this.props.parentState.currentAccount });
     }
 
     render() {
@@ -114,7 +127,7 @@ class CollectionManager extends React.Component {
       <Tab className="cursor-pointer sm:px-6 py-3 w-1/2 sm:w-auto justify-center sm:justify-start border-b-2 title-font font-medium inline-flex items-center leading-none border-gray-200 hover:text-gray-900 tracking-wider">
         <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5 mr-3" viewBox="0 0 24 24">
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-        </svg>STAGE
+        </svg>STAGES
       </Tab>
     </TabList>
   </div>
@@ -247,7 +260,7 @@ class CollectionManager extends React.Component {
 <section className="text-gray-600 body-font">
   <div className="container px-5 pb-5 mx-auto flex flex-wrap">
     <div className="flex flex-wrap w-full">
-      <div className="w-1/2 mt-5 mx-auto">
+      <div className="w-2/3 mt-5 mx-auto">
         <div className="flex relative pb-12">
           <div className="h-full w-10 absolute inset-0 flex items-center justify-center">
             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -256,17 +269,17 @@ class CollectionManager extends React.Component {
             1
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Public Whitelist</h2>
+            <h2 className="font-medium title-font text-m text-gray-900 mb-1 tracking-wider">Public Whitelist</h2>
             <div className="flex flex-wrap -m-2"><div className="w-1/2 p-2"> 
             <div className="relative">
-            <label htmlFor="startDateWhitelist" className="leading-7 text-sm text-gray-600">Starting date/time</label>
-            <DateTimePicker onChange={this.handleChange} value={this.state.startDateWhitelist} />
+            <label htmlFor="startDateWhitelist" className="leading-7 text-sm text-gray-600">Start </label>
+            <DateTimePicker name="startDateWhitelist" onChange={(value) => this.setState({ startDateWhitelist: value })} value={this.state.startDateWhitelist} />
             </div>
             </div>
             <div className="w-1/2 p-2"> 
             <div className="relative">
-            <label htmlFor="endDateWhitelist" className="leading-7 text-sm text-gray-600">Ending date/time</label>
-            <DateTimePicker onChange={this.handleChange} value={this.state.endDateWhitelist} />
+            <label htmlFor="endDateWhitelist" className="leading-7 text-sm text-gray-600">End </label>
+            <DateTimePicker name="endDateWhitelist" onChange={(value) => this.setState({ endDateWhitelist: value })} value={this.state.endDateWhitelist} />
             </div></div>
             </div>
           </div>
@@ -279,7 +292,19 @@ class CollectionManager extends React.Component {
             2
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Presale</h2>
+            <h2 className="font-medium title-font text-m text-gray-900 mb-1 tracking-wider">Presale</h2>
+          <div className="flex flex-wrap -m-2"><div className="w-1/2 p-2"> 
+            <div className="relative">
+            <label htmlFor="startDatePresale" className="leading-7 text-sm text-gray-600">Start </label>
+            <DateTimePicker name="startDatePresale" onChange={(value) => this.setState({ startDatePresale: value })} value={this.state.startDatePresale} />
+            </div>
+            </div>
+            <div className="w-1/2 p-2"> 
+            <div className="relative">
+            <label htmlFor="endDatePresale" className="leading-7 text-sm text-gray-600">End </label>
+            <DateTimePicker name="endDatePresale" onChange={(value) => this.setState({ endDatePresale: value })} value={this.state.endDatePresale} />
+            </div></div>
+            </div>
         </div>
         </div>
         <div className="flex relative pb-12">
@@ -290,7 +315,19 @@ class CollectionManager extends React.Component {
             3
           </div>
           <div className="flex-grow pl-4">
-            <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Sale</h2>
+            <h2 className="font-medium title-font text-m text-gray-900 mb-1 tracking-wider">Sale</h2>
+            <div className="flex flex-wrap -m-2"><div className="w-1/2 p-2"> 
+            <div className="relative">
+            <label htmlFor="startDateSale" className="leading-7 text-sm text-gray-600">Start </label>
+            <DateTimePicker name="startDateSale" onChange={(value) => this.setState({ startDateSale: value })} value={this.state.startDateSale} />
+            </div>
+            </div>
+            <div className="w-1/2 p-2"> 
+            <div className="relative">
+            <label htmlFor="endDateSale" className="leading-7 text-sm text-gray-600">End </label>
+            <DateTimePicker name="endDateSale" onChange={(value) => this.setState({ endDateSale: value })} value={this.state.endDateSale} />
+            </div></div>
+            </div>
             </div>
         </div>
         <div className="flex relative">
