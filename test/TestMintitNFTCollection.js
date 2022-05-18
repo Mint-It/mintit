@@ -18,7 +18,7 @@ contract("MintitNFTCollectionManager", accounts => {
 
     it("...Create new NFT collection", async () => {
         //let tx = await mintitMgtInstance.createMintitNFTCollection("My duss", "DUSS", {from: artist });
-        let tx = await mintitMgtInstance.createMintitNFTCollection("Incomplete Control", "BLOCKS", [80, web3.utils.toWei("3", "ether"), web3.utils.toWei("4", "ether"), 2], ["https://lh3.googleusercontent.com/gI2OEGj-wAogAC56WZq8VsFJd0FPEwBkTXjklcmahNJDEDxVxT2YoGKtOEEemt9jclk-EMv1jeRFkfa98__C0zpJ0DULxvAelzv1=h200", "Incomplete Control is about letting go, allowing room for error and imperfection. It is a meditation on the relation between analogue and computational aesthetics. The output space is a continuous spectrum. Each iteration has its own character to discover and enjoy, if you are willing to give it the time.", "Music", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png"], {from: artist });
+        let tx = await mintitMgtInstance.createMintitNFTCollection("Incomplete Control", "BLOCKS", [80, web3.utils.toWei("3", "ether"), web3.utils.toWei("4", "ether"), 2], ["https://banner.jpg", "Description", "Music", "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo",".png"], {from: artist });
         truffleAssert.eventEmitted(tx, 'MintitNFTCollectionCreated', (ev) => {
             collectionAddress = ev._collectionAddress;
             return ev._collectionName == "Incomplete Control";
@@ -38,75 +38,65 @@ contract("MintitNFTCollectionManager", accounts => {
         await truffleAssert.fails(mintitNFTinstance.setMaxSupply(50, {from: user }));
     });
 
-    it("...check max supply", async () => {
-        let supply = await mintitNFTinstance.getCollectionInfos();
-        assert.equal(supply['maxSupply'], 80, "Supply should be set to 80");
+    it("...check collection params", async () => {
+        let infos = await mintitNFTinstance.getCollectionInfos();
+        assert.equal(infos['maxSupply'], 80, "Supply should be set to 80");
+        assert.equal(infos['maxPerWallet'], 2, "Max per wallet should be set to 2");
+        assert.equal(infos['presalePrice'], web3.utils.toWei("3", "ether"), "Price should be set to 3 ether");
+        assert.equal(infos['price'], web3.utils.toWei("4", "ether"), "Price should be set to 3 ether");
+        assert.equal(infos['description'], "Description", "Description not correct");
+        assert.equal(infos['banner'], "https://banner.jpg", "Banner not correct");
+        assert.equal(infos['category'], "Music", "Category not correct");
+        assert.equal(infos['baseURI'], "ipfs://QmfHqZdR8TTrspohWav6kgqbD5vwj5f289t28KPpat92Wo", "baseURI not correct");
+        assert.equal(infos['baseExtension'], ".png", "base extension not correct");
     });
 
     it("...change max supply", async () => {
-        await mintitNFTinstance.setMaxSupply(50, {from: artist });
+        await mintitNFTinstance.setMaxSupply(3, {from: artist });
         let supply = await mintitNFTinstance.getCollectionInfos();
-        assert.equal(supply['maxSupply'], 50, "Supply should be set to 50");
+        assert.equal(supply['maxSupply'], 3, "Supply should be set to 50");
     });
 
-    it("...check calendar", async () => {
-        let tx = await mintitNFTinstance.setCalendar([1, 1651960495, 1652133295], {from: artist });
+    it("...set calendar to whitelist and test whitelist", async () => {
+        let tx = await mintitNFTinstance.setCalendar([1, parseInt(Date.now()/1000)-3600, parseInt(Date.now()/1000)+3600], {from: artist });
         tx = await mintitNFTinstance.addPublicWhitelist({from: user });
         let result = await mintitNFTinstance.isPublicWhiteListed(user);
         assert.equal(result, true, "Should be in public Whitelist");
-        //console.log(stage);
-        //assert.equal(stage, true, "Should be stage Whitelist");
     });
 
-    it("...mint a NFT should fail if Sale did not start yet", async () => {
+    it("...premint or mint a NFT should fail if Sale did not start yet", async () => {
         await truffleAssert.fails(mintitNFTinstance.MintArt({from: user }));
+        await truffleAssert.fails(mintitNFTinstance.PresaleMintArt({from: user }));
     });
 
-    it("...Move to Whitelist", async () => {
-        let nftId = await mintitNFTinstance.setUpStage(1, {from: artist });
-        let stage = await mintitNFTinstance.sellingStage({from: user });
-        assert.equal(stage, 1, "Should be stage Whitelist");
-    });
 
-    /*it("...Add user to Public Whitelist", async () => {
-        let tx = await mintitNFTinstance.addPublicWhitelist({from: user });
-        let result = await mintitNFTinstance.isPublicWhiteListed(user);
-        assert.equal(result, true, "Should be in public Whitelist");
-    });*/
-
-    it("...Move to Presale", async () => {
-        let nftId = await mintitNFTinstance.setUpStage(2, {from: artist });
-        let stage = await mintitNFTinstance.sellingStage({from: user });
-        assert.equal(stage, 2, "Should be stage Presale");
+    it("...Move to Presale and mint a NFT in a presale", async () => {
+        let tx = await mintitNFTinstance.setCalendar([1, parseInt(Date.now()/1000)-7200, parseInt(Date.now()/1000)-3600,
+                                                      2, parseInt(Date.now()/1000)-3600, parseInt(Date.now()/1000)+3600], {from: artist });
+        tx = await mintitNFTinstance.PresaleMintArt([], {from: user, value: web3.utils.toWei("3", "ether") });
+        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
+            return ev.tokenId == 1;
+        });
     });
 
     it("...mint a NFT in a presale should fail if not whitelisted", async () => {
         await truffleAssert.fails(mintitNFTinstance.PresaleMintArt([], {from: userNotWL, value: web3.utils.toWei("3", "ether") }));
     });
 
-    it("...mint a NFT in a presale", async () => {
-        let tx = await mintitNFTinstance.PresaleMintArt([], {from: user, value: web3.utils.toWei("3", "ether") });
-        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
-            return ev.tokenId == 1;
-        });
-    });
+    it("...Move to Sale and in ta NFT", async () => {
+        let tx = await mintitNFTinstance.setCalendar([1, parseInt(Date.now()/1000)-7200, parseInt(Date.now()/1000)-3600,
+                                                      2, parseInt(Date.now()/1000)-3600, parseInt(Date.now()/1000)-2000,
+                                                      3, parseInt(Date.now()/1000)-2000, parseInt(Date.now()/1000)+2000], {from: artist });
 
-    it("...Move to Sale", async () => {
-        let nftId = await mintitNFTinstance.setUpStage(3, {from: artist });
-        let stage = await mintitNFTinstance.sellingStage({from: user });
-        assert.equal(stage, 3, "Should be stage Sale");
+
+        tx = await mintitNFTinstance.MintArt({from: user, value: web3.utils.toWei("4", "ether") });
+        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
+            return ev.tokenId == 2;
+        });
     });
 
     it("...mint a NFT should fail if sending less than the price", async () => {
         await truffleAssert.fails(mintitNFTinstance.MintArt({from: user, value: web3.utils.toWei("3", "ether") }));
-    });
-
-    it("...mint a NFT", async () => {
-        let tx = await mintitNFTinstance.MintArt({from: user, value: web3.utils.toWei("4", "ether") });
-        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
-            return ev.tokenId == 2;
-        });
-        //assert.equal(nftId, 1, "First mint should have id 1");
     });
 
     it("...check user balance", async () => {
@@ -114,5 +104,18 @@ contract("MintitNFTCollectionManager", accounts => {
         assert.equal(nbNft, 2, "user should have 2 NFT");
     });
 
+    it("...mint a NFT should fail as user already has 2 NFT", async () => {
+        await truffleAssert.fails(mintitNFTinstance.MintArt({from: user, value: web3.utils.toWei("4", "ether") }));
+    });
 
+    it("...Mint another NFT from another user", async () => {
+        tx = await mintitNFTinstance.MintArt({from: userNotWL, value: web3.utils.toWei("4", "ether") });
+        truffleAssert.eventEmitted(tx, 'Transfer', (ev) => {
+            return ev.tokenId == 3;
+        });
+    });
+
+    it("...Mint another NFT should fail as max supply reached", async () => {
+        await truffleAssert.fails(mintitNFTinstance.MintArt({from: userNotWL, value: web3.utils.toWei("4", "ether") }));
+    });
 });
