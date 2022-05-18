@@ -7,6 +7,7 @@ import NFTCard from './NFTCard';
 import { toast } from 'react-toastify';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import DateTimePicker from 'react-datetime-picker';
+import { NavLink } from 'react-router-dom';
 
 class CollectionManager extends React.Component {
     constructor(props) {
@@ -29,7 +30,8 @@ class CollectionManager extends React.Component {
         endDatePresale: null,
         startDateSale: null,
         endDateSale: null,
-        calendar: []
+        calendar: [],
+        contractNFT: null
       }
     }
 
@@ -43,7 +45,6 @@ class CollectionManager extends React.Component {
 
     componentDidMount = async () => {
         this.getCollection();
-        const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
     };
 
     getCollection = async () => {
@@ -52,7 +53,7 @@ class CollectionManager extends React.Component {
       this.setState({collectionAddress : String(colAddress)});
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
       const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
-      this.setState({collectionInfos : infosNft});
+      this.setState({collectionInfos : infosNft, contractNFT: contractNFT});
       this.setState({calendar : await contractNFT.methods.getCalendar().call()});
       for (let i=0;i<this.state.calendar.length;i+=3) {
         if(this.state.calendar[i] == 1) this.setState({startDateWhitelist: new Date(this.state.calendar[i+1]*1000),endDateWhitelist: new Date(this.state.calendar[i+2]*1000)})
@@ -62,44 +63,35 @@ class CollectionManager extends React.Component {
   }
 
     setMaxSupply = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setMaxSupply(this.state.maxSupply).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setMaxSupply(this.state.maxSupply).send({ from: this.props.parentState.currentAccount });
     }
 
     setPresalePrice = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setPresalePrice(Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice))).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setPresalePrice(Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice))).send({ from: this.props.parentState.currentAccount });
     }
 
     setPrice = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setPrice(Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice))).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setPrice(Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice))).send({ from: this.props.parentState.currentAccount });
     }
 
     setBaseExtension = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setBaseExtension(this.state.baseExtension).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setBaseExtension(this.state.baseExtension).send({ from: this.props.parentState.currentAccount });
     }
 
     setMaxNbPerWallet = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setMaxNbPerWallet(this.state.maxPerWallet).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setMaxNbPerWallet(this.state.maxPerWallet).send({ from: this.props.parentState.currentAccount });
     }
 
     setBanner = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setBanner(this.state.banner).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setBanner(this.state.banner).send({ from: this.props.parentState.currentAccount });
     }
 
     setDescription = async () => {
-      console.log(this.state.description);
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setDescription(this.state.description).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setDescription(this.state.description).send({ from: this.props.parentState.currentAccount });
     }
 
     setBaseURI = async () => {
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setBaseURI(this.state.baseURI).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setBaseURI(this.state.baseURI).send({ from: this.props.parentState.currentAccount });
     }
 
     setCalendar = async () => {
@@ -107,8 +99,7 @@ class CollectionManager extends React.Component {
       if((this.state.startDateWhitelist != null) && (this.state.endDateWhitelist != null)) arrayCalendar.push(1, Math.floor(this.state.startDateWhitelist.getTime()/1000), Math.floor(this.state.endDateWhitelist.getTime()/1000));
       if((this.state.startDatePresale != null) && (this.state.endDatePresale != null)) arrayCalendar.push(2, Math.floor(this.state.startDatePresale.getTime()/1000), Math.floor(this.state.endDatePresale.getTime()/1000));
       if((this.state.startDateSale != null) && (this.state.endDateSale != null)) arrayCalendar.push(3, Math.floor(this.state.startDateSale.getTime()/1000), Math.floor(this.state.endDateSale.getTime()/1000));
-      const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      const infosNft = await contractNFT.methods.setCalendar(arrayCalendar).send({ from: this.props.parentState.currentAccount });
+      const infosNft = await this.state.contractNFT.methods.setCalendar(arrayCalendar).send({ from: this.props.parentState.currentAccount });
     }
 
     render() {
@@ -116,7 +107,14 @@ class CollectionManager extends React.Component {
         <div>
           <Tabs>
             <section className="text-gray-600 body-font">
-            
+            <section class="text-gray-600 body-font">
+  <div class="container px-5 mx-auto">
+    <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+      <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Collection {this.state.collectionInfos.name} ({this.state.collectionInfos.symbol})</h1>
+      <NavLink to={'/explore/' + this.state.collectionAddress} ><button class="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0">View collection</button></NavLink>
+    </div>
+  </div>
+</section>
   <div className="container px-5 py-5 mx-auto flex flex-wrap flex-col">
     <TabList className="flex mx-auto flex-wrap">
       <Tab className="cursor-pointer sm:px-6 py-3 w-1/2 sm:w-auto justify-center sm:justify-start border-b-2 title-font font-medium inline-flex items-center leading-none border-gray-200 hover:text-gray-900 tracking-wider">
