@@ -1,4 +1,4 @@
-# Modèles de conception
+# Design pattern (in progress)
 
 -   [Smart Contracts](#contracts)
     -   [MintitNFTCollectionManager](#MintitNFTCollectionManager)
@@ -10,26 +10,23 @@
 
 # Smart Contracts <a name="contracts"></a>
 
-Plusieurs Smart Contracts ont été créé pour les besoins du projets.
+Several Smart Contracts have been created for the needs of the project.
 
 ## MintitNFTCollectionManager <a name="MintitNFTCollectionManager"></a>
-
-C'est 
 
 ## MintitNFTCollection <a name="MintitNFTCollection"></a>
 
 # Tools <a name="tools"></a>
 
-Truffle 
-Le scripts 
-initFullCollections
+We use Truffle to deploy smart contracts.
+Ganache is used for development/testing of smart contracts but the beta will be deployed on the Kovan test blockchain so that users can test the application.
 
 # dApp <a name="dapp"></a>
 
 ## Frameworks
 
-La dApp est concu avec le framework React et le l'API JavaScript Ethereum web3.js
+The dApp is built with the React framework and the Ethereum web3.js JavaScript API
 
 ## Hosting 
 
-La dApp est déployé sur heroku : https://mintit.herokuapp.com/
+The dApp is deployed on heroku : https://mintit.herokuapp.com/

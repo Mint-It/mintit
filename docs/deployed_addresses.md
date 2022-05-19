@@ -1,6 +1,6 @@
-# Adresses des Smart Contracts
+# Smart contracts addresses
 
-Les contrats sont déployés sur la Blockchain de test Kovan.
+Smart contracts are deployed on the Kovan blockchain.
 
 [MintitNFTCollectionManager](https://kovan.etherscan.io/address/0xa7db6c74f20ead2Cfb66A437E650d3241B653340) 0xa7db6c74f20ead2Cfb66A437E650d3241B653340
 
