@@ -12,7 +12,7 @@
 
 Several Smart Contracts have been created for the needs of the project.
 <p align="center" >
-    <img width="650" src="./assets/MintitNFTCollectionManager_schema.png"></img>
+    <img width="500" src="./assets/MintitNFTCollectionManager_schema.png"></img>
 </p>
 
 ## MintitNFTCollectionManager <a name="MintitNFTCollectionManager"></a>
