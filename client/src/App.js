@@ -28,7 +28,8 @@ class App extends React.Component {
     this.state = {
       web3: null,
       currentAccount: null,
-      contractNFTManager: null
+      contractNFTManager: null,
+      ethBalance: 0
     };
   }
 
@@ -43,8 +44,9 @@ class App extends React.Component {
       const accounts = await web3.eth.requestAccounts();
       if (accounts.length !== 0) {
         const networkId = await web3.eth.net.getId();
+        const ethBalance = await web3.eth.getBalance(accounts[0]);
         const contract = new web3.eth.Contract(MintitNFTCollectionManagerContract.abi, MintitNFTCollectionManagerContract.networks[networkId].address);
-        this.setState({currentAccount: accounts[0], contractNFTManager: contract});
+        this.setState({currentAccount: accounts[0], contractNFTManager: contract, ethBalance: Web3.utils.fromWei(ethBalance)});
       } else {
         toast.error("No authorized account found.");
       }
@@ -60,6 +62,7 @@ class App extends React.Component {
     return (
       <NavLink to={'/user'}>
       <div className='flex flex-wrap items-center text-base'>
+        <button disabled className='text-gray-600 py-2 px-2 mr-2 rounded border border-red-500 font-bold'>{parseFloat(this.state.ethBalance).toFixed(4)} ETH</button>
         <p id="userWallet" className="text-lg text-gray-600 leading-3"><span id="userWalletSpan" className="text-red-500 font-bold text-base">{this.state.currentAccount.slice(0,5)+'...'+this.state.currentAccount.slice(38,42)}</span><br /><span style={{fontSize: "10px"}}>WALLET CONNECTED</span></p>
       </div>
       </NavLink>
@@ -124,7 +127,7 @@ class App extends React.Component {
       isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>Create</NavLink>
     </nav>
     <NavLink to={'/artist'} className={({ isActive }) => 
-      isActive ? "mr-5 text-gray-900" : "mr-5 hover:text-gray-900" }>
+      isActive ? "mr-2 text-gray-900" : "mr-2 hover:text-gray-900" }>
         <FontAwesomeIcon icon="user" /><span id="loginButtonText">&nbsp;Artist profile</span>
         </NavLink>
         {this.state.currentAccount ? this.connectedWallet() : this.connectWalletButton()}
