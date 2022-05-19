@@ -16,9 +16,9 @@ class Create extends React.Component {
         maxPerWallet: "",
         banner: "",
         newBaseURI: "",
-        baseExtension: "",
+        extension: ".jpg",
         description: "",
-        category: ""
+        category: "Arts"
       };
     }
 
