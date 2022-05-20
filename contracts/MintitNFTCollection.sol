@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./eip/2981/ERC2981Collection.sol";
 
 /** 
   * @title Mint It NFT collection
@@ -15,7 +16,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitter, Ownable {
+contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyGuard, PaymentSplitter, Ownable {
     using Strings for uint256;
     using Counters for Counters.Counter;
     address artistAddress;
@@ -72,6 +73,8 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
 
     /// @notice Event emitted each time a user get whitelisted
     event Whitelisted(address _userAddress);
+    /// @notice Event emitted after royalties are updated
+    event UpdatedRoyalties(address newRoyaltyAddress, uint256 newPercentage);
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
@@ -350,7 +353,19 @@ contract MintitNFTCollection is ERC721Enumerable, ReentrancyGuard, PaymentSplitt
             release(payable(payee(i)));
         }
     }
-    
+
+    /**
+    * @notice this will use internal functions to set EIP 2981
+    *  found in IERC2981.sol and used by ERC2981Collections.sol
+    * @param _royaltyAddress - Address for all royalties to go to
+    * @param _percentage - Precentage in whole number of comission
+    *  of secondary sales
+    **/
+    function setRoyaltyInfo(address _royaltyAddress, uint256 _percentage) public onlyOwner {
+        _setRoyalties(_royaltyAddress, _percentage);
+        emit UpdatedRoyalties(_royaltyAddress, _percentage);
+    }
+
     modifier callerIsUser() {
         require(tx.origin == msg.sender, "The caller is another contract");
         _;
