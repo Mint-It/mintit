@@ -57,6 +57,13 @@ contract("MintitNFTCollectionManager", accounts => {
         assert.equal(supply['maxSupply'], 3, "Supply should be set to 50");
     });
 
+    it("...set royalties", async () => {
+        let tx = await mintitNFTinstance.setRoyaltyInfo(artist, 5, {from: artist });
+        truffleAssert.eventEmitted(tx, 'UpdatedRoyalties', (ev) => {
+            return ev.newPercentage == 5;
+        });
+    });
+
     it("...set calendar to whitelist and test whitelist", async () => {
         let tx = await mintitNFTinstance.setCalendar([1, parseInt(Date.now()/1000)-3600, parseInt(Date.now()/1000)+3600], {from: artist });
         tx = await mintitNFTinstance.addPublicWhitelist({from: user });

@@ -71,6 +71,10 @@ Check that all collection parameters are correct
 
 Check that changing max supply woks for the cotnract owner
 
+### Set royalties
+
+Change royalties and check that the event UpdatedRoyalties is emitted with correct value
+
 ### Set calendar to whitelist and test whitelist
 
 Set the calendar to the white list phase and verify that user can be added to whitelist
