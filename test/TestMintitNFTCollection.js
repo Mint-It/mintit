@@ -14,6 +14,7 @@ contract("MintitNFTCollectionManager", accounts => {
 
     beforeEach(async () => {
         mintitMgtInstance = await MintitNFTCollectionManager.deployed();
+        await mintitMgtInstance.createMintitBaseCollection();
     })    
 
     it("...Create new NFT collection", async () => {
