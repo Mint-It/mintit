@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/proxy/Proxy.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/StorageSlot.sol";
 
+/** 
+  * @title Mint It NFT collection Proxy
+  * @author Geoffrey B. / Christophe B.
+  * @notice NFT collection Proxy
+  * @dev This Proxy contract will delegate calls to the NFT Base collection address provided in the constructor
+  */
 contract MintitProxy is Proxy {
     
     constructor(address[] memory _payees, uint256[] memory _shares,

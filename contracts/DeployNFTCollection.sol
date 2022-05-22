@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
 // importing the ERC-721 contract to deploy for an artist
 import "./MintitProxy.sol";
@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Create2.sol";
   * @title In Real Life NFT collection Deployment Library
   * @author Geoffrey B. / Christophe B.
   * @notice Used to deploy a new NFT collection with create2 function.
-  * @dev    If the contract is already deployed for an _artistName, it will revert.
+  * @dev    This will deply a Proxy contract that will delegate all calls to the MintitNFTCollection base contract.
   */
 library DeployNFTCollection {
 

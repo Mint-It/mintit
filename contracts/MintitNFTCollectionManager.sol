@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
 // importing the ERC-721 contract to deploy for an artist
 import "./MintitNFTCollection.sol";
@@ -12,7 +12,6 @@ import "./DeployBaseCollection.sol";
   * @title Mint It NFT collection Manager
   * @author Geoffrey B. / Christophe B.
   * @notice Give the ability to deploy a contract to manage ERC-721 tokens for an Artist.
-  * @dev    If the contract is already deployed for an _collectionName, it will revert.
   */
 contract MintitNFTCollectionManager is Artists, Users{
 

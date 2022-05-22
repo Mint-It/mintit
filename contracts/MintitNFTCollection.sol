@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
@@ -14,8 +14,7 @@ import "./eip/2981/ERC2981Collection.sol";
 /** 
   * @title Mint It NFT collection
   * @author Geoffrey B. / Christophe B.
-  * @notice NFT collection of an artist which may generate some action in real life
-  * @dev    If the contract is already deployed for an _artistName, it will revert.
+  * @notice NFT collection of an artist
   */
 contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2981Collection, ReentrancyGuardUpgradeable, PaymentSplitterUpgradeable, OwnableUpgradeable {
     using StringsUpgradeable for uint256;
