@@ -1,8 +1,8 @@
 const Web3 = require('web3');
 var Tx = require('ethereumjs-tx').Transaction
+const MintitContract = require('../client/src/contracts/MintitNFTSimple.json');
 
 const MintitMgrContract = require('../client/src/contracts/MintitNFTCollectionManager.json');
-const MintitContract = require('../client/src/contracts/MintitNFTCollection.json');
 
 let owner = "0xD07193529CB72bdb8620113C8444d1E63e5C0D6a";
 let artist1 = "0xA32709cE9e8eE20785f621f8C8b7b675C44c421b";
@@ -70,14 +70,7 @@ const initCollections = async () => {
     data = mintitMgr.methods.createMintitBaseCollection().encodeABI();
     sendMintitTransaction(data, cAddress, Buffer.from(artists[col[0][0]][3], 'hex'), txCount);
 
-    for (i=0;i<artists.length;i++) {
-        txCount = await web3.eth.getTransactionCount(artists[i][2]);
-        data = mintitMgr.methods.setArtist(artists[i][0], artists[i][1]).encodeABI();
-        console.log(artists[i][2] + ":" + artists[i][3]);
-        sendMintitTransaction(data, cAddress, Buffer.from(artists[i][3], 'hex'), txCount);
-    }
-
-    for (i=0;i<3;i++) {
+    for (i=0;i<1;i++) {
         // Create NFT collection
         txCount = await web3.eth.getTransactionCount(artists[col[i][0]][2]);
         data = mintitMgr.methods.createMintitNFTCollection(col[i][1], col[i][2], [col[i][3], web3.utils.toWei(col[i][4], "ether"), web3.utils.toWei(col[i][5], "ether"), 2], [col[i][6], col[i][7], col[i][8], col[i][9], col[i][10]]).encodeABI();
@@ -85,39 +78,19 @@ const initCollections = async () => {
     }
 
     let colArray = await  mintitMgr.methods.getCollectionArray().call({from:artist1});
-    for (i=0;i<3;i++) {
-        let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[i]);
-        txCount = await web3.eth.getTransactionCount(artists[col[i][0]][2]);
-        data = mintitNFT.methods.setCalendar(col[i][11]).encodeABI();
-        sendMintitTransaction(data, colArray[i], Buffer.from(artists[col[i][0]][3], 'hex'), txCount);
-    }
 
-    // change max
-    let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
+
+    let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[1]);
     txCount = await web3.eth.getTransactionCount(artists[1][2]);
-    data = mintitNFT.methods.setMaxNbPerWallet(20).encodeABI();
-    sendMintitTransaction(data, colArray[2], Buffer.from(artists[1][3], 'hex'), txCount);
 
-    // mint NFT
-    for (i=0;i<10;i++) {
-        let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
-        txCount = await web3.eth.getTransactionCount(user1);
-        data = mintitNFT.methods.MintArt().encodeABI();
-        sendMintitValueTransaction(data, colArray[2], puser1, txCount, "0.08");        
-    }
-
-    // mint NFT
-    for (i=0;i<7;i++) {
-        let mintitNFT = new web3.eth.Contract(MintitContract.abi, colArray[2]);
-        txCount = await web3.eth.getTransactionCount(user2);
-        data = mintitNFT.methods.MintArt().encodeABI();
-        sendMintitValueTransaction(data, colArray[2], puser2, txCount, "0.08");        
-    }
+    //let strTest = await  mintitNFT.methods.getTest().call({from:artist1});
+    //console.log("Test result: " + strTest);
 
     console.log("---------------------------");
     console.log(" List of NFT collection adresses");
     console.log(await  mintitMgr.methods.getCollectionArray().call({from:artist1}) );
     console.log("---------------------------");
+
     console.log(" Details of artist1");
     console.log(await  mintitMgr.methods.getArtistDetails(artist1).call({from:artist2}) );
     console.log("---------------------------");
@@ -151,8 +124,8 @@ function sendMintitTransaction(data, address, privatekey, txCount) {
 function sendMintitValueTransaction(data, address, privatekey, txCount, value) {
     const txObject = {
         nonce:    web3.utils.toHex(txCount),
-        gasLimit: web3.utils.toHex(5000000), // Raise the gas limit to a much higher amount
-        gasPrice: web3.utils.toHex(web3.utils.toWei('20', 'gwei')),
+        gasLimit: web3.utils.toHex(10000000), // Raise the gas limit to a much higher amount
+        gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei')),
         to: address,
         value: web3.utils.toHex(web3.utils.toWei(value, 'ether')),
         data: data

@@ -11,7 +11,9 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
-     },
+      gas : 6721975,
+      gasPrice : 40000000000
+    },
      rinkeby: {
       provider: function() {
         return new HDWalletProvider(`${process.env.MNEMONIC}`, `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`)
@@ -33,7 +35,7 @@ module.exports = {
       settings: {          // See the solidity docs for advice about optimization and evmVersion
        optimizer: {
          enabled: true,
-         runs: 200
+         runs: 50
        },
       //  evmVersion: "byzantium"
       }

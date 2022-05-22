@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/MerkleProofUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/finance/PaymentSplitterUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./eip/2981/ERC2981Collection.sol";
 
 /** 
@@ -16,11 +17,11 @@ import "./eip/2981/ERC2981Collection.sol";
   * @notice NFT collection of an artist which may generate some action in real life
   * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
-contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyGuard, PaymentSplitter, Ownable {
-    using Strings for uint256;
-    using Counters for Counters.Counter;
+contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2981Collection, ReentrancyGuardUpgradeable, PaymentSplitterUpgradeable, OwnableUpgradeable {
+    using StringsUpgradeable for uint256;
+    using CountersUpgradeable for CountersUpgradeable.Counter;
     address artistAddress;
-    Counters.Counter private _tokenIds;
+    CountersUpgradeable.Counter private _tokenIds;
 
     struct Infos {
         string name;
@@ -79,10 +80,12 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
-    constructor(address[] memory _payees, uint256[] memory _shares,
+    function initialize(address[] memory _payees, uint256[] memory _shares,
                 string memory name_, string memory symbol_, address _artist,
-                uint[] memory _intParams, string[] memory _strParams) 
-                ERC721 (name_, symbol_) PaymentSplitter(_payees, _shares) {
+                uint256[] memory _intParams, string[] memory _strParams) public initializer {
+        __ERC721_init(name_, symbol_);
+        __PaymentSplitter_init(_payees, _shares);
+        __Ownable_init();
         sellingStage = Stages.Config;
         artistAddress = _artist;
         collectionInfo.maxSupply = _intParams[0];
@@ -99,6 +102,13 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
         teamLength = _payees.length;
         transferOwnership(_artist);
    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165) returns (bool) {
+        return ERC721EnumerableUpgradeable.supportsInterface(interfaceId);
+    }
 
     /** 
     * @notice Allows to set dates for each sales
@@ -232,7 +242,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     * @return True if a account can be proved to be a part of the whiteList merkle tree
     **/
     function isPrivateWhiteListed(address account, bytes32[] calldata proof) internal view returns(bool) {
-        return MerkleProof.verify(proof, privateWL, keccak256(abi.encodePacked(account)));
+        return MerkleProofUpgradeable.verify(proof, privateWL, keccak256(abi.encodePacked(account)));
     }
 
     /** 
@@ -335,7 +345,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     *
     * @return The token URI of the NFT which has _nftId Id
     **/
-    function tokenURI(uint _nftId) public view override(ERC721) returns (string memory) {
+    function tokenURI(uint _nftId) public view override(ERC721Upgradeable) returns (string memory) {
         require(_exists(_nftId), "This NFT doesn't exist.");
         
         string memory currentBaseURI = _baseURI();
