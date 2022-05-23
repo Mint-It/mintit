@@ -14,7 +14,6 @@ import "./eip/2981/ERC2981Collection.sol";
   * @title Mint It NFT collection
   * @author Geoffrey B. / Christophe B.
   * @notice NFT collection of an artist which may generate some action in real life
-  * @dev    If the contract is already deployed for an _artistName, it will revert.
   */
 contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyGuard, PaymentSplitter, Ownable {
     using Strings for uint256;

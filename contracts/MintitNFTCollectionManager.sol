@@ -10,7 +10,6 @@ import "./DeployNFTCollection.sol";
   * @title Mint It NFT collection Manager
   * @author Geoffrey B. / Christophe B.
   * @notice Give the ability to deploy a contract to manage ERC-721 tokens for an Artist.
-  * @dev    If the contract is already deployed for an _collectionName, it will revert.
   */
 contract MintitNFTCollectionManager is Artists, Users{
 
