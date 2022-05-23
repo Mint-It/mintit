@@ -10,10 +10,10 @@ MintIt provides a web3 user interface for the creator to have a full control on 
 
 - Define all characteristics of the collection : name, symbol, description, banner, base URI and extension
 - Define the price of the NFT during presale and sale
-- Define the oryalties that will be applied to the collection (ERC2981)
-- Let the artist specify a precise calendar for every stages of the sale (white, presale, sale, reveal). If the artist want to have a presale evey monday in march, and then starts the sale in april, this is possible with Minitit with just one transaction.
+- Define the royalties that will be applied to the collection (ERC2981)
+- Let the artist specify a precise calendar for every stages of the sale (white, presale, sale, reveal). If the artist wants to have a presale every monday in march, and then starts the sale in april, this is possible with MinitIt with just one transaction.
 
-Also, MintIt provides a great interface for users to easily find all the collections using different filters. Accessing the Collection in the whitelist stage, or in the sale stage, can be done in one click.
+Also, MintIt provides a great interface for users to easily find all the collections using different filters. Finding the collections in the whitelist stage, or in the sale stage, can be done in one click.
 
 MintIt is completely free to use for artists and collectors. The platform just take a 4% commission on every mint.
 
@@ -22,7 +22,7 @@ MintIt is completely free to use for artists and collectors. The platform just t
 ## MintIt advantages
 
 MintIt is a fully optimized platform which reduces gas fees to the minimum. To achieve this goal, MintIt will deploy a NFT collection contract type for you. Then deploying a collection will just be deploying a proxy contract.
-This simple proxy smart contract will be cheap to deploy.
+This simple proxy smart contract will be much cheap to deploy compared to a full NFT collection smart contract.
 
 In addition, the artist will remain the only owner of the smart contract NFT deployed, giving him the full control of it.
 
@@ -40,7 +40,7 @@ More details can be found in the [Design Patterns](docs/design_pattern_desicions
 
 Security has been a real concerned of the MintIt platform.
 
-More detail. can be found in the [Avoiding common Attacks](docs/avoiding_common_attacks.md) document.
+More details can be found in the [Avoiding common Attacks](docs/avoiding_common_attacks.md) document.
 
 ---
 
