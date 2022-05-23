@@ -3,6 +3,7 @@
 -   [Smart Contracts](#contracts)
     -   [MintitNFTCollectionManager](#MintitNFTCollectionManager)
     -   [MintitNFTCollection](#MintitNFTCollection)
+-   [Use cases](#usecases)
 -   [Tools](#tools)
 -   [dApp](#dapp)
     -   [Frameworks](#Frameworks)
@@ -11,13 +12,16 @@
 # Smart Contracts <a name="contracts"></a>
 
 Several Smart Contracts have been created for the needs of the project.
+
 <p align="center" >
-    <img width="500" src="./assets/MintitNFTCollectionManager_schema.png"></img>
+    <img width="500" src="./assets/Mintit.global_contracts.png"></img>
 </p>
 
 ## MintitNFTCollectionManager <a name="MintitNFTCollectionManager"></a>
 
 ## MintitNFTCollection <a name="MintitNFTCollection"></a>
+
+# Use cases <a name="usecases"></a>
 
 # Tools <a name="tools"></a>
 
