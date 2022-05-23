@@ -1,6 +1,6 @@
 ## `Artists`
 
-
+Artists contract to manage Artists informations
 
 
 
@@ -25,7 +25,7 @@ Return the list of artist addresses created
 
 
 
-### `getArtistDetails(address artistAddress) → string name, string description, bool verified` (public)
+### `getArtistDetails(address artistAddress) → string name, string description, bool verified, address[] collections` (public)
 
 Return the details of an artist based on its address
 
@@ -56,7 +56,7 @@ bool created
 bool verified
 
 
-mapping(address => contract MintitNFTCollection) collections
+address[] collections
 
 
 

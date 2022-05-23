@@ -1,6 +1,6 @@
 ## `Users`
 
-
+Users contract to manage User informations
 
 
 

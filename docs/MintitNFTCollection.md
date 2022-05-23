@@ -3,53 +3,66 @@
 NFT collection of an artist which may generate some action in real life
 
 
-   If the contract is already deployed for an _artistName, it will revert.
 
-### `onlyArtist()`
-
+### `callerIsUser()`
 
 
 
 
 
-### `constructor(string name_, string symbol_, address _artist)` (public)
+
+### `constructor(address[] _payees, uint256[] _shares, string name_, string symbol_, address _artist, uint256[] _intParams, string[] _strParams)` (public)
 
 Constructor parameters of ERC721. Params will be set by Collection Manager
 
 
 
-### `getDescription() → string` (external)
+### `setCalendar(uint256[] dates)` (external)
 
-Retrieve the description of the collection
-
-
-
-
-
-### `getBanner() → string` (external)
-
-Retrieve the image banner of the collection
+Allows to set dates for each sales
 
 
 
 
 
-### `setDetails(string _description, string _banner)` (external)
+### `getCalendar() → uint256[]` (public)
+
+Returns Mint stages calendar array
+
+
+
+
+
+### `getArtistAddress() → address` (public)
+
+Returns the adress of the artist of the collection
+
+
+
+
+
+### `setBanner(string _banner)` (external)
+
+Allows to change the banner
+
+
+
+
+### `setDescription(string _description)` (external)
+
+Allows to change the description
+
+
+
+
+### `setMaxSupply(uint256 _amount)` (external)
 
 Allows to change the max supply during the config stage
 
 
 
 
-### `getMaxSupply() → uint256` (external)
-
-Allows to retrieve the max supply of the collection
-
-
-
-
-
-### `setMaxSupply(uint256 _amount)` (external)
+### `setMaxNbPerWallet(uint256 _amount)` (external)
 
 Allows to change the max supply during the config stage
 
@@ -77,9 +90,40 @@ Allows to change the price of a NFT during the config stage
 
 
 
-### `getPrice() → uint256` (external)
+### `setPresalePrice(uint256 _price)` (external)
 
-Allows to change the price of the NFT during the config stage
+Allows to change the price of a NFT during the config stage
+
+
+
+
+### `setPrivateWhitelist(bytes32 _newWhiteList)` (external)
+
+Set a new adresses white list 
+
+
+
+
+
+### `addPublicWhitelist()` (public)
+
+Add sender adress to the public white list 
+
+
+
+
+
+### `isPrivateWhiteListed(address account, bytes32[] proof) → bool` (internal)
+
+Returns true if a leaf can be proved to be a part of a Merkle tree defined by root
+
+
+
+
+
+### `isPublicWhiteListed(address account) → bool` (public)
+
+Returns true if a address is whitelisted
 
 
 
@@ -93,16 +137,33 @@ Return URI of the NFTs when revealed
 
 
 
-### `setUpPresale()` (external)
+### `isStage(enum MintitNFTCollection.Stages stage) → bool` (internal)
 
-Allows to change the sellinStep to Presale
-
-
+check if the mint phase is the one provided in parameter
 
 
-### `setUpSale()` (external)
 
-Allows to change the sellinStep to Sale
+
+
+### `getCollectionInfos() → struct MintitNFTCollection.Infos` (external)
+
+Allows to get details information of the NFT collection
+
+
+
+
+
+### `setUpStage(enum MintitNFTCollection.Stages stage)` (external)
+
+Allows to change the sellinStage value
+
+
+
+
+### `PresaleMintArt(bytes32[] _proof) → uint256` (external)
+
+Allows to mint NFTs
+
 
 
 
@@ -123,6 +184,69 @@ Allows to get the complete URI of a specific NFT by his ID
 
 
 
+### `releaseAll()` (external)
+
+Send shares to all payee
+
+
+
+
+### `setRoyaltyInfo(address _royaltyAddress, uint256 _percentage)` (public)
+
+this will use internal functions to set EIP 2981
+ found in IERC2981.sol and used by ERC2981Collections.sol
+
+
+
+
+
+### `Whitelisted(address _userAddress)`
+
+Event emitted each time a user get whitelisted
+
+
+
+### `UpdatedRoyalties(address newRoyaltyAddress, uint256 newPercentage)`
+
+Event emitted after royalties are updated
+
+
+
+
+### `Infos`
+
+
+string name
+
+
+string symbol
+
+
+string description
+
+
+string banner
+
+
+string baseURI
+
+
+string baseExtension
+
+
+string category
+
+
+uint256 price
+
+
+uint256 presalePrice
+
+
+uint256 maxSupply
+
+
+uint256 maxPerWallet
 
 
 ### `Arts`
@@ -131,8 +255,20 @@ Allows to get the complete URI of a specific NFT by his ID
 string description
 
 
+### `Interval`
+
+
+uint256 start
+
+
+uint256 end
+
+
 
 ### `Stages`
+
+
+
 
 
 

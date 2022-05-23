@@ -1,12 +1,11 @@
 ## `MintitNFTCollectionManager`
 
-Give the ability to deploy a contract to manage ERC-721 tokens for an Artist. S/O @Snow
+Give the ability to deploy a contract to manage ERC-721 tokens for an Artist.
 
 
-   If the contract is already deployed for an _artistName, it will revert.
 
 
-### `createMintitNFTCollectionn(string _collectionName, string _collectionSymbol) → address collectionAddress` (external)
+### `createMintitNFTCollection(string _collectionName, string _collectionSymbol, uint256[] _intParams, string[] _strParams) → address collectionAddress` (external)
 
 Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
 
