@@ -2,7 +2,6 @@
 pragma solidity 0.8.13;
 
 // importing the ERC-721 contract to deploy for an artist
-import "./MintitNFTCollection.sol";
 import "./Artists.sol";
 import "./Users.sol";
 import "./DeployNFTCollection.sol";
@@ -26,27 +25,6 @@ contract MintitNFTCollectionManager is Artists, Users{
       *
       * @return collectionAddress the address of the created collection contract
       */
-    /*function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol) external returns (address collectionAddress) {
-        // deploy NFT collection
-        collectionAddress = DeployNFTCollection.deployNFTCollection(_collectionName, _collectionSymbol, msg.sender,
-                                                  [0, 0, 0, 0], ["", "", "", "", ""]);
-        
-        // create the artist if not exist
-        if (artists[msg.sender].created == false) {
-            setArtist(_collectionName, "");
-        }
-        //artists[msg.sender].collections[collectionAddress] = MintitNFTCollection(collectionAddress);
-        artists[msg.sender].collections.push(collectionAddress);
-        collectionArray.push(collectionAddress);
-
-        emit MintitNFTCollectionCreated(_collectionName, collectionAddress, block.timestamp);
-    }*/
-
-    /**
-      * @notice Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
-      *
-      * @return collectionAddress the address of the created collection contract
-      */
     function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol, 
                                         uint[] memory _intParams, string[] memory _strParams) external returns (address collectionAddress) {
         // deploy NFT collection
@@ -57,7 +35,6 @@ contract MintitNFTCollectionManager is Artists, Users{
         if (artists[msg.sender].created == false) {
             setArtist(_collectionName, "");
         }
-        //MintitNFTCollection collection = MintitNFTCollection(collectionAddress);
         artists[msg.sender].collections.push(collectionAddress);
         collectionArray.push(collectionAddress);
 
