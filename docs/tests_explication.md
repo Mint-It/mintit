@@ -1,6 +1,6 @@
-# Explication des tests réalisés
+# Explanation of the tests performed
 
-## Test du smart contract MintitNFTCollectionManager.sol
+## Test of the smart contract MintitNFTCollectionManager.sol
 
 ### Create new NFT collection
 
@@ -46,7 +46,7 @@ Call getCollectionArray method and check that it contains the created collection
 
 Retrieve the first collection adress from the collectionArray and verify it corresponds to the created collection
 
-## Test du smart contract MintitNFTCollection.sol
+## Test of the smart contract MintitNFTCollection.sol
 
 ### Create new NFT collection
 

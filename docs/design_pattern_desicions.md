@@ -1,4 +1,4 @@
-# Design pattern (in progress)
+# Design pattern
 
 -   [Smart Contracts](#contracts)
     -   [MintitNFTCollectionManager](#MintitNFTCollectionManager)
