@@ -2,7 +2,6 @@
 pragma solidity 0.8.14;
 
 // importing the ERC-721 contract to deploy for an artist
-import "./MintitNFTCollection.sol";
 import "./Artists.sol";
 import "./Users.sol";
 import "./DeployNFTCollection.sol";
