@@ -3,6 +3,7 @@
 -   [Smart Contracts](#contracts)
     -   [MintitNFTCollectionManager](#MintitNFTCollectionManager)
     -   [MintitNFTCollection](#MintitNFTCollection)
+    -   [DeployNFTCollection](#DeployNFTCollection)
 -   [Use cases](#usecases)
 -   [Tools & dApp](#tools&dapp)
 
@@ -16,11 +17,31 @@ Several Smart Contracts have been created for the needs of the project.
 
 ## MintitNFTCollectionManager <a name="MintitNFTCollectionManager"></a>
 
+This Smart Contract allows to get the list of collections and to create a collection (calls the smart contract deployNFTCollection)<br/>
+2 other smart counteracts are also included (Artists and Users) to return the list of artists, the artist's info and the addresses of the artist's collections.
+
+## DeployNFTCollection <a name="DeployNFTCollection"></a>
+
+Contains the function to deploy a collection.<br/>
+Import the bytecode of the contract to deploy.
+
 ## MintitNFTCollection <a name="MintitNFTCollection"></a>
+
+This Smart Contract is dynamically deployed for each NFT Collection.<br/>
+Inherits from :
+- ERC721Enumerable : ERC721 is standard interface for non-fungible tokens.
+- ERC2981Collection : The artist can set royalties.
+- ReentrancyGuard : A modifier that can prevent reentrancy during certain functions.
+- PaymentSplitter : Help to transfer the amount of Ether according to the percentage of the total shares.
+- Ownable : The artist is the owner of the contract and is allowed to call some functions.
 
 # Use cases <a name="usecases"></a>
 
-## MintitNFTCollection <a name="MintitNFTCollection"></a>
+## Collection interactions <a name="collectioninteractions"></a>
+
+<p align="center" >
+    <img width="600" src="./assets/Mintit.collection.png"></img>
+</p>
 
 # Tools & dApp <a name="tools&dapp"></a>
 
