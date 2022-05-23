@@ -7,6 +7,8 @@
 -   [Use cases](#usecases)
     -   [Create collection](#createcollection)
     -   [Collection interactions](#collectioninteractions)
+    -   [NFT list of a collection](#nftlistcollection)
+    -   [NFT list of a user](#nftlistuser)
 -   [Tools & dApp](#tools&dapp)
 
 # Smart Contracts <a name="contracts"></a>
@@ -49,6 +51,18 @@ Inherits from :
 
 <p align="center" >
     <img width="600" src="./assets/Mintit.collection.png"></img>
+</p>
+
+## NFT list of a collection <a name="nftlistcollection"></a>
+
+<p align="center" >
+    <img width="600" src="./assets/Mintit.NFT.png"></img>
+</p>
+
+## NFT list of a user <a name="nftlistuser"></a>
+
+<p align="center" >
+    <img width="600" src="./assets/Mintit.user.png"></img>
 </p>
 
 # Tools & dApp <a name="tools&dapp"></a>
