@@ -2,9 +2,11 @@
 
 -   [Smart Contracts](#contracts)
     -   [MintitNFTCollectionManager](#MintitNFTCollectionManager)
-    -   [MintitNFTCollection](#MintitNFTCollection)
     -   [DeployNFTCollection](#DeployNFTCollection)
+    -   [MintitNFTCollection](#MintitNFTCollection)
 -   [Use cases](#usecases)
+    -   [Create collection](#createcollection)
+    -   [Collection interactions](#collectioninteractions)
 -   [Tools & dApp](#tools&dapp)
 
 # Smart Contracts <a name="contracts"></a>
@@ -36,6 +38,12 @@ Inherits from :
 - Ownable : The artist is the owner of the contract and is allowed to call some functions.
 
 # Use cases <a name="usecases"></a>
+
+## Create collection <a name="createcollection"></a>
+
+<p align="center" >
+    <img width="600" src="./assets/Mintit.artists.png"></img>
+</p>
 
 ## Collection interactions <a name="collectioninteractions"></a>
 
