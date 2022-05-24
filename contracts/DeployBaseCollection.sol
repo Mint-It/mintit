@@ -21,7 +21,7 @@ library DeployBaseCollection {
         // Import the bytecode of the contract to deploy
         bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTCollection).creationCode);
         // Make a random salt based on the artist name
-        bytes32 salt = keccak256(abi.encodePacked(msg.sender));
+        bytes32 salt = keccak256(abi.encodePacked("MintItNFTBaseCollection"));
 
         mintitAddress = Create2.deploy(0, salt, collectionBytecode);
 
