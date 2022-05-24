@@ -23,9 +23,9 @@ contract MintitNFTCollectionManager is Artists, Users{
     event MintitNFTCollectionCreated(string _collectionName, address _collectionAddress, uint _timestamp);
 
     /**
-      * @notice Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
+      * @notice Deploy the ERC-721 Base NFT Collection contract
       *
-      * @return collectionAddress the address of the created collection contract
+      * @return mintitCollection the address of the created base NFT collection contract
       */
     function createMintitBaseCollection() external returns (address) {
 
@@ -36,9 +36,9 @@ contract MintitNFTCollectionManager is Artists, Users{
     }
 
     /**
-      * @notice Deploy the ERC-721 Collection contract of the artist caller to be able to create NFTs later
+      * @notice Deploy the Proxy MintIt smart contract which will delegate calls to the Base NFT Collection contracts
       *
-      * @return collectionAddress the address of the created collection contract
+      * @return collectionAddress the address of the created collection proxy contract
       */
     function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol, 
                                         uint256[] memory _intParams, string[] memory _strParams) external returns (address collectionAddress) {
