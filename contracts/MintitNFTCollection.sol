@@ -350,7 +350,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
         string memory currentBaseURI = _baseURI();
         return 
             bytes(currentBaseURI).length > 0 
-            ? string(abi.encodePacked(currentBaseURI, _nftId.toString(), collectionInfo.baseExtension))
+            ? string(abi.encodePacked(currentBaseURI, _nftId.toString()))
             : "";
     }
 
