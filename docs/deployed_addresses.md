@@ -1,12 +1,14 @@
 # Smart contracts addresses
 
-Smart contracts are deployed on the Kovan blockchain.
+Smart contracts are deployed on the Rinkeby test blockchain.
 
-[MintitNFTCollectionManager](https://kovan.etherscan.io/address/0xa7db6c74f20ead2Cfb66A437E650d3241B653340) 0xa7db6c74f20ead2Cfb66A437E650d3241B653340
+[MintitNFTCollectionManager](https://rinkeby.etherscan.io/address/0x4Cdd2b6d0F901A1Ab99aC6d42Cb1A3Aa38fe0C1d) 0x4Cdd2b6d0F901A1Ab99aC6d42Cb1A3Aa38fe0C1d
 
-[DeployNFTCollection](https://kovan.etherscan.io/address/0x387c89fbD7Da59f18cacb7a885ea773620829726) 0x387c89fbD7Da59f18cacb7a885ea773620829726
+[DeployBaseCollection](https://rinkeby.etherscan.io/address/0x4413C37eeBDC656CCa70845a7b9fCB2070aB08c6) 0x4413C37eeBDC656CCa70845a7b9fCB2070aB08c6
+
+[DeployNFTCollection](https://rinkeby.etherscan.io/address/0xaEE798b98ea93Dc3D5b56705Bbdc527DaAEed42b) 0xaEE798b98ea93Dc3D5b56705Bbdc527DaAEed42b
 
 ## Example of NFT Collection (MintitNFTCollection)
 
-[Karafuru](https://kovan.etherscan.io/address/0xAd7ECC5C701F09E5d0D2b28dEE7374128333441a) 0xAd7ECC5C701F09E5d0D2b28dEE7374128333441a
-https://mintit.herokuapp.com/explore/0xAd7ECC5C701F09E5d0D2b28dEE7374128333441a
+[Chimpers](https://rinkeby.etherscan.io/address/0xEe9cf66057E26199e1dFc19522f401423dc377eb) 0xEe9cf66057E26199e1dFc19522f401423dc377eb
+https://mintit.herokuapp.com/explore/0xEe9cf66057E26199e1dFc19522f401423dc377eb
