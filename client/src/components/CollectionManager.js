@@ -15,7 +15,7 @@ class CollectionManager extends React.Component {
       this.state = {
         collectionAddress: "",
         artistAddress: "",
-        collectionInfos: {'name' : "", "description" : "", "maxSupply" : 0, "price": 0, "presalePrice" : 0, maxPerWallet: 0, category : ""},        maxSupply: "",
+        collectionInfos: {'name' : "", 'symbol' : "", "description" : "", "maxSupply" : 0, "price": 0, "presalePrice" : 0, "maxPerWallet": 0, "category" : ""},
         maxSupply: "",
         presalePrice: "",
         mintPrice: "",
@@ -58,11 +58,12 @@ class CollectionManager extends React.Component {
           toast.success(event.returnValues.dataType+" updated");
         })
       }
+      
     };
 
     getCollection = async () => {
       const infosNft = await this.state.contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
-      this.setState({collectionInfos : infosNft});
+      this.setState({collectionInfos : infosNft, category: infosNft.category, baseExtension: infosNft.baseExtension});
       this.setState({calendar : await this.state.contractNFT.methods.getCalendar().call()});
       for (let i=0;i<this.state.calendar.length;i+=3) {
         if(this.state.calendar[i] == 1) this.setState({startDateWhitelist: new Date(this.state.calendar[i+1]*1000),endDateWhitelist: new Date(this.state.calendar[i+2]*1000)})
@@ -72,35 +73,85 @@ class CollectionManager extends React.Component {
     }
 
     setMaxSupply = async () => {
-      const infosNft = await this.state.contractNFT.methods.setMaxSupply(this.state.maxSupply).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setMaxSupply(this.state.maxSupply).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setPresalePrice = async () => {
-      const infosNft = await this.state.contractNFT.methods.setPresalePrice(Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice))).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setPresalePrice(Web3.utils.toBN(Web3.utils.toWei(this.state.presalePrice))).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setPrice = async () => {
-      const infosNft = await this.state.contractNFT.methods.setPrice(Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice))).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setPrice(Web3.utils.toBN(Web3.utils.toWei(this.state.mintPrice))).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setBaseExtension = async () => {
-      const infosNft = await this.state.contractNFT.methods.setBaseExtension(this.state.baseExtension).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setBaseExtension(this.state.baseExtension).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setMaxNbPerWallet = async () => {
-      const infosNft = await this.state.contractNFT.methods.setMaxNbPerWallet(this.state.maxPerWallet).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setMaxNbPerWallet(this.state.maxPerWallet).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setBanner = async () => {
-      const infosNft = await this.state.contractNFT.methods.setBanner(this.state.banner).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setBanner(this.state.banner).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setDescription = async () => {
-      const infosNft = await this.state.contractNFT.methods.setDescription(this.state.description).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setDescription(this.state.description).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setBaseURI = async () => {
-      const infosNft = await this.state.contractNFT.methods.setBaseURI(this.state.baseURI).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setBaseURI(this.state.baseURI).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+
+    setCategory = async () => {
+      console.log(this.state.category)
+      try{
+        const infosNft = await this.state.contractNFT.methods.setCategory(this.state.category).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     setCalendar = async () => {
@@ -108,7 +159,12 @@ class CollectionManager extends React.Component {
       if((this.state.startDateWhitelist != null) && (this.state.endDateWhitelist != null)) arrayCalendar.push(1, Math.floor(this.state.startDateWhitelist.getTime()/1000), Math.floor(this.state.endDateWhitelist.getTime()/1000));
       if((this.state.startDatePresale != null) && (this.state.endDatePresale != null)) arrayCalendar.push(2, Math.floor(this.state.startDatePresale.getTime()/1000), Math.floor(this.state.endDatePresale.getTime()/1000));
       if((this.state.startDateSale != null) && (this.state.endDateSale != null)) arrayCalendar.push(3, Math.floor(this.state.startDateSale.getTime()/1000), Math.floor(this.state.endDateSale.getTime()/1000));
-      const infosNft = await this.state.contractNFT.methods.setCalendar(arrayCalendar).send({ from: this.props.parentState.currentAccount });
+      try{
+        const infosNft = await this.state.contractNFT.methods.setCalendar(arrayCalendar).send({ from: this.props.parentState.currentAccount });
+        toast.info("Transaction sent");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
 
     render() {
@@ -138,7 +194,7 @@ class CollectionManager extends React.Component {
     </div>
   <TabPanel>
     <div className="lg:w-2/3 md:w-2/3 mx-auto">
-        <div className="flex flex-wrap -m-2">
+        <div className="flex flex-wrap -m-2 items-center">
           <div className="p-2 w-1/2">
             <div className="relative">
               <label htmlFor="name" className="leading-7 text-sm text-gray-600">Name</label>
@@ -201,11 +257,11 @@ class CollectionManager extends React.Component {
             <span className="mr-3">Category</span>
               <div className="relative">
                 <select name="category" value={this.state.category} onChange={this.handleChange} className="w-full rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-base pl-3 pr-10">
-                  <option value="Arts">Arts</option>
+                  <option value="Art">Art</option>
                   <option value="Collectibles">Collectibles</option>
                   <option value="Music">Music</option>
-                  <option value="Photographie">Photographie</option>
-                  <option value="Sports">Sports</option>
+                  <option value="Photography">Photography</option>
+                  <option value="Sport">Sport</option>
                 </select>
                 <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                   <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4" viewBox="0 0 24 24">
@@ -231,11 +287,11 @@ class CollectionManager extends React.Component {
             <div className="relative">
               <span className="mr-3">Extension</span>
               <div className="relative">
-                <select name="extension" value={this.state.extension} onChange={this.handleChange} className="w-full rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-base pl-3 pr-10">
-                  <option value=".jpg">jpg</option>
-                  <option value=".jpeg">jpeg</option>
-                  <option value=".png">png</option>
-                  <option value=".gif">gif</option>
+                <select name="baseExtension" value={this.state.baseExtension} onChange={this.handleChange} className="w-full rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-base pl-3 pr-10">
+                  <option value=".jpg">.jpg</option>
+                  <option value=".jpeg">.jpeg</option>
+                  <option value=".png">.png</option>
+                  <option value=".gif">.gif</option>
                 </select>
                 <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                   <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4" viewBox="0 0 24 24">

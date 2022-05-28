@@ -22,9 +22,9 @@ class Explore extends React.Component {
           {id:-1, name:"All"},
           {id:0, name:"Art"},
           {id:1, name:"Collectibles"},
-          {id:2, name:"Musique"},
-          {id:3, name:"Photographie"},
-          {id:4, name:"Sports"}
+          {id:2, name:"Music"},
+          {id:3, name:"Photography"},
+          {id:4, name:"Sport"}
         ]
       };
     }

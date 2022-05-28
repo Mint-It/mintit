@@ -206,6 +206,15 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     }
 
     /** 
+    * @notice Allows to change the category during the config stage
+    **/
+    function setCategory(string memory _category) external onlyOwner {
+        require(isStage(Stages.Config), "Should be in Config stage to change the category.");
+        collectionInfo.category = _category;
+        emit UpdatedDatas("Category");
+    }
+
+    /** 
     * @notice Allows to change the price of a NFT during the config stage
     **/
     function setPrice(uint _price) external onlyOwner {
