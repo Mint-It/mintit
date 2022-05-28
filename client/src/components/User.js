@@ -50,13 +50,13 @@ class User extends React.Component {
           items.push("NFT " + i);*/
 
         return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="flex flex-col text-center w-full mb-20">
-                <h1 class="text-2xl font-medium title-font mb-4 text-gray-900">My NFT</h1>
-                <p class="lg:w-2/3 mx-auto leading-relaxed text-base"></p>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-24 mx-auto">
+              <div className="flex flex-col text-center w-full mb-20">
+                <h1 className="text-2xl font-medium title-font mb-4 text-gray-900">My NFT</h1>
+                <p className="lg:w-2/3 mx-auto leading-relaxed text-base"></p>
               </div>
-              <div class="flex flex-wrap -m-4">
+              <div className="flex flex-wrap -m-4">
                 {this.state.Nfts.map((item, index) => (
                   <NFTCard parentState={this.props.parentState} collectionAddress={item[0]} key={item[1]} tokenId={item[1]}/>
                 ))}
@@ -70,7 +70,7 @@ class User extends React.Component {
     render() {
       return (
           <div>
-            <section class="text-gray-600 body-font">
+            <section className="text-gray-600 body-font">
             </section>
             {this.renderNFTCollection()}
           </div>

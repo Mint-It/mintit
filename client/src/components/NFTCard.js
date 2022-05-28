@@ -44,15 +44,15 @@ class NFTCard extends React.Component {
 
     render() {
       return (
-      <div class="p-4 lg:w-1/4 md:w-1/2">
-        <div class="h-full flex flex-col items-center text-center">
+      <div key={this.props.key} className="p-4 lg:w-1/4 md:w-1/2">
+        <div className="h-full flex flex-col items-center text-center">
           <NavLink to={'/explore/' + this.props.collectionAddress + "/" + this.props.tokenId} className="text-red-500 inline-flex items-center md:mb-2 lg:mb-0">
-          <img alt="team" class="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4" src={this.state.tokenImage} />
+          <img alt="team" className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4" src={this.state.tokenImage} />
           </NavLink>
-          <div class="w-full">
-            <h2 class="title-font font-medium text-lg text-gray-900">{this.state.tokenOwner.slice(0,5)+'...'+this.state.tokenOwner.slice(38,42)}</h2>
-            <h3 class="text-gray-500 mb-3">Collection : <NavLink to={'/explore/' + this.props.collectionAddress} className="text-red-500 inline-flex items-center md:mb-2 lg:mb-0">{this.props.collectionAddress.slice(0,5)+'...'+this.props.collectionAddress.slice(38,42)} </NavLink></h3>
-            <p class="mb-4">Token : {this.props.tokenId}</p>
+          <div className="w-full">
+            <h2 className="title-font font-medium text-lg text-gray-900">{this.state.tokenOwner.slice(0,5)+'...'+this.state.tokenOwner.slice(38,42)}</h2>
+            <h3 className="text-gray-500 mb-3">Collection : <NavLink to={'/explore/' + this.props.collectionAddress} className="text-red-500 inline-flex items-center md:mb-2 lg:mb-0">{this.props.collectionAddress.slice(0,5)+'...'+this.props.collectionAddress.slice(38,42)} </NavLink></h3>
+            <p className="mb-4">Token : {this.props.tokenId}</p>
           </div>
         </div>
       </div>

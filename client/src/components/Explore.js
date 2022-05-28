@@ -66,13 +66,13 @@ class Explore extends React.Component {
         return (
         <div>
           <div className="flex flex-col text-center w-full">
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500">Category.</p>
+            <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500">Category.</p>
             <div className="flex mx-auto border-2 border-red-500 rounded overflow-hidden mt-2 mb-6">
               {this.state.categoryArray.map(category => (
               <button className={this.buttonCatStyle(category.id)} onClick={() => this.selectCategory(category.id)} >{category.name}</button>
               ))}
             </div>
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500">Mint Phase.</p>
+            <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500">Mint Phase.</p>
             <div className="flex mx-auto border-2 border-red-500 rounded overflow-hidden mt-2">
               {this.state.stageArray.map(stage => (
               <button className={this.buttonStageStyle(stage.id)} onClick={() => this.selectPhase(stage.id)} >{stage.name}</button>

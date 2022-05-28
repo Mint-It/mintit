@@ -46,27 +46,30 @@ class CollectionManager extends React.Component {
     }
 
     componentDidMount = async () => {
-        this.getCollection();
-    };
-
-    getCollection = async () => {
       const { colAddress } = this.props.match.params;
       this.state.collectionAddress = colAddress;
       this.setState({collectionAddress : String(colAddress)});
       const contractNFT = new this.props.parentState.web3.eth.Contract(MintitNFTCollection.abi, this.state.collectionAddress);
-      this.setState({artistAddress : await contractNFT.methods.getArtistAddress().call()});
+      this.setState({contractNFT: contractNFT, artistAddress : await contractNFT.methods.getArtistAddress().call()});
       if(this.state.artistAddress == this.props.parentState.currentAccount){
         this.setState({isAllow : true});
-        const infosNft = await contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
-        this.setState({collectionInfos : infosNft, contractNFT: contractNFT});
-        this.setState({calendar : await contractNFT.methods.getCalendar().call()});
-        for (let i=0;i<this.state.calendar.length;i+=3) {
-          if(this.state.calendar[i] == 1) this.setState({startDateWhitelist: new Date(this.state.calendar[i+1]*1000),endDateWhitelist: new Date(this.state.calendar[i+2]*1000)})
-          else if (this.state.calendar[i] == 2) this.setState({startDatePresale: new Date(this.state.calendar[i+1]*1000),endDatePresale: new Date(this.state.calendar[i+2]*1000)})
-          else if (this.state.calendar[i] == 3) this.setState({startDateSale: new Date(this.state.calendar[i+1]*1000),endDateSale: new Date(this.state.calendar[i+2]*1000)})
-        }
+        this.getCollection();
+        this.state.contractNFT.events.UpdatedDatas([]).on('data', function(event){
+          toast.success(event.returnValues.dataType+" updated");
+        })
       }
-  }
+    };
+
+    getCollection = async () => {
+      const infosNft = await this.state.contractNFT.methods.getCollectionInfos().call({ from: this.props.parentState.currentAccount });
+      this.setState({collectionInfos : infosNft});
+      this.setState({calendar : await this.state.contractNFT.methods.getCalendar().call()});
+      for (let i=0;i<this.state.calendar.length;i+=3) {
+        if(this.state.calendar[i] == 1) this.setState({startDateWhitelist: new Date(this.state.calendar[i+1]*1000),endDateWhitelist: new Date(this.state.calendar[i+2]*1000)})
+        else if (this.state.calendar[i] == 2) this.setState({startDatePresale: new Date(this.state.calendar[i+1]*1000),endDatePresale: new Date(this.state.calendar[i+2]*1000)})
+        else if (this.state.calendar[i] == 3) this.setState({startDateSale: new Date(this.state.calendar[i+1]*1000),endDateSale: new Date(this.state.calendar[i+2]*1000)})
+      }
+    }
 
     setMaxSupply = async () => {
       const infosNft = await this.state.contractNFT.methods.setMaxSupply(this.state.maxSupply).send({ from: this.props.parentState.currentAccount });
@@ -112,10 +115,10 @@ class CollectionManager extends React.Component {
       if(this.state.isAllow)
       return (
         <div>
-        <div class="container px-5 mx-auto">
-        <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-          <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Collection {this.state.collectionInfos.name} ({this.state.collectionInfos.symbol})</h1>
-          <NavLink to={'/explore/' + this.state.collectionAddress} ><button class="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0">View collection</button></NavLink>
+        <div className="container px-5 mx-auto">
+        <div className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+          <h1 className="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Collection {this.state.collectionInfos.name} ({this.state.collectionInfos.symbol})</h1>
+          <NavLink to={'/explore/' + this.state.collectionAddress} ><button className="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0">View collection</button></NavLink>
         </div>
       </div>
   <Tabs>
@@ -353,10 +356,10 @@ class CollectionManager extends React.Component {
       )
       else
       return(
-        <div class="container px-5 mx-auto">
-        <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-          <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are not the owner of this collection.</h1>
-          <NavLink to={'/explore/' + this.state.collectionAddress} ><button class="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0">View collection</button></NavLink>
+        <div className="container px-5 mx-auto">
+        <div className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+          <h1 className="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are not the owner of this collection.</h1>
+          <NavLink to={'/explore/' + this.state.collectionAddress} ><button className="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0">View collection</button></NavLink>
         </div>
         </div>
       )

@@ -75,6 +75,8 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     event Whitelisted(address _userAddress);
     /// @notice Event emitted after royalties are updated
     event UpdatedRoyalties(address newRoyaltyAddress, uint256 newPercentage);
+    /// @notice Event emitted after data are updated
+    event UpdatedDatas(string dataType);
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
@@ -131,6 +133,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
             calendar[dates[i]].push(interval);
         }
         calendarArray = dates;
+        emit UpdatedDatas("Calendar");
     }
 
     /** 
@@ -156,6 +159,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     **/
     function setBanner(string memory _banner) external onlyOwner {
         collectionInfo.banner = _banner;
+        emit UpdatedDatas("Banner");
     }
 
     /** 
@@ -163,6 +167,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     **/
     function setDescription(string memory _description) external onlyOwner {
         collectionInfo.description = _description;
+        emit UpdatedDatas("Description");
     }
 
     /** 
@@ -171,6 +176,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     function setMaxSupply(uint _amount) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxSupply = _amount;
+        emit UpdatedDatas("Max supply");
     }
 
     /** 
@@ -179,6 +185,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     function setMaxNbPerWallet(uint _amount) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxPerWallet = _amount;
+        emit UpdatedDatas("Max wallet");
     }
     /** 
     * @notice Allows to change the max supply during the config stage
@@ -186,6 +193,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     function setBaseURI(string memory __baseURI) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseURI = __baseURI;
+        emit UpdatedDatas("Base URI");
     }
 
     /** 
@@ -194,6 +202,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     function setBaseExtension(string memory _baseExtension) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseExtension = _baseExtension;
+        emit UpdatedDatas("Base Extension");
     }
 
     /** 
@@ -202,6 +211,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     function setPrice(uint _price) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.price = _price;
+        emit UpdatedDatas("Price");
     }
 
     /** 
@@ -210,6 +220,7 @@ contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2
     function setPresalePrice(uint _price) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.presalePrice = _price;
+        emit UpdatedDatas("Presale Price");
     }
 
     /**
