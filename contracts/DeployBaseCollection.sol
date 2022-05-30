@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.14;
 
-import "./MintitNFTCollection.sol";
+import "./MintitNFTERC721Collection.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
 
 /** 
@@ -19,9 +19,9 @@ library DeployBaseCollection {
     function deployBaseCollection() external returns (address mintitAddress) {
 
         // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTCollection).creationCode);
+        bytes memory collectionBytecode = abi.encodePacked(type(MintitNFTERC721Collection).creationCode);
         // Make a random salt based on the artist name
-        bytes32 salt = keccak256(abi.encodePacked("MintItNFTBaseCollection"));
+        bytes32 salt = keccak256(abi.encodePacked("MintitNFTERC721Collection"));
 
         mintitAddress = Create2.deploy(0, salt, collectionBytecode);
 
