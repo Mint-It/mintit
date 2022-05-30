@@ -126,15 +126,15 @@ class Collection extends React.Component {
     renderSoon() {
       if (this.state.isSelectedStage[0]) {
         return (
-          <section class="text-gray-600 body-font">
-            <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Collection coming soon
+          <section className="text-gray-600 body-font">
+            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Collection coming soon
             </h1>
           </section>
         )
       }
       else 
         return(
-          <section class="text-gray-600 body-font">
+          <section className="text-gray-600 body-font">
           </section>
         )
     }
@@ -142,11 +142,11 @@ class Collection extends React.Component {
     renderPublicWhitelist () {
       if (this.state.isSelectedStage[1] && !this.state.iamWhitelisted) {
         return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-                <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Press Whitelist button if you want to have access to the Presale</h1>
-                <button class="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0" onClick={() => this.addWhitelist()}>Add me to Whitelist</button>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-24 mx-auto">
+              <div className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+                <h1 className="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Press Whitelist button if you want to have access to the Presale</h1>
+                <button className="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0" onClick={() => this.addWhitelist()}>Add me to Whitelist</button>
               </div>
             </div>
           </section>
@@ -154,11 +154,11 @@ class Collection extends React.Component {
       }
       else if (this.state.isSelectedStage[1] && this.state.iamWhitelisted) {
         return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-                <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are already Whitelisted</h1>
-                <button class="flex-shrink-0 text-gray-700 bg-gray-100 border-0 py-2 px-8 focus:outline-none rounded text-lg mt-10 sm:mt-0">Add me to Whitelist</button>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-24 mx-auto">
+              <div className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+                <h1 className="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are already Whitelisted</h1>
+                <button className="flex-shrink-0 text-gray-700 bg-gray-100 border-0 py-2 px-8 focus:outline-none rounded text-lg mt-10 sm:mt-0">Add me to Whitelist</button>
               </div>
             </div>
           </section> 
@@ -166,7 +166,7 @@ class Collection extends React.Component {
       }
       else 
         return(
-          <section class="text-gray-600 body-font">
+          <section className="text-gray-600 body-font">
           </section>
         )
     }
@@ -204,9 +204,9 @@ class Collection extends React.Component {
         return (
           <React.Fragment>
           <tr>
-          <td class={classVal}>{stage}</td>
-          <td class={classVal}>{start}</td>
-          <td class={classVal}>{end}</td>
+          <td className={classVal}>{stage}</td>
+          <td className={classVal}>{start}</td>
+          <td className={classVal}>{end}</td>
           </tr>
           </React.Fragment>
         )
@@ -222,13 +222,13 @@ class Collection extends React.Component {
 
     renderCalendar () {
       return (
-        <div class="lg:w-2/3 w-full mx-auto overflow-auto">
-        <table class="table-auto w-full text-left whitespace-no-wrap">
+        <div className="lg:w-2/3 w-full mx-auto overflow-auto">
+        <table className="table-auto w-full text-left whitespace-no-wrap">
           <thead>
             <tr>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Stage</th>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Start date</th>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">End date</th>
+            <th className="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Stage</th>
+            <th className="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Start date</th>
+            <th className="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">End date</th>
             </tr>
           </thead>
           <tbody>
@@ -250,11 +250,11 @@ class Collection extends React.Component {
           price = Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.presalePrice));
 
         return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-                <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Mint a NFT</h1>
-                <button class="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0" onClick={() => this.mint()}>Mint { price} ETH</button>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-24 mx-auto">
+              <div className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+                <h1 className="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Mint a NFT</h1>
+                <button className="flex-shrink-0 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg mt-10 sm:mt-0" onClick={() => this.mint()}>Mint { price} ETH</button>
               </div>
             </div>
           </section>
@@ -262,10 +262,10 @@ class Collection extends React.Component {
       }
       else if ((this.state.isSelectedStage[2] && !this.state.iamWhitelisted)) {
         return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
-                <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are not whitelisted</h1>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-24 mx-auto">
+              <div className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
+                <h1 className="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">You are not whitelisted</h1>
               </div>
             </div>
           </section>
@@ -273,7 +273,7 @@ class Collection extends React.Component {
       }
       else 
         return(
-          <section class="text-gray-600 body-font">
+          <section className="text-gray-600 body-font">
           </section>
         )
     }
@@ -282,17 +282,15 @@ class Collection extends React.Component {
       if (this.state.isSelectedStage[4]) {
         let items=[];
         let i;
-        for (i=0;i<this.state.totalSupply;i++)
-          items.push("NFT " + i);
-
+        for (i=0;i<this.state.totalSupply;i++) items.push("NFT " + i);
         return (
-          <section class="text-gray-600 body-font">
-            <div class="container px-5 py-24 mx-auto">
-              <div class="flex flex-col text-center w-full mb-20">
-                <h1 class="text-2xl font-medium title-font mb-4 text-gray-900">Minted NFT</h1>
-                <p class="lg:w-2/3 mx-auto leading-relaxed text-base"></p>
+          <section className="text-gray-600 body-font">
+            <div className="container px-5 py-24 mx-auto">
+              <div className="flex flex-col text-center w-full mb-20">
+                <h1 className="text-2xl font-medium title-font mb-4 text-gray-900">Minted NFT</h1>
+                <p className="lg:w-2/3 mx-auto leading-relaxed text-base"></p>
               </div>
-              <div class="flex flex-wrap -m-4">
+              <div className="flex flex-wrap -m-4">
                 {items.map((item, index) => (
                   <NFTCard parentState={this.props.parentState} collectionAddress={this.state.collectionAddress} key={index+1} tokenId={index+1}/>
                 ))}
@@ -304,7 +302,7 @@ class Collection extends React.Component {
       }
       else 
         return(
-          <section class="text-gray-600 body-font">
+          <section className="text-gray-600 body-font">
           </section>
         )
     }
@@ -312,19 +310,19 @@ class Collection extends React.Component {
     render() {
       return (
           <div>
-            <section class="text-gray-600 body-font">
-              <div class="container mx-auto flex px-5 py-5 md:flex-row flex-col items-center">
-                <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
-                  <img class="lg:h-48 md:h-36 w-full object-cover object-center" alt="hero" src={this.state.collectionInfos.banner}  />
+            <section className="text-gray-600 body-font">
+              <div className="container mx-auto flex px-5 py-5 md:flex-row flex-col items-center">
+                <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
+                  <img className="lg:h-48 md:h-36 w-full object-cover object-center" alt="hero" src={this.state.collectionInfos.banner}  />
                 </div>
-                <div class="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
-                  <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">{this.state.collectionInfos.name}
+                <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
+                  <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">{this.state.collectionInfos.name}
                   <br />
                   by {this.state.artistName}
-                    <br class="hidden lg:inline-block" />
+                    <br className="hidden lg:inline-block" />
                   </h1>
-                  <p class="mb-8 leading-relaxed">{this.state.collectionInfos.description}</p>
-                  <p class="mb-8 leading-relaxed">Supply {this.state.totalSupply} / {this.state.collectionInfos.maxSupply}
+                  <p className="mb-8 leading-relaxed">{this.state.collectionInfos.description}</p>
+                  <p className="mb-8 leading-relaxed">Supply {this.state.totalSupply} / {this.state.collectionInfos.maxSupply}
                   <br></br>
                   Presale Price : {Web3.utils.fromWei(Web3.utils.toBN(this.state.collectionInfos.presalePrice))} ETH
                   <br></br>

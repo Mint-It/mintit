@@ -1,25 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/MerkleProofUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/finance/PaymentSplitterUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./eip/2981/ERC2981Collection.sol";
 
 /** 
   * @title Mint It NFT collection
   * @author Geoffrey B. / Christophe B.
+<<<<<<< HEAD
   * @notice NFT collection of an artist which may generate some action in real life
+=======
+  * @notice NFT collection of an artist
+>>>>>>> release/0.0.2
   */
-contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyGuard, PaymentSplitter, Ownable {
-    using Strings for uint256;
-    using Counters for Counters.Counter;
+contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2981Collection, ReentrancyGuardUpgradeable, PaymentSplitterUpgradeable, OwnableUpgradeable {
+    using StringsUpgradeable for uint256;
+    using CountersUpgradeable for CountersUpgradeable.Counter;
     address artistAddress;
-    Counters.Counter private _tokenIds;
+    CountersUpgradeable.Counter private _tokenIds;
 
     struct Infos {
         string name;
@@ -74,14 +79,18 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     event Whitelisted(address _userAddress);
     /// @notice Event emitted after royalties are updated
     event UpdatedRoyalties(address newRoyaltyAddress, uint256 newPercentage);
+    /// @notice Event emitted after data are updated
+    event UpdatedDatas(string dataType);
 
     /**
       * @notice Constructor parameters of ERC721. Params will be set by Collection Manager
       */
-    constructor(address[] memory _payees, uint256[] memory _shares,
+    function initialize(address[] memory _payees, uint256[] memory _shares,
                 string memory name_, string memory symbol_, address _artist,
-                uint[] memory _intParams, string[] memory _strParams) 
-                ERC721 (name_, symbol_) PaymentSplitter(_payees, _shares) {
+                uint256[] memory _intParams, string[] memory _strParams) public initializer {
+        __ERC721_init(name_, symbol_);
+        __PaymentSplitter_init(_payees, _shares);
+        __Ownable_init();
         sellingStage = Stages.Config;
         artistAddress = _artist;
         collectionInfo.maxSupply = _intParams[0];
@@ -98,6 +107,13 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
         teamLength = _payees.length;
         transferOwnership(_artist);
    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165) returns (bool) {
+        return ERC721EnumerableUpgradeable.supportsInterface(interfaceId);
+    }
 
     /** 
     * @notice Allows to set dates for each sales
@@ -121,6 +137,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
             calendar[dates[i]].push(interval);
         }
         calendarArray = dates;
+        emit UpdatedDatas("Calendar");
     }
 
     /** 
@@ -146,6 +163,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     **/
     function setBanner(string memory _banner) external onlyOwner {
         collectionInfo.banner = _banner;
+        emit UpdatedDatas("Banner");
     }
 
     /** 
@@ -153,6 +171,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     **/
     function setDescription(string memory _description) external onlyOwner {
         collectionInfo.description = _description;
+        emit UpdatedDatas("Description");
     }
 
     /** 
@@ -161,6 +180,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     function setMaxSupply(uint _amount) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxSupply = _amount;
+        emit UpdatedDatas("Max supply");
     }
 
     /** 
@@ -169,6 +189,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     function setMaxNbPerWallet(uint _amount) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the max supply.");
         collectionInfo.maxPerWallet = _amount;
+        emit UpdatedDatas("Max wallet");
     }
     /** 
     * @notice Allows to change the max supply during the config stage
@@ -176,6 +197,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     function setBaseURI(string memory __baseURI) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseURI = __baseURI;
+        emit UpdatedDatas("Base URI");
     }
 
     /** 
@@ -184,6 +206,16 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     function setBaseExtension(string memory _baseExtension) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.baseExtension = _baseExtension;
+        emit UpdatedDatas("Base Extension");
+    }
+
+    /** 
+    * @notice Allows to change the category during the config stage
+    **/
+    function setCategory(string memory _category) external onlyOwner {
+        require(isStage(Stages.Config), "Should be in Config stage to change the category.");
+        collectionInfo.category = _category;
+        emit UpdatedDatas("Category");
     }
 
     /** 
@@ -192,6 +224,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     function setPrice(uint _price) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.price = _price;
+        emit UpdatedDatas("Price");
     }
 
     /** 
@@ -200,6 +233,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     function setPresalePrice(uint _price) external onlyOwner {
         require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
         collectionInfo.presalePrice = _price;
+        emit UpdatedDatas("Presale Price");
     }
 
     /**
@@ -231,7 +265,7 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     * @return True if a account can be proved to be a part of the whiteList merkle tree
     **/
     function isPrivateWhiteListed(address account, bytes32[] calldata proof) internal view returns(bool) {
-        return MerkleProof.verify(proof, privateWL, keccak256(abi.encodePacked(account)));
+        return MerkleProofUpgradeable.verify(proof, privateWL, keccak256(abi.encodePacked(account)));
     }
 
     /** 
@@ -334,13 +368,13 @@ contract MintitNFTCollection is ERC721Enumerable, ERC2981Collection, ReentrancyG
     *
     * @return The token URI of the NFT which has _nftId Id
     **/
-    function tokenURI(uint _nftId) public view override(ERC721) returns (string memory) {
+    function tokenURI(uint _nftId) public view override(ERC721Upgradeable) returns (string memory) {
         require(_exists(_nftId), "This NFT doesn't exist.");
         
         string memory currentBaseURI = _baseURI();
         return 
             bytes(currentBaseURI).length > 0 
-            ? string(abi.encodePacked(currentBaseURI, _nftId.toString(), collectionInfo.baseExtension))
+            ? string(abi.encodePacked(currentBaseURI, _nftId.toString()))
             : "";
     }
 

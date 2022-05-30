@@ -28,22 +28,23 @@ let col = [
 [0, "The CryptoBear Watch Club", "CBWC", 30, "0.2", "0.3",
 "https://lh3.googleusercontent.com/uYwlGK1Flj_QxlwFV-6o80nHbCY40Q_67gxYZiv5DNtTFDZaQG0AGwZ3Ir1YOa26z08ygce3UeCiGG--NaAuiFezySlpC9SbZyHOiWA=h200",
 "OS Holder number doesn't include STAKED CBWC. 73% unique holders currently staked to earn the $ARK utility token.",
-"Arts", "https://cryptobearwatchclub.mypinata.cloud/ipfs/QmX8kGmiRD5crgp3WZHgch2M7wEhCyStev9vpqxycQ713p/", ".png",
+"Arts", "https://cryptobearwatchclub.mypinata.cloud/ipfs/QmX8kGmiRD5crgp3WZHgch2M7wEhCyStev9vpqxycQ713p/", "",
 [1, getTs()-3600, getTs() + 3600, 2, getTs()+3600, getTs() + 7200, 3, getTs()+7200, getTs() + 10000]],
 [1, "Karafuru", "Karafuru", 5555, "0.4", "0.5",
 "https://lh3.googleusercontent.com/wagZQjBQU0NZnTjlHHdBjDCgE0AvP1K4WGNYsCSTTj2Gib2N0LbE4uWC76w510bbyXFtqWTqj_1rlK_ZZ0KfZvGYuEBA5NivGuBnIw=h200",
 "Karafuru is home to 5,555 generative arts where colors reign supreme. Leave the drab reality and enter the world of Karafuru by Museum of Toys.",
-"Arts", "https://opensea.mypinata.cloud/ipfs/QmdJ8S7YfZmXQJYdieyHJhNpAUnqQ8KEQsgZ4EAdwYk7tx/", ".jpg",
+"Arts", "https://opensea.mypinata.cloud/ipfs/QmdJ8S7YfZmXQJYdieyHJhNpAUnqQ8KEQsgZ4EAdwYk7tx/", "",
 [2, getTs()-3600, getTs() + 36000]],
 [1, "Quirkies Originals", "", 20, "0.05", "0.08",
 "https://lh3.googleusercontent.com/TS2mwNzus7SqEjSjKVu7Gmj1lpnZc4u8x-wrvTlZvU7jEVMHLi3edj7TyudKaKvSM79x_0ORmQc0ATXotUJsBNrrE8j5MY4piS7aM6Q=h200",
 "5,000 Quirkies brought into the metaverse to celebrate everyone's quirks",
-"Arts", "http://metadata.quirkies.io/", ".png",
+"Arts", "http://metadata.quirkies.io/", "",
 [3, getTs()-3600, getTs() + 36000]],
-["", "", 30, 0.5, 1,
-"",
-"",
-"Arts", "", ".png"]
+[1, "Chimpers", "CHIMP", 10, "0.02", "0.03",
+"https://lh3.googleusercontent.com/8uTlhk5MJ41QPowZBqRfbZfnXWpUezl_NiRhg1VMyCHEIwO6dy9hZ-aZd5tQJ4wJE3e9YX2eaMt4vZVgfdmao8qZKSWRPz03Vdoj8A=h600",
+"Chimpers are a collection of 5,555 generative NFT pixel characters created by @TimpersHD",
+"Arts", "https://collectible.api.manifoldxyz.dev/collectible/0x80336ad7a747236ef41f47ed2c7641828a480baa/", "",
+[3, getTs()-3600, getTs() + 36000]]
 ];
 
 console.log(getTs());
@@ -66,6 +67,10 @@ const initCollections = async () => {
     let i;
     let txCount;
 
+    txCount = await web3.eth.getTransactionCount(artists[col[0][0]][2]);
+    data = mintitMgr.methods.createMintitBaseCollection().encodeABI();
+    sendMintitTransaction(data, cAddress, Buffer.from(artists[col[0][0]][3], 'hex'), txCount);
+
     for (i=0;i<artists.length;i++) {
         txCount = await web3.eth.getTransactionCount(artists[i][2]);
         data = mintitMgr.methods.setArtist(artists[i][0], artists[i][1]).encodeABI();
@@ -73,7 +78,7 @@ const initCollections = async () => {
         sendMintitTransaction(data, cAddress, Buffer.from(artists[i][3], 'hex'), txCount);
     }
 
-    for (i=0;i<3;i++) {
+    for (i=0;i<4;i++) {
         // Create NFT collection
         txCount = await web3.eth.getTransactionCount(artists[col[i][0]][2]);
         data = mintitMgr.methods.createMintitNFTCollection(col[i][1], col[i][2], [col[i][3], web3.utils.toWei(col[i][4], "ether"), web3.utils.toWei(col[i][5], "ether"), 2], [col[i][6], col[i][7], col[i][8], col[i][9], col[i][10]]).encodeABI();
@@ -126,7 +131,7 @@ function sendMintitTransaction(data, address, privatekey, txCount) {
     const txObject = {
         nonce:    web3.utils.toHex(txCount),
         gasLimit: web3.utils.toHex(5000000), // Raise the gas limit to a much higher amount
-        gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+        gasPrice: web3.utils.toHex(web3.utils.toWei('20', 'gwei')),
         to: address,
         data: data
        }
@@ -148,7 +153,7 @@ function sendMintitValueTransaction(data, address, privatekey, txCount, value) {
     const txObject = {
         nonce:    web3.utils.toHex(txCount),
         gasLimit: web3.utils.toHex(5000000), // Raise the gas limit to a much higher amount
-        gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+        gasPrice: web3.utils.toHex(web3.utils.toWei('20', 'gwei')),
         to: address,
         value: web3.utils.toHex(web3.utils.toWei(value, 'ether')),
         data: data

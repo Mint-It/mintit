@@ -68,7 +68,11 @@ Inherits from :
 # Tools & dApp <a name="tools&dapp"></a>
 
 We use Truffle to deploy smart contracts.<br/>
+<<<<<<< HEAD
 Ganache is used for development/testing of smart contracts but the beta will be deployed on the Kovan test blockchain so that users can test the application.<br/><br/>
+=======
+Ganache is used for development/testing of smart contracts but the beta will be deployed on the Rinkeby test blockchain so that users can test the application.<br/><br/>
+>>>>>>> release/0.0.2
 
 The dApp is built with the React framework and web3.js (Ethereum JavaScript API).<br/>
 To design the UI of the application we use Tailwind CSS.<br/>
