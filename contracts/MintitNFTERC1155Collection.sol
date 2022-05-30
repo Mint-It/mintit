@@ -4,7 +4,6 @@ pragma solidity 0.8.14;
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./eip/2981/ERC2981Collection.sol";
 import "./MintitNFTBaseCollection.sol";
@@ -14,8 +13,8 @@ import "./MintitNFTBaseCollection.sol";
   * @author Geoffrey B. / Christophe B.
   * @notice NFT collection of an artist
   */
-contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitNFTBaseCollection, ReentrancyGuardUpgradeable {
-    using StringsUpgradeable for uint256;
+contract MintitNFTERC1155Collection is Initializable, ERC1155Upgradeable, MintitNFTBaseCollection, ReentrancyGuardUpgradeable {
+    //using StringsUpgradeable for uint256;
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter private _tokenIds;
 
@@ -24,8 +23,6 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
         string symbol;
         string description;
         string banner;
-        string baseURI;
-        string baseExtension;
         string category;
         uint price;
         uint presalePrice;
@@ -50,9 +47,7 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
         collectionInfo.banner = _strParams[0];
         collectionInfo.description = _strParams[1];
         collectionInfo.category = _strParams[2];
-        collectionInfo.baseURI = _strParams[3];
-        collectionInfo.baseExtension = _strParams[4];
-        collection1155Info.name = name_;
+        collectionInfo.name = name_;
         collectionInfo.symbol = symbol_;
    }
 
@@ -60,7 +55,7 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155Upgradeable, IERC165) returns (bool) {
-        return ERCUpgradeable.supportsInterface(interfaceId);
+        return ERC1155Upgradeable.supportsInterface(interfaceId);
     }
 
     /** 
@@ -96,23 +91,6 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
         collectionInfo.maxPerWallet = _amount;
         emit UpdatedDatas("Max wallet");
     }
-    /** 
-    * @notice Allows to change the max supply during the config stage
-    **/
-    function setBaseURI(string memory __baseURI) external onlyOwner {
-        require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
-        collectionInfo.baseURI = __baseURI;
-        emit UpdatedDatas("Base URI");
-    }
-
-    /** 
-    * @notice Allows to change the max supply during the config stage
-    **/
-    function setBaseExtension(string memory _baseExtension) external onlyOwner {
-        require(isStage(Stages.Config), "Should be in Config stage to change the base URI.");
-        collectionInfo.baseExtension = _baseExtension;
-        emit UpdatedDatas("Base Extension");
-    }
 
     /** 
     * @notice Allows to change the category during the config stage
@@ -141,15 +119,6 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
         emit UpdatedDatas("Presale Price");
     }
 
-    /**
-    * @notice Return URI of the NFTs when revealed
-    *
-    * @return The URI of the NFTs when revealed
-    **/
-    function _baseURI() internal view returns (string memory) {
-        return collectionInfo.baseURI;
-    }
-
     /** 
     * @notice Allows to get details information of the NFT collection
     *
@@ -164,19 +133,18 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
     *
     * @return newItemId The Id of the minted NFT
     **/
-    function PresaleMintArt(bytes32[] calldata _proof, uint quantity) external payable nonReentrant callerIsUser returns (uint256)
+    function PresaleMintArt(bytes32[] calldata _proof) external payable nonReentrant callerIsUser returns (uint256)
     {
         require(isStage(Stages.Presale), "Presale has not started yet.");
-        require(totalSupply() < collectionInfo.maxSupply, "All NFT are sold");
+        require(_tokenIds.current() < collectionInfo.maxSupply, "All NFT are sold");
         require((isPrivateWhiteListed(msg.sender, _proof) || publicWL[msg.sender] == true), "Not on the whitelist");
         require(msg.value >= collectionInfo.presalePrice, "Not enought funds.");
         require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
         _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
         nbWallet[msg.sender] = nbWallet[msg.sender] + 1;
-        _safeMint(msg.sender, newItemId);
+        _mint(msg.sender, 1, 1, "");
 
-        return newItemId;
+        return 1;
     }
     /**
     * @notice Allows to mint NFTs
@@ -186,32 +154,14 @@ contract MintitNFTERC721Collection is Initializable, ERC1155Upgradeable, MintitN
     function MintArt() external payable nonReentrant callerIsUser returns (uint256)
     {
         require(isStage(Stages.Sale), "Sale has not started yet.");
-        require(totalSupply() < collectionInfo.maxSupply, "All NFT are sold");
+        require(_tokenIds.current() < collectionInfo.maxSupply, "All NFT are sold");
         require(msg.value >= collectionInfo.price, "Not enought funds.");
         require(nbWallet[msg.sender] < collectionInfo.maxPerWallet, "Max number of mint reached");
         _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
         nbWallet[msg.sender] = nbWallet[msg.sender] + 1;
-        _safeMint(msg.sender, newItemId);
+        _mint(msg.sender, 1, 1, "");
 
-        return newItemId;
-    }
-
-    /**
-    * @notice Allows to get the complete URI of a specific NFT by his ID
-    *
-    * @param _nftId The id of the NFT
-    *
-    * @return The token URI of the NFT which has _nftId Id
-    **/
-    function tokenURI(uint _nftId) public view override(ERC721Upgradeable) returns (string memory) {
-        require(_exists(_nftId), "This NFT doesn't exist.");
-        
-        string memory currentBaseURI = _baseURI();
-        return 
-            bytes(currentBaseURI).length > 0 
-            ? string(abi.encodePacked(currentBaseURI, _nftId.toString()))
-            : "";
+        return 1;
     }
 
     modifier callerIsUser() {
