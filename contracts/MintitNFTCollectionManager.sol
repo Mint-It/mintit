@@ -27,8 +27,6 @@ contract MintitNFTCollectionManager is Artists, Users{
       *
       * @return mintitCollection the address of the created base NFT collection contract
       */
-<<<<<<< HEAD
-=======
     function createMintitBaseCollection() external returns (address) {
 
         if (mintitCollection == address(0))
@@ -42,7 +40,6 @@ contract MintitNFTCollectionManager is Artists, Users{
       *
       * @return collectionAddress the address of the created collection proxy contract
       */
->>>>>>> release/0.0.2
     function createMintitNFTCollection(string memory _collectionName, string memory _collectionSymbol, 
                                         uint256[] memory _intParams, string[] memory _strParams) external returns (address collectionAddress) {
 

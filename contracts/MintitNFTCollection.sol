@@ -14,11 +14,7 @@ import "./eip/2981/ERC2981Collection.sol";
 /** 
   * @title Mint It NFT collection
   * @author Geoffrey B. / Christophe B.
-<<<<<<< HEAD
-  * @notice NFT collection of an artist which may generate some action in real life
-=======
   * @notice NFT collection of an artist
->>>>>>> release/0.0.2
   */
 contract MintitNFTCollection is Initializable, ERC721EnumerableUpgradeable, ERC2981Collection, ReentrancyGuardUpgradeable, PaymentSplitterUpgradeable, OwnableUpgradeable {
     using StringsUpgradeable for uint256;
